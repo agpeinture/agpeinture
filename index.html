@@ -2404,11 +2404,11 @@ const _origSetItem = localStorage.setItem.bind(localStorage);
 let fbSaveTimer = null;
 localStorage.setItem = function(key, value) {
   _origSetItem(key, value);
-  if(key.startsWith('ag4_') && window.fbSave) {
+  if(key.startsWith('ag4_') && window.fbSave && !window._fbLoading) {
     clearTimeout(fbSaveTimer);
     fbSaveTimer = setTimeout(function(){ window.fbSave(); }, 2000);
     const el = document.getElementById('fb-status');
-    if(el) { el.textContent = '☁️ Enregistrement...'; el.style.color = '#f39c12'; }
+    if(el) { el.textContent = '☁️ Sauvegarde...'; el.style.color = '#f39c12'; }
   }
 };
 
