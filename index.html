@@ -664,20 +664,16 @@ header img{height:42px}
 
 <!-- MODAL FACTURE -->
 <div class="overlay" id="ov-facture">
-  <div class="modal" style="padding-bottom:20px">
+  <div class="modal" style="max-height:70vh">
     <div class="mh"></div>
     <h3>💶 Nouvelle facture</h3>
     <div class="frow"><label>Client / Chantier</label><input id="f-client" type="text" placeholder="Nom du client..."></div>
-    <div class="frow"><label>Description travaux</label><input id="f-desc" type="text" placeholder="Ex: Peinture salon, 3 pièces..."></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-      <div class="frow" style="margin:0"><label>Montant CHF</label><input id="f-montant" type="number" step="0.01" placeholder="0.00"></div>
-      <div class="frow" style="margin:0"><label>Date</label><input id="f-date" type="date"></div>
-    </div>
-    <div class="frow"><label>Notes</label><input id="f-notes" type="text" placeholder="Remarques..."></div>
-    <div style="display:flex;gap:10px;margin-top:20px;padding-bottom:10px">
-      <button class="btn bcancel" onclick="closeModal('facture')" style="flex:1">Annuler</button>
-      <button class="btn bsave" onclick="saveFacture()" style="flex:2">💶 Ajouter</button>
-    </div>
+    <div class="frow"><label>Travaux</label><input id="f-desc" type="text" placeholder="Ex: Peinture salon..."></div>
+    <div class="frow"><label>Montant CHF</label><input id="f-montant" type="number" step="0.01" placeholder="0.00"></div>
+    <input id="f-date" type="date" style="display:none">
+    <input id="f-notes" type="hidden">
+    <button onclick="closeModal('facture')" style="width:100%;padding:14px;margin-top:8px;margin-bottom:6px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);font-family:Nunito,sans-serif;font-size:14px;font-weight:800;color:var(--muted);cursor:pointer">Annuler</button>
+    <button onclick="saveFacture()" style="width:100%;padding:16px;border-radius:12px;border:none;background:var(--blue);font-family:Nunito,sans-serif;font-size:16px;font-weight:900;color:white;cursor:pointer;box-shadow:0 4px 12px rgba(61,184,212,0.4)">💶 Ajouter la facture</button>
   </div>
 </div>
 
@@ -2267,6 +2263,56 @@ function generatePDFCmd(){
 setTimeout(function(){try{renderMetreHist();renderCmdHist();}catch(e){console.error('hist error:',e);}},350);
 
 setTimeout(function(){try{loadRDV();}catch(e){console.error('rdv error:',e);}},300);
+
+
+// FACTURES
+var factures = JSON.parse(localStorage.getItem('ag4_factures')||'[]');
+
+function saveFactures(){localStorage.setItem('ag4_factures',JSON.stringify(factures));}
+
+function saveFacture(){
+  var client=document.getElementById('f-client').value.trim();
+  if(!client){alert('Indique le nom du client !');return;}
+  factures.unshift({id:Date.now(),client:client,desc:document.getElementById('f-desc').value,montant:document.getElementById('f-montant').value,date:todayStr,faite:false,createdAt:new Date().toISOString()});
+  saveFactures();
+  closeModal('facture');
+  ['f-client','f-desc','f-montant'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  renderFactures();renderHome();
+}
+
+function toggleFactureFaite(id){
+  var f=factures.find(function(x){return x.id===id;});
+  if(f){f.faite=!f.faite;saveFactures();renderFactures();renderHome();}
+}
+
+function delFacture(id){
+  if(!confirm('Supprimer ?'))return;
+  factures=factures.filter(function(f){return f.id!==id;});
+  saveFactures();renderFactures();renderHome();
+}
+
+function renderFactures(){
+  var el=document.getElementById('fact-list');
+  var att=factures.filter(function(f){return !f.faite;});
+  var fait=factures.filter(function(f){return f.faite;});
+  var total=att.reduce(function(s,f){return s+(parseFloat(f.montant)||0);},0);
+  var ec=document.getElementById('fact-count-att');var et=document.getElementById('fact-total-att');var sub=document.getElementById('fact-sub');
+  if(ec)ec.textContent=att.length;
+  if(et)et.textContent=total>0?total.toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF':'— CHF';
+  if(sub)sub.textContent=att.length+' en attente · '+fait.length+' faite'+(fait.length>1?'s':'');
+  if(!el)return;
+  if(!factures.length){el.innerHTML='<div class="empty"><div class="ei">💶</div><p>Aucune facture</p><span>Appuie sur + Ajouter</span></div>';return;}
+  var h='';
+  if(att.length){
+    h+='<div style="font-size:11px;font-weight:800;color:var(--orange);text-transform:uppercase;margin-bottom:8px">⏳ À établir</div>';
+    h+=att.map(function(f){return '<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px;border-left:4px solid var(--orange)"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div style="font-size:15px;font-weight:900">'+f.client+'</div>'+(f.desc?'<div style="font-size:12px;color:var(--muted)">'+f.desc+'</div>':'')+'</div><button onclick="delFacture('+f.id+')" style="background:none;border:none;color:#ddd;font-size:16px;cursor:pointer">✕</button></div><div style="display:flex;justify-content:space-between;align-items:center">'+(f.montant?'<span style="font-size:18px;font-weight:900;color:var(--orange)">'+parseFloat(f.montant).toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF</span>':'<span></span>')+'<button onclick="toggleFactureFaite('+f.id+')" style="background:var(--green);color:white;border:none;border-radius:20px;padding:7px 14px;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer">✅ Faite</button></div></div>';}).join('');
+  }
+  if(fait.length){
+    h+='<div style="font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;margin:14px 0 8px">✅ Faites</div>';
+    h+=fait.map(function(f){return '<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 16px;margin-bottom:8px;border-left:4px solid var(--green);opacity:0.7"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:14px;font-weight:800;text-decoration:line-through">'+f.client+'</div>'+(f.montant?'<div style="font-size:12px;font-weight:700;color:var(--green)">'+parseFloat(f.montant).toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF</div>':'')+'</div><div style="display:flex;gap:8px"><button onclick="toggleFactureFaite('+f.id+')" style="background:var(--bg);color:var(--muted);border:1.5px solid var(--border);border-radius:20px;padding:5px 10px;font-family:Nunito,sans-serif;font-size:11px;font-weight:700;cursor:pointer">↩ Remettre</button><button onclick="delFacture('+f.id+')" style="background:none;border:none;color:#ddd;font-size:16px;cursor:pointer">✕</button></div></div></div>';}).join('');
+  }
+  el.innerHTML=h;
+}
 
 try{renderHome();renderAfaire();renderDevis();renderChantiers();renderPatrols();renderNuanciers();renderPlanning();renderAgenda();renderNotes();renderRoutine();renderFactures();}catch(e){console.error('render error:',e);}
 </script>
