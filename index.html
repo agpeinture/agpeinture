@@ -2341,7 +2341,7 @@ setTimeout(function(){try{loadRDV();}catch(e){console.error('rdv error:',e);}},3
 // FACTURES
 var factures = JSON.parse(localStorage.getItem('ag4_factures')||'[]');
 
-function saveFactures(){localStorage.setItem('ag4_factures',JSON.stringify(factures));}
+function saveFactures(){localStorage.setItem('ag4_factures',JSON.stringify(factures));if(window.fbSave){clearTimeout(window.fbSaveTimer);window.fbSaveTimer=setTimeout(window.fbSave,2000);var el=document.getElementById('fb-status');if(el){el.textContent='☁️ Sauvegarde...';el.style.color='#f39c12';}}}
 
 function saveFacture(){
   var client=document.getElementById('f-client').value.trim();
