@@ -665,7 +665,10 @@ header img{height:42px}
 <!-- MODAL FACTURE -->
 <div class="overlay" id="ov-facture">
   <div class="modal">
-    <div class="mh"><div class="mt">💶 Nouvelle facture</div><button class="mc" onclick="closeModal('facture')">✕</button></div>
+    <div class="mh" style="display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border)">
+      <div class="mt">💶 Nouvelle facture</div>
+      <button onclick="closeModal('facture')" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);line-height:1">✕</button>
+    </div>
     <div class="mf">
       <div class="pi-field"><label>Client / Chantier</label><input id="f-client" class="rdv-input" placeholder="Nom du client..."></div>
       <div class="pi-field" style="margin-top:10px"><label>Description travaux</label><input id="f-desc" class="rdv-input" placeholder="Ex: Peinture salon, 3 pièces..."></div>
