@@ -643,14 +643,14 @@ header img{height:42px}
 <!-- FACTURES -->
 <div class="sec" id="s-factures">
   <div class="sh">
-    <div><div class="st">💶 Factures à faire</div><div class="ss" id="fact-sub">En attente</div></div>
+    <div><div class="st">💶 Factures à faire</div><div class="ss" id="fact-sub">À faire</div></div>
     <button class="fab" onclick="openModal('facture')">＋ Ajouter</button>
   </div>
 
   <!-- Totaux -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
     <div style="background:var(--orange);color:white;border-radius:var(--radius);padding:14px 16px;box-shadow:0 4px 15px rgba(243,156,18,0.3)">
-      <div style="font-size:10px;font-weight:800;opacity:0.85;text-transform:uppercase;letter-spacing:0.5px">En attente</div>
+      <div style="font-size:10px;font-weight:800;opacity:0.85;text-transform:uppercase;letter-spacing:0.5px">À faire</div>
       <div style="font-size:24px;font-weight:900;margin-top:3px" id="fact-count-att">0</div>
     </div>
     <div style="background:var(--green);color:white;border-radius:var(--radius);padding:14px 16px;box-shadow:0 4px 15px rgba(39,174,96,0.3)">
@@ -1096,7 +1096,7 @@ function renderDevis(){
   document.getElementById('devis-sub').textContent=devis.length+' devis au total';
   document.getElementById('devis-stats').innerHTML=`
     <div class="stat sb"><div class="sv">${af}</div><div class="sl">À envoyer</div></div>
-    <div class="stat so"><div class="sv">${en}</div><div class="sl">En attente</div></div>
+    <div class="stat so"><div class="sv">${en}</div><div class="sl">À faire</div></div>
     <div class="stat sg"><div class="sv">${ac}</div><div class="sl">Acceptés</div></div>
     <div class="stat sg"><div class="sv" style="font-size:17px">${mt>0?mt.toLocaleString('fr-FR')+' CHF':'—'}</div><div class="sl">CA accepté</div></div>
   `;
@@ -2305,7 +2305,7 @@ function renderFactures(){
   var h='';
   if(att.length){
     h+='<div style="font-size:11px;font-weight:800;color:var(--orange);text-transform:uppercase;margin-bottom:8px">⏳ À établir</div>';
-    h+=att.map(function(f){return '<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px;border-left:4px solid var(--orange)"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div style="font-size:15px;font-weight:900">'+f.client+'</div>'+(f.desc?'<div style="font-size:12px;color:var(--muted)">'+f.desc+'</div>':'')+'</div><button onclick="delFacture('+f.id+')" style="background:none;border:none;color:#ddd;font-size:16px;cursor:pointer">✕</button></div><div style="display:flex;justify-content:space-between;align-items:center">'+(f.montant?'<span style="font-size:18px;font-weight:900;color:var(--orange)">'+parseFloat(f.montant).toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF</span>':'<span></span>')+'<button onclick="toggleFactureFaite('+f.id+')" style="background:var(--green);color:white;border:none;border-radius:20px;padding:7px 14px;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer">✅ Faite</button></div></div>';}).join('');
+    h+=att.map(function(f){return '<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px;border-left:4px solid var(--orange)"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div style="font-size:15px;font-weight:900">'+f.client+'</div>'+(f.desc?'<div style="font-size:12px;color:var(--muted)">'+f.desc+'</div>':'')+'</div><button onclick="delFacture('+f.id+')" style="background:none;border:none;color:#ddd;font-size:16px;cursor:pointer">✕</button></div><div style="display:flex;justify-content:space-between;align-items:center">'+(f.montant?'<span style="font-size:18px;font-weight:900;color:var(--orange)">'+parseFloat(f.montant).toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF</span>':'<span></span>')+'<button onclick="toggleFactureFaite('+f.id+')" style="background:var(--green);color:white;border:none;border-radius:20px;padding:7px 14px;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer">✅ Facturée</button></div></div>';}).join('');
   }
   if(fait.length){
     h+='<div style="font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;margin:14px 0 8px">✅ Faites</div>';
