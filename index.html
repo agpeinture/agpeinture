@@ -879,9 +879,19 @@ function openModal(t){
     sel.nuColor='#FFFFFF';
     buildColorPicker();
   }
+  if(t==='facture'){
+    document.getElementById('f-date').value=todayStr;
+  }
   document.getElementById('ov-'+t).classList.add('open');
 }
-function closeModal(t){document.getElementById('ov-'+t).classList.remove('open');}
+function closeModal(t){
+  document.getElementById('ov-'+t).classList.remove('open');
+  if(t==='facture'){
+    ['f-client','f-desc','f-montant','f-date','f-notes'].forEach(function(id){
+      var el=document.getElementById(id);if(el)el.value='';
+    });
+  }
+}
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
 function buildColorPicker(){
