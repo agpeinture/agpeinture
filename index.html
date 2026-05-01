@@ -295,68 +295,69 @@ header img{height:42px}
 
 
 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
-  var firebaseConfig = {
-    apiKey: "AIzaSyB4387wUDckjCkx5Ac5cTiDwsmyGEZferQ",
-    authDomain: "agpeinture-416d1.firebaseapp.com",
-    projectId: "agpeinture-416d1",
-    storageBucket: "agpeinture-416d1.firebasestorage.app",
-    messagingSenderId: "837260095027",
-    appId: "1:837260095027:web:4a34e02247532a4c8c7d46"
-  };
-  firebase.initializeApp(firebaseConfig);
-  var db = firebase.firestore();
-  var DOC_REF = db.collection("appdata").doc("agpeinture-data");
-  var KEYS = ['ag4_af','ag4_ch','ag4_dv','ag4_nu','ag4_pa','ag4_plan','ag4_ag','ag4_no','ag4_routine',
-              'ag4_rdv','ag4_rdvc','ag4_rdvt','ag4_metre_hist','ag4_cmd_hist','ag4_factures'];
-
   function fbSetStatus(txt, color) {
     var el = document.getElementById('fb-status');
-    if(el) { el.textContent = txt; el.style.color = color; }
+    if(el) { el.textContent = txt; el.style.color = color || '#aaa'; }
   }
 
-  window.fbLoad = function() {
-    fbSetStatus('☁️...', '#aaa');
-    DOC_REF.get().then(function(doc) {
-      if(doc.exists) {
-        var data = doc.data();
-        KEYS.forEach(function(k) {
-          if(data[k] !== undefined) {
-            window._fbLoading = true;
-            localStorage.setItem(k, data[k]);
-            window._fbLoading = false;
+  fbSetStatus('☁️ Init...', '#aaa');
+
+  try {
+    var firebaseConfig = {
+      apiKey: "AIzaSyB4387wUDckjCkx5Ac5cTiDwsmyGEZferQ",
+      authDomain: "agpeinture-416d1.firebaseapp.com",
+      projectId: "agpeinture-416d1",
+      storageBucket: "agpeinture-416d1.firebasestorage.app",
+      messagingSenderId: "837260095027",
+      appId: "1:837260095027:web:4a34e02247532a4c8c7d46"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+    var DOC_REF = db.collection("appdata").doc("agpeinture-data");
+    var KEYS = ['ag4_af','ag4_ch','ag4_dv','ag4_nu','ag4_pa','ag4_plan','ag4_ag','ag4_no','ag4_routine',
+                'ag4_rdv','ag4_rdvc','ag4_rdvt','ag4_metre_hist','ag4_cmd_hist','ag4_factures'];
+
+    fbSetStatus('☁️ Connexion...', '#f39c12');
+
+    window.fbSave = function() {
+      fbSetStatus('☁️ Sauvegarde...', '#f39c12');
+      var data = {};
+      KEYS.forEach(function(k) { var v = localStorage.getItem(k); if(v) data[k] = v; });
+      DOC_REF.set(data)
+        .then(function() { fbSetStatus('☁️ Synchronisé', '#27ae60'); })
+        .catch(function(e) { fbSetStatus('⚠️ ' + e.code, '#e74c3c'); });
+    };
+
+    window.fbLoad = function() {
+      DOC_REF.get()
+        .then(function(doc) {
+          if(doc.exists) {
+            var data = doc.data();
+            KEYS.forEach(function(k) {
+              if(data[k]) localStorage.setItem(k, data[k]);
+            });
+            fbSetStatus('☁️ Synchronisé', '#27ae60');
+          } else {
+            fbSetStatus('☁️ Prêt', '#27ae60');
           }
+          if(window.initApp) window.initApp();
+        })
+        .catch(function(e) {
+          fbSetStatus('⚠️ ' + (e.code || e.message), '#e74c3c');
+          if(window.initApp) window.initApp();
         });
-        fbSetStatus('☁️ Synchronisé', '#27ae60');
-        console.log('Firebase: données chargées ✅');
-      } else {
-        fbSetStatus('☁️ Prêt', '#27ae60');
-      }
-      if(window.initApp) window.initApp();
-    }).catch(function(e) {
-      console.warn('Firebase load error:', e);
-      fbSetStatus('⚠️ Hors ligne', '#f39c12');
-      if(window.initApp) window.initApp();
-    });
-  };
+    };
 
-  window.fbSave = function() {
-    var data = {};
-    KEYS.forEach(function(k) {
-      var v = localStorage.getItem(k);
-      if(v) data[k] = v;
-    });
-    DOC_REF.set(data).then(function() {
-      fbSetStatus('☁️ Synchronisé', '#27ae60');
-    }).catch(function(e) {
-      console.warn('Firebase save error:', e);
-      fbSetStatus('⚠️ Hors ligne', '#f39c12');
-    });
-  };
+    window.fbLoad();
 
-  window.fbLoad();
+  } catch(e) {
+    fbSetStatus('⚠️ SDK: ' + e.message, '#e74c3c');
+    if(window.initApp) window.initApp();
+  }
 </script>
 
 </head>
