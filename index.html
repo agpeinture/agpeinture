@@ -388,7 +388,7 @@ header img{height:42px}
     </div>
     <div class="rdv-form" id="rdv-form">
       <div class="rdv-section">
-        <div class="rdv-section-title">① INFORMATIONS</div>
+        <div class="rdv-section-title">(1) INFORMATIONS</div>
         <div class="rdv-grid">
           <div class="rdv-field"><div class="rdv-label">Chantier</div><input class="rdv-input" id="rdv-chantier" placeholder="Nom du chantier..." oninput="saveRDV()"></div>
           <div class="rdv-field"><div class="rdv-label">Client</div><input class="rdv-input" id="rdv-client" placeholder="Nom du client..." oninput="saveRDV()"></div>
@@ -401,7 +401,7 @@ header img{height:42px}
       </div>
 
       <div class="rdv-section">
-        <div class="rdv-section-title">② TYPE DE RENDEZ-VOUS</div>
+        <div class="rdv-section-title">(2) TYPE DE RENDEZ-VOUS</div>
         <div class="rdv-type-btns">
           <button class="rdv-type-btn" id="rdvt-metre" onclick="selRDVType('metre')">☑ Métré / Visite</button>
           <button class="rdv-type-btn" id="rdvt-suivi" onclick="selRDVType('suivi')">☑ Suivi chantier</button>
@@ -432,14 +432,14 @@ header img{height:42px}
       </div>
 
       <div class="rdv-section">
-        <div class="rdv-section-title">③ DÉCISIONS / ACTIONS À MENER</div>
+        <div class="rdv-section-title">(3) DÉCISIONS / ACTIONS À MENER</div>
         <div style="padding:12px 14px">
           <textarea class="rdv-big-textarea" id="rdv-decisions" rows="5" placeholder="Décisions prises et actions à mener..." oninput="saveRDV()" style="min-height:80px"></textarea>
         </div>
       </div>
 
       <div class="rdv-section">
-        <div class="rdv-section-title">④ SUITE À DONNER</div>
+        <div class="rdv-section-title">(4) SUITE À DONNER</div>
         <div class="rdv-grid">
           <div class="rdv-field"><div class="rdv-label">Prochain RDV</div><input class="rdv-input" id="rdv-prochrdv" type="date" oninput="saveRDV()"></div>
           <div class="rdv-field"><div class="rdv-label">Heure</div><input class="rdv-input" id="rdv-prochheure" type="time" oninput="saveRDV()"></div>
@@ -470,7 +470,7 @@ header img{height:42px}
           </div>
         </div>
       </div>
-      <div class="rdv-footer">AG Peinture • Case postale 1290, 1260 Nyon • 079 489.16.39 • info@agpeinture.ch • www.agpeinture.ch</div>
+      <div class="rdv-footer">Newflash SA • Case postale, 1260 Nyon 2 • 079 489.16.39 • info@agpeinture.ch • www.agpeinture.ch</div>
     </div>
   </div>
 
@@ -1363,18 +1363,18 @@ function generatePDFFicheRDV(){
     }
   }
 
-  // ① INFORMATIONS
-  y=sectionTitle('\u2460 INFORMATIONS',y);
+  // (1) INFORMATIONS
+  y=sectionTitle('(1) INFORMATIONS',y);
   y=fieldRow([{label:'Chantier',value:d.chantier,w:0.5},{label:'Client',value:d.client,w:0.5}],y);
   y=fieldRow([{label:'Adresse',value:d.adresse,w:1}],y);
   y=fieldRow([{label:'Téléphone',value:d.tel,w:0.35},{label:'Date',value:fmtDatePDF(d.date),w:0.25},{label:'Heure',value:d.heure||'',w:0.2},{label:'Responsable',value:d.resp,w:0.2}],y);
   y+=2;
 
   // ② TYPE DE RDV
-  y=sectionTitle('\u2461 TYPE DE RENDEZ-VOUS',y);
+  y=sectionTitle('(2) TYPE DE RENDEZ-VOUS',y);
   var typeLabels2={'metre':'Métré / Visite','suivi':'Suivi chantier','recep':'Réception travaux','recla':'Réclamation client'};
-  var typeRow='\u2610 Métré / Visite    \u2610 Suivi chantier    \u2610 Réception travaux    \u2610 Réclamation client';
-  if(rdvType && typeLabels2[rdvType]) typeRow=typeRow.replace('\u2610 '+typeLabels2[rdvType],'\u2611 '+typeLabels2[rdvType]);
+  var typeRow='[ ] Métré / Visite    [ ] Suivi chantier    [ ] Réception travaux    [ ] Réclamation client';
+  if(rdvType && typeLabels2[rdvType]) typeRow=typeRow.replace('[ ] '+typeLabels2[rdvType],'[X] '+typeLabels2[rdvType]);
   doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(cDark[0],cDark[1],cDark[2]);
   doc.rect(mg,y,W,lh,'S');
   doc.text(typeRow,mg+3,y+4.5);
@@ -1393,7 +1393,7 @@ function generatePDFFicheRDV(){
   if(y>200){doc.addPage();y=mg;}
 
   // ③ DÉCISIONS
-  y=sectionTitle('\u2462 DÉCISIONS / ACTIONS À MENER',y);
+  y=sectionTitle('(3) DÉCISIONS / ACTIONS A MENER',y);
   doc.rect(mg,y,W,22,'S');
   if(d.decisions){
     doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(cDark[0],cDark[1],cDark[2]);
@@ -1402,12 +1402,12 @@ function generatePDFFicheRDV(){
   }
   y+=24;
 
-  // ④ SUITE À DONNER
-  y=sectionTitle('\u2463 SUITE À DONNER',y);
+  // (4) SUITE À DONNER
+  y=sectionTitle('(4) SUITE A DONNER',y);
   y=fieldRow([{label:'Prochain RDV',value:fmtDatePDF(d.prochrdv),w:0.33},{label:'Heure',value:d.prochheure||'',w:0.2},{label:'Avec',value:d.prochavec,w:0.47}],y);
   doc.rect(mg,y,W,lh,'S');
   doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(cDark[0],cDark[1],cDark[2]);
-  var ck=function(k){return rdvChecks[k]?'\u2611':'\u2610';};
+  var ck=function(k){return rdvChecks[k]?'[X]':'[ ]';};
   doc.text(ck('devis')+' Devis à établir         '+ck('photos')+' Photos prises         '+ck('extras')+' Facture extras',mg+3,y+4.5);
   y+=lh+1;
   // Signatures
@@ -1423,7 +1423,7 @@ function generatePDFFicheRDV(){
   y+=sh+3;
   // Footer
   doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(150,150,150);
-  doc.text('AG Peinture  \u2022  Case postale 1290, 1260 Nyon  \u2022  079 489.16.39  \u2022  info@agpeinture.ch  \u2022  www.agpeinture.ch',pw/2,ph-8,{align:'center'});
+  doc.text('Newflash SA  -  Case postale, 1260 Nyon 2  -  079 489.16.39  -  info@agpeinture.ch  -  www.agpeinture.ch',pw/2,ph-8,{align:'center'});
 
   var fname='FicheRDV_'+(d.chantier||'chantier').replace(/\s+/g,'_')+'_'+fmtDatePDF(d.date).replace(/\//g,'-')+'.pdf';
   doc.save(fname);
@@ -1476,7 +1476,7 @@ function generatePDFListeChantiers(){
   });
 
   doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(150,150,150);
-  doc.text('AG Peinture  •  Case postale 1290, 1260 Nyon  •  079 489.16.39  •  info@agpeinture.ch',pw/2,200,{align:'center'});
+  doc.text('Newflash SA  -  Case postale, 1260 Nyon 2  -  079 489.16.39  -  info@agpeinture.ch',pw/2,200,{align:'center'});
   doc.save('Liste_Chantiers_AGPeinture_'+dateStr.replace(/\//g,'-')+'.pdf');
 }
 
