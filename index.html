@@ -1936,7 +1936,7 @@ function delCmdLigne(id){
   saveCmdFull();renderCmdLignes();
 }
 
-function saveCmdUnite(id,unite){
+function saveCmdUnite(id,unite,e){if(e)e.stopPropagation();
   var l=cmdData2.lignes.find(function(x){return x.id===id;});
   if(l)l.unite=unite;
   saveCmdFull();renderCmdLignes();
@@ -1983,10 +1983,11 @@ function renderCmdLignes(){
 
     return '<div class="cmd-card" style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden;border-left:4px solid '+borderCol+'">'
       // Ligne 1: Qté + Description + suppr
-      +'<div style="padding:12px 14px 8px;display:grid;grid-template-columns:72px 1fr 32px;gap:8px;align-items:center">'
+      +'<div style="padding:12px 14px 8px;display:grid;grid-template-columns:130px 1fr 32px;gap:8px;align-items:center">'
       +'<div>'
         +'<div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:3px">Qté</div>'
-        +'<input type="number" step="0.5" value="'+(l.qte||'')+'" placeholder="0" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 6px;font-family:Nunito,sans-serif;font-size:16px;font-weight:900;color:var(--blue);background:var(--blue-bg);outline:none;width:100%;text-align:center" oninput="saveCmdLigne('+l.id+',\'qte\',this.value)">'
+        +'<input type="number" step="0.5" value="'+(l.qte||'')+'" placeholder="0" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 6px;font-family:Nunito,sans-serif;font-size:16px;font-weight:900;color:var(--blue);background:var(--blue-bg);outline:none;width:100%;text-align:center;border-radius:8px 8px 0 0" oninput="saveCmdLigne('+l.id+',\'qte\',this.value)">'
+      +'<input type="text" value="'+(l.unite||'pce')+'" placeholder="unité" style="border:1.5px solid var(--blue);border-top:none;border-radius:0 0 8px 8px;padding:6px 4px;font-family:Nunito,sans-serif;font-size:12px;font-weight:900;color:var(--blue);background:var(--blue-bg);outline:none;width:100%;text-align:center" oninput="saveCmdLigne('+l.id+',\'unite\',this.value)">'
       +'</div>'
       +'<div>'
         +'<div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:3px">Désignation du matériel</div>'
