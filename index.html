@@ -636,7 +636,51 @@ header img{height:42px}
   <button class="nb" id="nb-devis" onclick="showTab('devis',this)"><span class="ni">📋</span>Devis</button>
   <button class="nb" id="nb-chantiers" onclick="showTab('chantiers',this)"><span class="ni">🔧</span>Chantiers</button>
   <button class="nb" id="nb-patron" onclick="showTab('patron',this)"><span class="ni">👔</span>Patron</button>
+  <button class="nb" id="nb-factures" onclick="showTab('factures',this)"><span class="ni">💶</span>Factures</button>
 </nav>
+
+
+<!-- FACTURES -->
+<div class="sec" id="s-factures">
+  <div class="sh">
+    <div><div class="st">💶 Factures à faire</div><div class="ss" id="fact-sub">En attente</div></div>
+    <button class="fab" onclick="openModal('facture')">＋ Ajouter</button>
+  </div>
+
+  <!-- Totaux -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+    <div style="background:var(--orange);color:white;border-radius:var(--radius);padding:14px 16px;box-shadow:0 4px 15px rgba(243,156,18,0.3)">
+      <div style="font-size:10px;font-weight:800;opacity:0.85;text-transform:uppercase;letter-spacing:0.5px">En attente</div>
+      <div style="font-size:24px;font-weight:900;margin-top:3px" id="fact-count-att">0</div>
+    </div>
+    <div style="background:var(--green);color:white;border-radius:var(--radius);padding:14px 16px;box-shadow:0 4px 15px rgba(39,174,96,0.3)">
+      <div style="font-size:10px;font-weight:800;opacity:0.85;text-transform:uppercase;letter-spacing:0.5px">Total CHF</div>
+      <div style="font-size:20px;font-weight:900;margin-top:3px" id="fact-total-att">— CHF</div>
+    </div>
+  </div>
+
+  <div id="fact-list"></div>
+</div>
+
+<!-- MODAL FACTURE -->
+<div class="overlay" id="ov-facture">
+  <div class="modal">
+    <div class="mh"><div class="mt">💶 Nouvelle facture</div><button class="mc" onclick="closeModal('facture')">✕</button></div>
+    <div class="mf">
+      <div class="pi-field"><label>Client / Chantier</label><input id="f-client" class="rdv-input" placeholder="Nom du client..."></div>
+      <div class="pi-field" style="margin-top:10px"><label>Description travaux</label><input id="f-desc" class="rdv-input" placeholder="Ex: Peinture salon, 3 pièces..."></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+        <div class="pi-field"><label>Montant CHF</label><input id="f-montant" type="number" step="0.01" class="rdv-input" placeholder="0.00"></div>
+        <div class="pi-field"><label>Date</label><input id="f-date" type="date" class="rdv-input"></div>
+      </div>
+      <div class="pi-field" style="margin-top:10px"><label>Notes</label><input id="f-notes" class="rdv-input" placeholder="Remarques..."></div>
+    </div>
+    <div class="mfooter" style="display:flex;gap:10px;padding:14px 16px">
+      <button class="bcancel" onclick="closeModal('facture')">Annuler</button>
+      <button class="bsave" onclick="saveFacture()">Ajouter</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODALS -->
 <div class="overlay" id="ov-afaire">
@@ -2215,7 +2259,7 @@ setTimeout(function(){try{renderMetreHist();renderCmdHist();}catch(e){console.er
 
 setTimeout(function(){try{loadRDV();}catch(e){console.error('rdv error:',e);}},300);
 
-try{renderHome();renderAfaire();renderDevis();renderChantiers();renderPatrols();renderNuanciers();renderPlanning();renderAgenda();renderNotes();renderRoutine();}catch(e){console.error('render error:',e);}
+try{renderHome();renderAfaire();renderDevis();renderChantiers();renderPatrols();renderNuanciers();renderPlanning();renderAgenda();renderNotes();renderRoutine();renderFactures();}catch(e){console.error('render error:',e);}
 </script>
 
 <!-- PRINT AREA (liste chantier) -->
