@@ -287,14 +287,91 @@ header img{height:42px}
 .liste-print-table td { padding:7px 10px; border-bottom:1px solid #eee; font-size:12px; font-weight:600; }
 .liste-print-table tr:nth-child(even) td { background:#f8faff; }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+
+
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB4387wUDckjCkx5Ac5cTiDwsmyGEZferQ",
+    authDomain: "agpeinture-416d1.firebaseapp.com",
+    projectId: "agpeinture-416d1",
+    storageBucket: "agpeinture-416d1.firebasestorage.app",
+    messagingSenderId: "837260095027",
+    appId: "1:837260095027:web:4a34e02247532a4c8c7d46"
+};
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const DOC_ID = "agpeinture-data";
+
+  // Keys to sync
+  const KEYS = ['ag4_af','ag4_ch','ag4_dv','ag4_nu','ag4_pa','ag4_plan','ag4_ag','ag4_no','ag4_routine',
+                 'ag4_rdv','ag4_rdvc','ag4_rdvt','ag4_metre_hist','ag4_cmd_hist','ag4_factures'];
+
+  // Load from Firestore on start
+  window.fbLoad = async function() {
+    try {
+      const ref = doc(db, "appdata", DOC_ID);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        const data = snap.data();
+        KEYS.forEach(k => {
+          if (data[k] !== undefined) {
+            localStorage.setItem(k, typeof data[k] === 'string' ? data[k] : JSON.stringify(data[k]));
+          }
+        });
+        console.log("Firebase: données chargées ✅");
+        // Show sync indicator
+        const el = document.getElementById('fb-status');
+        if(el) { el.textContent = '☁️ Synchronisé'; el.style.color = '#27ae60'; }
+      } else {
+        console.log("Firebase: aucune donnée en ligne, utilisation locale");
+      }
+    } catch(e) {
+      console.warn("Firebase load error:", e);
+    }
+    // Render app after loading
+    if(window.initApp) window.initApp();
+  };
+
+  // Save to Firestore
+  window.fbSave = async function() {
+    try {
+      const data = {};
+      KEYS.forEach(k => {
+        const v = localStorage.getItem(k);
+        if(v) data[k] = v;
+      });
+      const ref = doc(db, "appdata", DOC_ID);
+      await setDoc(ref, data);
+      const el = document.getElementById('fb-status');
+      if(el) { el.textContent = '☁️ Synchronisé'; el.style.color = '#27ae60'; }
+    } catch(e) {
+      console.warn("Firebase save error:", e);
+      const el = document.getElementById('fb-status');
+      if(el) { el.textContent = '⚠️ Hors ligne'; el.style.color = '#f39c12'; }
+    }
+  };
+
+  // Start app
+  window.fbLoad();
+
+
+
+</script>
+
 </head>
 <body>
 
 <header>
   <img id="logo" src="" alt="AG Peinture">
   <div class="hright">
-    <div class="hdate" id="hdate"></div>
+    <div id="fb-status" style="font-size:11px;font-weight:700;color:#27ae60;margin-right:8px">☁️...</div>
+<div class="hdate" id="hdate"></div>
     <div class="hname">AG Peinture</div>
   </div>
 </header>
@@ -2314,7 +2391,31 @@ function renderFactures(){
   el.innerHTML=h;
 }
 
-try{renderHome();renderAfaire();renderDevis();renderChantiers();renderPatrols();renderNuanciers();renderPlanning();renderAgenda();renderNotes();renderRoutine();renderFactures();}catch(e){console.error('render error:',e);}
+window.initApp = function() {
+  try{renderHome();renderAfaire();renderDevis();renderChantiers();renderPatrols();renderNuanciers();renderPlanning();renderAgenda();renderNotes();renderRoutine();renderFactures();}catch(e){console.error('render error:',e);}
+};
+// If Firebase not available yet, init directly
+if(!window.fbLoad) window.initApp();
+
+
+
+
+
+
+
+// Firebase auto-sync on localStorage changes
+const _origSetItem = localStorage.setItem.bind(localStorage);
+let fbSaveTimer = null;
+localStorage.setItem = function(key, value) {
+  _origSetItem(key, value);
+  if(key.startsWith('ag4_') && window.fbSave) {
+    clearTimeout(fbSaveTimer);
+    fbSaveTimer = setTimeout(function(){ window.fbSave(); }, 2000);
+    const el = document.getElementById('fb-status');
+    if(el) { el.textContent = '☁️ Enregistrement...'; el.style.color = '#f39c12'; }
+  }
+};
+
 </script>
 
 <!-- PRINT AREA (liste chantier) -->
