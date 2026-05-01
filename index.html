@@ -332,41 +332,46 @@ header img{height:42px}
         .catch(function(e) { fbSetStatus('⚠️ ' + e.code, '#e74c3c'); });
     };
 
-    var fbLoadedAtStart = false;
+    var fbStarted = false;
+
     window.fbLoad = function() {
       fbSetStatus('☁️ Chargement...', '#f39c12');
-      DOC_REF.get()
-        .then(function(doc) {
-          if(doc.exists) {
-            var data = doc.data();
-            window._fbLoading = true;
-            KEYS.forEach(function(k) {
-              if(data[k]) localStorage.setItem(k, data[k]);
-            });
-            window._fbLoading = false;
-            fbSetStatus('☁️ Synchronisé', '#27ae60');
-            if(!fbLoadedAtStart) {
-              fbLoadedAtStart = true;
-              if(window.initApp) window.initApp();
-            } else {
-              // Manual reload - refresh the page to update all in-memory vars
-              setTimeout(function(){ location.reload(); }, 500);
+      // Use onSnapshot for real-time updates
+      DOC_REF.onSnapshot(function(doc) {
+        if(doc.exists) {
+          var data = doc.data();
+          var changed = false;
+          window._fbLoading = true;
+          KEYS.forEach(function(k) {
+            if(data[k] && data[k] !== localStorage.getItem(k)) {
+              localStorage.setItem(k, data[k]);
+              changed = true;
             }
-          } else {
-            fbSetStatus('☁️ Prêt', '#27ae60');
-            if(!fbLoadedAtStart) {
-              fbLoadedAtStart = true;
-              if(window.initApp) window.initApp();
-            }
+          });
+          window._fbLoading = false;
+          fbSetStatus('☁️ Synchronisé', '#27ae60');
+          
+          if(!fbStarted) {
+            fbStarted = true;
+            if(window.initApp) window.initApp();
+          } else if(changed) {
+            // Data changed from another device - reload page
+            setTimeout(function(){ location.reload(); }, 1000);
           }
-        })
-        .catch(function(e) {
-          fbSetStatus('⚠️ ' + (e.code || e.message), '#e74c3c');
-          if(!fbLoadedAtStart) {
-            fbLoadedAtStart = true;
+        } else {
+          fbSetStatus('☁️ Prêt', '#27ae60');
+          if(!fbStarted) {
+            fbStarted = true;
             if(window.initApp) window.initApp();
           }
-        });
+        }
+      }, function(e) {
+        fbSetStatus('⚠️ ' + (e.code || e.message), '#e74c3c');
+        if(!fbStarted) {
+          fbStarted = true;
+          if(window.initApp) window.initApp();
+        }
+      });
     };
 
     window.fbLoad();
