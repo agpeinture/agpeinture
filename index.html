@@ -2338,7 +2338,7 @@ function generatePDFCmd(){
   doc.text('(2) LISTE DU MATÉRIEL',mg+3,y+5);y+=7;
   var cols=[14,60,20,25,22,25,12,12];
   var hdrs=['Qté','Désignation','Unité','Fournisseur','P.U.','Total CHF','Urg.','Reçu'];
-  doc.setFillColor(cDark[0],cDark[1],cDark[2]);
+  doc.setFillColor(cBlue[0],cBlue[1],cBlue[2]);
   var x=mg;cols.forEach(function(w){doc.rect(x,y,w,6,'F');x+=w;});
   doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(255,255,255);
   x=mg;hdrs.forEach(function(h,i){doc.text(h,x+cols[i]/2,y+4.2,{align:'center'});x+=cols[i];});y+=6;
@@ -2365,10 +2365,10 @@ function generatePDFCmd(){
     else{doc.setDrawColor(200,200,200);doc.rect(x+2,y+1,8,4,'S');}
     y+=6;if(y>ph-40){doc.addPage();y=mg;}
   });
-  doc.setFillColor(cDark[0],cDark[1],cDark[2]);doc.rect(mg,y,W,9,'F');
+  doc.setFillColor(cBlue[0],cBlue[1],cBlue[2]);doc.rect(mg,y,W,9,'F');
   doc.setFont('helvetica','bold');doc.setFontSize(10);doc.setTextColor(255,255,255);
   doc.text('TOTAL COMMANDE',mg+3,y+6);
-  if(hasTotal){doc.setTextColor(100,255,150);doc.text(totalCmd.toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF',pw-mg-3,y+6,{align:'right'});}
+  if(hasTotal){doc.setTextColor(255,255,255);doc.text(totalCmd.toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF',pw-mg-3,y+6,{align:'right'});}
   y+=13;
   if(c.notes){
     doc.setFillColor(cBlue[0],cBlue[1],cBlue[2]);doc.rect(mg,y,W,7,'F');
