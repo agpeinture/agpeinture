@@ -867,6 +867,36 @@ let notes=JSON.parse(localStorage.getItem('ag4_no')||'[]');
 let patrols=JSON.parse(localStorage.getItem('ag4_pa')||'[]');
 let planningData=JSON.parse(localStorage.getItem('ag4_plan')||'{}');
 
+// Réparation auto des IDs en doublon (corrige le bug des cases à cocher)
+(function fixDuplicateIds(){
+  var lists=[afaire,devis,chantiers,nuanciers,agenda,notes,patrols];
+  var changed=false;
+  lists.forEach(function(list){
+    if(!Array.isArray(list))return;
+    var seen={};
+    list.forEach(function(item){
+      if(item&&item.id!=null){
+        if(seen[item.id]){
+          item.id=Date.now()*1000+Math.floor(Math.random()*10000);
+          changed=true;
+        }
+        seen[item.id]=true;
+      }
+    });
+  });
+  if(changed){
+    try{
+      localStorage.setItem('ag4_af',JSON.stringify(afaire));
+      localStorage.setItem('ag4_dv',JSON.stringify(devis));
+      localStorage.setItem('ag4_ch',JSON.stringify(chantiers));
+      localStorage.setItem('ag4_nu',JSON.stringify(nuanciers));
+      localStorage.setItem('ag4_ag',JSON.stringify(agenda));
+      localStorage.setItem('ag4_no',JSON.stringify(notes));
+      localStorage.setItem('ag4_pa',JSON.stringify(patrols));
+    }catch(e){console.error('fixDuplicateIds save error:',e);}
+  }
+})();
+
 function save(){
   localStorage.setItem('ag4_af',JSON.stringify(afaire));
   localStorage.setItem('ag4_dv',JSON.stringify(devis));
@@ -989,7 +1019,7 @@ function quickSave(){
   else if(tl.includes('contrôl')||tl.includes('vérif'))cat='ctrl';
   else if(tl.includes('chantier'))cat='chant';
   if(tl.includes('urgent')||tl.includes('vite'))prio='urgent';
-  afaire.unshift({id:Date.now(),title:txt,note:'',date:todayStr,cat,prio,done:false});
+  afaire.unshift({id:Date.now()*1000+Math.floor(Math.random()*1000),title:txt,note:'',date:todayStr,cat,prio,done:false});
   save();renderAfaire();renderHome();inp.value='';
   inp.style.borderColor='var(--green)';
   setTimeout(()=>{inp.style.borderColor='';},700);
@@ -1000,7 +1030,7 @@ document.getElementById('qi').addEventListener('keydown',e=>{if(e.key==='Enter')
 function saveAfaire(){
   const title=document.getElementById('af-title').value.trim();
   if(!title){alert('Écris ce que tu dois faire !');return;}
-  afaire.unshift({id:Date.now(),title,note:document.getElementById('af-note').value.trim(),date:document.getElementById('af-date').value,cat:sel.afCat,prio:sel.afPrio,done:false});
+  afaire.unshift({id:Date.now()*1000+Math.floor(Math.random()*1000),title,note:document.getElementById('af-note').value.trim(),date:document.getElementById('af-date').value,cat:sel.afCat,prio:sel.afPrio,done:false});
   save();renderAfaire();renderHome();closeModal('afaire');
   ['af-title','af-note'].forEach(id=>document.getElementById(id).value='');
 }
