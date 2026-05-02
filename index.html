@@ -57,7 +57,7 @@ header img{height:42px}
 .motiv{background:linear-gradient(135deg,var(--blue),#2980b9);border-radius:var(--radius);padding:15px 17px;color:white;margin-bottom:14px;display:flex;align-items:center;gap:13px;box-shadow:0 4px 15px rgba(61,184,212,0.3)}
 .mt{font-size:15px;font-weight:800}
 .ms{font-size:12px;opacity:0.85;margin-top:2px}
-.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.dash-grid{display:block;margin-bottom:16px}
 .dc{background:white;border-radius:var(--radius);padding:15px;box-shadow:var(--shadow);cursor:pointer;transition:transform 0.1s;border-top:4px solid transparent}
 .dc:active{transform:scale(0.97)}
 .dc.cb{border-color:var(--blue)} .dc.cg{border-color:var(--green)} .dc.co{border-color:var(--orange)} .dc.cr{border-color:var(--red)} .dc.cp{border-color:var(--purple)} .dc.ct{border-color:var(--teal)}
@@ -834,7 +834,7 @@ const motivs=[
   {i:'🎨',t:'La peinture c\'est ton métier !',s:'Laisse l\'appli gérer le reste.'},
   {i:'🚀',t:'Tu gères comme un chef !',s:'Vérifie tes urgences du jour.'},
   {i:'💼',t:'Patron organisé = patron serein',s:'Ta tête est libre pour travailler.'},
-  {i:'⭐',t:'Belle semaine en vue !',s:'Pense à vérifier tes devis en attente.'},
+  {i:'⭐',t:'Belle semaine en vue !',s:'Prépare ton matériel pour lundi.'},
   {i:'🏆',t:'AG Peinture au top !',s:'Un artisan de confiance, c\'est toi.'},
 ];
 const mv=motivs[now.getDay()%motivs.length];
@@ -1104,9 +1104,44 @@ function renderHome(){
   const enc=chantiers.filter(c=>c.status==='encours').length;
   const rdvAuj=agenda.filter(a=>a.date===todayStr).length;
   document.getElementById('dash-grid').innerHTML=`
-    <div class="dc cr" onclick="document.getElementById('nb-afaire').click()"><div class="dc-ico">🔴</div><div class="dc-val">${afU}</div><div class="dc-lbl">Tâches urgentes</div></div>
-    <div class="dc co" onclick="document.getElementById('nb-chantiers').click()"><div class="dc-ico">🔧</div><div class="dc-val">${enc}</div><div class="dc-lbl">Chantiers en cours</div></div>
-    <div class="dc cp" onclick="document.getElementById('nb-patron').click()"><div class="dc-ico">📅</div><div class="dc-val">${rdvAuj}</div><div class="dc-lbl">RDV aujourd'hui</div></div>
+    <!-- Boutons d'action rapide -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <button onclick="quickAction('rdv')" style="background:white;border:none;border-radius:var(--radius);padding:18px 12px;box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;border-top:4px solid var(--blue);font-family:Nunito,sans-serif">
+        <div style="font-size:30px">📋</div>
+        <div style="font-size:13px;font-weight:900;color:var(--text)">Fiche RDV</div>
+        <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px">Visite client</div>
+      </button>
+      <button onclick="quickAction('metre')" style="background:white;border:none;border-radius:var(--radius);padding:18px 12px;box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;border-top:4px solid var(--blue);font-family:Nunito,sans-serif">
+        <div style="font-size:30px">📐</div>
+        <div style="font-size:13px;font-weight:900;color:var(--text)">Métré</div>
+        <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px">Nouveau</div>
+      </button>
+      <button onclick="quickAction('commande')" style="background:white;border:none;border-radius:var(--radius);padding:18px 12px;box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;border-top:4px solid var(--orange);font-family:Nunito,sans-serif">
+        <div style="font-size:30px">📦</div>
+        <div style="font-size:13px;font-weight:900;color:var(--text)">Commande</div>
+        <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px">Matériel</div>
+      </button>
+      <button onclick="quickAction('tache')" style="background:white;border:none;border-radius:var(--radius);padding:18px 12px;box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;border-top:4px solid var(--red);font-family:Nunito,sans-serif">
+        <div style="font-size:30px">＋</div>
+        <div style="font-size:13px;font-weight:900;color:var(--text)">Tâche</div>
+        <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px">À faire</div>
+      </button>
+    </div>
+    <!-- Mini stats -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px">
+      <div onclick="document.getElementById('nb-chantiers').click()" style="background:white;border-radius:var(--radius);padding:12px 8px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-left:3px solid var(--orange)">
+        <div style="font-size:20px;font-weight:900;color:var(--orange)">${enc}</div>
+        <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">🔧 Chantiers</div>
+      </div>
+      <div style="background:white;border-radius:var(--radius);padding:12px 8px;box-shadow:var(--shadow);text-align:center;border-left:3px solid var(--purple)">
+        <div style="font-size:20px;font-weight:900;color:var(--purple)">${rdvAuj}</div>
+        <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">📅 RDV jour</div>
+      </div>
+      <div onclick="document.getElementById('nb-afaire').click()" style="background:white;border-radius:var(--radius);padding:12px 8px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-left:3px solid var(--red)">
+        <div style="font-size:20px;font-weight:900;color:var(--red)">${afU}</div>
+        <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">🔴 Urgents</div>
+      </div>
+    </div>
   `;
   const urgents=afaire.filter(a=>a.prio==='urgent'&&!a.done).slice(0,4);
   const el=document.getElementById('home-urgent');
@@ -1115,6 +1150,34 @@ function renderHome(){
   // badge
   const nb=document.getElementById('nb-afaire');
   nb.innerHTML=`<span class="ni">🧠</span>Ma tête${afU>0?'<span class="nbadge">'+afU+'</span>':''}`;
+}
+
+// Boutons d'action rapide depuis l'accueil
+function quickAction(type){
+  if(type==='tache'){
+    openModal('afaire');return;
+  }
+  if(type==='rdv'){
+    document.getElementById('nb-patron').click();
+    setTimeout(function(){showPatronTab('rdv');},80);
+    return;
+  }
+  if(type==='metre'){
+    document.getElementById('nb-patron').click();
+    setTimeout(function(){
+      showPatronTab('metre');
+      try{nouveauMetre();}catch(e){console.error(e);}
+    },80);
+    return;
+  }
+  if(type==='commande'){
+    document.getElementById('nb-patron').click();
+    setTimeout(function(){
+      showPatronTab('commande');
+      try{nouvelleCommande();}catch(e){console.error(e);}
+    },80);
+    return;
+  }
 }
 
 function afCard(a){
