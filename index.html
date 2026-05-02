@@ -608,13 +608,7 @@ header img{height:42px}
         </div>
       </div>
 
-      <!-- Total m² (CHF retiré) -->
-      <div style="margin-bottom:12px">
-        <div style="background:var(--blue);color:white;border-radius:var(--radius);padding:14px 16px;box-shadow:0 4px 15px rgba(61,184,212,0.3)">
-          <div style="font-size:10px;font-weight:800;opacity:0.85;text-transform:uppercase;letter-spacing:0.5px">Total m²</div>
-          <div style="font-size:24px;font-weight:900;margin-top:3px" id="metre-total-m2">0 m²</div>
-        </div>
-      </div>
+      <!-- Total global retiré (totaux par pièce conservés) -->
 
       <!-- Liste pièces -->
       <div id="metre-list"></div>
@@ -1885,8 +1879,11 @@ function updateMetreTotal(){
   var totalM2=0;
   (m.pieces||[]).forEach(function(p){
     (p.lignes||[]).forEach(function(l){
-      var m2=parseFloat(l.m2)||0;
-      totalM2+=m2;
+      var u=l.unite||'m²';
+      if(u==='m²'){
+        var m2=parseFloat(l.m2)||0;
+        totalM2+=m2;
+      }
     });
   });
   var em=document.getElementById('metre-total-m2');
