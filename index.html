@@ -1116,8 +1116,7 @@ const prioMap=Object.fromEntries(PRIOS.map(p=>[p.id,p]));
 // RENDER HOME
 function renderHome(){
   const afU=afaire.filter(a=>a.prio==='urgent'&&!a.done).length;
-  const enc=chantiers.filter(c=>c.status==='encours').length;
-  const rdvAuj=agenda.filter(a=>a.date===todayStr).length;
+  const dvAF=afaire.filter(a=>a.cat==='devis'&&!a.done).length;
   document.getElementById('dash-grid').innerHTML=`
     <!-- Boutons d'action rapide -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
@@ -1143,14 +1142,10 @@ function renderHome(){
       </button>
     </div>
     <!-- Mini stats -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px">
-      <div onclick="document.getElementById('nb-chantiers').click()" style="background:white;border-radius:var(--radius);padding:12px 8px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-left:3px solid var(--orange)">
-        <div style="font-size:20px;font-weight:900;color:var(--orange)">${enc}</div>
-        <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">🔧 Chantiers</div>
-      </div>
-      <div style="background:white;border-radius:var(--radius);padding:12px 8px;box-shadow:var(--shadow);text-align:center;border-left:3px solid var(--purple)">
-        <div style="font-size:20px;font-weight:900;color:var(--purple)">${rdvAuj}</div>
-        <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">📅 RDV jour</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px">
+      <div onclick="document.getElementById('nb-afaire').click()" style="background:white;border-radius:var(--radius);padding:12px 8px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-left:3px solid var(--blue)">
+        <div style="font-size:20px;font-weight:900;color:var(--blue)">${dvAF}</div>
+        <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">📋 Devis à faire</div>
       </div>
       <div onclick="document.getElementById('nb-afaire').click()" style="background:white;border-radius:var(--radius);padding:12px 8px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-left:3px solid var(--red)">
         <div style="font-size:20px;font-weight:900;color:var(--red)">${afU}</div>
