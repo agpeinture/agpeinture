@@ -1833,7 +1833,7 @@ function updateMetreTotal(){
 function addMetrePiece(){
   var m=getMetreCurrent();if(!m)return;
   if(!m.pieces)m.pieces=[];
-  m.pieces.unshift({id:Date.now(),nom:'',lignes:[{id:Date.now()+1,desc:'',m2:'',prix:''}],photos:[]});
+  m.pieces.unshift({id:Date.now(),nom:'',lignes:[{id:Date.now()+1,desc:'',m2:'',prix:'',unite:'m²'}],photos:[]});
   saveMetreFull();renderMetreList();
 }
 
@@ -1848,7 +1848,7 @@ function delMetrePiece(id){
 function addLigne(pieceId){
   var m=getMetreCurrent();if(!m)return;
   var p=m.pieces.find(function(x){return x.id===pieceId;});
-  if(p)p.lignes.push({id:Date.now(),desc:'',m2:'',prix:''});
+  if(p)p.lignes.push({id:Date.now(),desc:'',m2:'',prix:'',unite:'m²'});
   saveMetreFull();renderMetreList();
 }
 
@@ -1873,7 +1873,29 @@ function savePieceNom(pieceId,val){
   saveMetreFull();
 }
 
-function pieceTotalM2(p){return (p.lignes||[]).reduce(function(s,l){return s+(parseFloat(l.m2)||0);},0);}
+function pieceTotalM2(p){
+  return (p.lignes||[]).reduce(function(s,l){
+    var u=l.unite||'m²';
+    if(u==='m²') return s+(parseFloat(l.m2)||0);
+    return s;
+  },0);
+}
+// Liste des unités disponibles dans Métré
+var METRE_UNITES=['m²','pce','ml','bloc','forf'];
+function nextUnite(cur){
+  var idx=METRE_UNITES.indexOf(cur||'m²');
+  if(idx<0) idx=0;
+  return METRE_UNITES[(idx+1)%METRE_UNITES.length];
+}
+function cycleLigneUnit(pieceId,ligneId){
+  var m=getMetreCurrent();if(!m)return;
+  var p=m.pieces.find(function(x){return x.id===pieceId;});
+  if(!p)return;
+  var l=p.lignes.find(function(x){return x.id===ligneId;});
+  if(!l)return;
+  l.unite=nextUnite(l.unite);
+  saveMetreFull();renderMetreList();
+}
 function pieceTotalCHF(p){
   var t=0,has=false;
   (p.lignes||[]).forEach(function(l){var m=parseFloat(l.m2)||0;var px=parseFloat(l.prix)||0;if(px>0){t+=m*px;has=true;}});
@@ -1915,9 +1937,12 @@ function renderMetreList(){
   el.innerHTML=m.pieces.map(function(p){
     var ptm2=pieceTotalM2(p);
     var lignesHTML=(p.lignes||[]).map(function(l){
-      return '<div style="display:grid;grid-template-columns:1fr 90px 28px;gap:6px;align-items:center;margin-bottom:8px">'
+      var unite=l.unite||'m²';
+      var unitLbl=unite.toUpperCase();
+      return '<div style="display:grid;grid-template-columns:1fr 70px 60px 28px;gap:5px;align-items:center;margin-bottom:8px">'
         +'<input value="'+(l.desc||'')+'" placeholder="Description..." style="border:1.5px solid var(--border);border-radius:8px;padding:9px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveLigne('+p.id+','+l.id+',\'desc\',this.value)">'
-        +'<div style="position:relative"><input type="number" step="0.01" value="'+(l.m2||'')+'" placeholder="0.00" style="border:1.5px solid var(--blue);border-radius:8px;padding:8px 6px;font-family:Nunito,sans-serif;font-size:14px;font-weight:900;color:var(--blue);background:var(--blue-bg);outline:none;width:100%;text-align:center" oninput="saveLigne('+p.id+','+l.id+',\'m2\',this.value)"><span style="position:absolute;right:5px;top:50%;transform:translateY(-50%);font-size:9px;font-weight:800;color:var(--blue);pointer-events:none">m²</span></div>'
+        +'<input type="number" step="0.01" value="'+(l.m2||'')+'" placeholder="0" style="border:1.5px solid var(--blue);border-radius:8px;padding:8px 4px;font-family:Nunito,sans-serif;font-size:14px;font-weight:900;color:var(--blue);background:var(--blue-bg);outline:none;width:100%;text-align:center" oninput="saveLigne('+p.id+','+l.id+',\'m2\',this.value)">'
+        +'<button onclick="cycleLigneUnit('+p.id+','+l.id+')" title="Tape pour changer d\'unité" style="border:1.5px solid var(--blue);border-radius:8px;padding:8px 2px;font-family:Nunito,sans-serif;font-size:11px;font-weight:900;color:white;background:var(--blue);cursor:pointer;height:36px;display:flex;align-items:center;justify-content:center">'+unitLbl+'</button>'
         +'<button onclick="delLigne('+p.id+','+l.id+')" style="background:none;border:1.5px solid #eee;border-radius:8px;color:#ccc;font-size:14px;cursor:pointer;width:28px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0">✕</button>'
         +'</div>';
     }).join('');
@@ -1932,9 +1957,10 @@ function renderMetreList(){
       +'</div>'
       +'<button onclick="delMetrePiece('+p.id+')" style="background:none;border:none;color:#ccc;font-size:18px;cursor:pointer;margin-left:8px">✕</button>'
       +'</div>'
-      +'<div style="display:grid;grid-template-columns:1fr 90px 28px;gap:6px;margin-bottom:6px">'
+      +'<div style="display:grid;grid-template-columns:1fr 70px 60px 28px;gap:5px;margin-bottom:6px">'
       +'<div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;padding-left:2px">Description</div>'
-      +'<div style="font-size:9px;font-weight:800;color:var(--blue);text-transform:uppercase;text-align:center">m²</div>'
+      +'<div style="font-size:9px;font-weight:800;color:var(--blue);text-transform:uppercase;text-align:center">Qté</div>'
+      +'<div style="font-size:9px;font-weight:800;color:var(--blue);text-transform:uppercase;text-align:center">Unité</div>'
       +'<div></div></div>'
       +lignesHTML
       +'<button onclick="addLigne('+p.id+')" style="width:100%;padding:8px;border:1.5px dashed var(--blue);border-radius:8px;background:var(--blue-bg);color:var(--blue);font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;margin-top:4px;margin-bottom:12px">＋ Ajouter une ligne</button>'
@@ -1985,17 +2011,23 @@ function generatePDFMetre(){
     doc.text('Notes : '+m.notes,mg,y);y+=6;
   }
   var totalM2=0;
-  (m.pieces||[]).forEach(function(p){(p.lignes||[]).forEach(function(l){var mv=parseFloat(l.m2)||0;totalM2+=mv;});});
+  (m.pieces||[]).forEach(function(p){(p.lignes||[]).forEach(function(l){
+    var u=l.unite||'m²';var mv=parseFloat(l.m2)||0;
+    if(u==='m²') totalM2+=mv;
+  });});
   (m.pieces||[]).forEach(function(p){
     if(y>ph-50){doc.addPage();y=mg;}
     var ptm2=pieceTotalM2(p);
     doc.setFillColor(cBlue[0],cBlue[1],cBlue[2]);doc.rect(mg,y,W,8,'F');
     doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(255,255,255);
     doc.text((p.nom||'Pièce').toUpperCase(),mg+4,y+5.5);
-    doc.text(ptm2.toFixed(2)+' m²',pw-mg-3,y+5.5,{align:'right'});y+=8;
+    if(ptm2>0) doc.text(ptm2.toFixed(2)+' m²',pw-mg-3,y+5.5,{align:'right'});
+    y+=8;
     doc.setFillColor(cLight[0],cLight[1],cLight[2]);doc.rect(mg,y,W,6,'F');
     doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(cBlue[0],cBlue[1],cBlue[2]);
-    doc.text('DESCRIPTION',mg+3,y+4);doc.text('m²',pw-mg-3,y+4,{align:'right'});
+    doc.text('DESCRIPTION',mg+3,y+4);
+    doc.text('QTÉ',pw-mg-22,y+4,{align:'right'});
+    doc.text('UNITÉ',pw-mg-3,y+4,{align:'right'});
     y+=6;
     (p.lignes||[]).forEach(function(l,idx){
       if(y>ph-25){doc.addPage();y=mg;}
@@ -2003,14 +2035,17 @@ function generatePDFMetre(){
       doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(cDark[0],cDark[1],cDark[2]);
       doc.text(l.desc||'—',mg+3,y+4.5);
       var mv=parseFloat(l.m2)||0;
-      if(mv>0){doc.setFont('helvetica','bold');doc.setTextColor(cBlue[0],cBlue[1],cBlue[2]);doc.text(mv.toFixed(2),pw-mg-3,y+4.5,{align:'right'});}
+      var u=l.unite||'m²';
+      if(mv>0){doc.setFont('helvetica','bold');doc.setTextColor(cBlue[0],cBlue[1],cBlue[2]);doc.text(mv.toFixed(2),pw-mg-22,y+4.5,{align:'right'});}
+      doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(cBlue[0],cBlue[1],cBlue[2]);
+      doc.text(u.toUpperCase(),pw-mg-3,y+4.5,{align:'right'});
       y+=6.5;
     });y+=3;
   });
   if(y>ph-30){doc.addPage();y=mg;}
   doc.setFillColor(cBlue[0],cBlue[1],cBlue[2]);doc.rect(mg,y,W,10,'F');
   doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(255,255,255);
-  doc.text('TOTAL',mg+4,y+6.5);
+  doc.text('TOTAL m²',mg+4,y+6.5);
   doc.text(totalM2.toFixed(2)+' m²',pw-mg-3,y+6.5,{align:'right'});y+=14;
   var hasPhotos=(m.pieces||[]).some(function(p){return p.photos&&p.photos.length>0;});
   if(hasPhotos){
