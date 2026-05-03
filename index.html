@@ -485,6 +485,13 @@ function checkPwd(){
 
 <div class="sec" id="s-afaire">
   <div class="sh"><div><div class="st">🧠 Ma tête</div><div class="ss" id="af-sub"></div></div><button class="fab" onclick="openModal('afaire')">＋ Ajouter</button></div>
+  <!-- Sous-onglets pour filtrer Ma tête -->
+  <div class="af-tabs" id="af-tabs" style="display:flex;gap:6px;background:white;padding:6px;border-radius:14px;margin-bottom:12px;box-shadow:var(--shadow);overflow-x:auto;-webkit-overflow-scrolling:touch">
+    <button class="af-tab active" data-filter="all" onclick="setAfaireFilter('all',this)" style="flex:1;min-width:auto;padding:9px 10px;border:none;background:var(--blue);color:white;border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>🧠 Tous</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.85">0</span></button>
+    <button class="af-tab" data-filter="devis" onclick="setAfaireFilter('devis',this)" style="flex:1;min-width:auto;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📋 Devis</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab" data-filter="tel" onclick="setAfaireFilter('tel',this)" style="flex:1;min-width:auto;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📞 Appels</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab" data-filter="autres" onclick="setAfaireFilter('autres',this)" style="flex:1;min-width:auto;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📌 Autres</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+  </div>
   <div class="cards" id="afaire-list"></div>
 </div>
 
@@ -1291,13 +1298,71 @@ function afCard(a){
   </div>`;
 }
 
+// Filtre actuel pour Ma tête : 'all', 'devis', 'tel', 'autres'
+var afaireFilter = 'all';
+
+function setAfaireFilter(filter, btn){
+  afaireFilter = filter;
+  // Mettre à jour le visuel des onglets
+  document.querySelectorAll('.af-tab').forEach(function(t){
+    t.style.background = '#f3f4f6';
+    t.style.color = 'var(--text)';
+    t.classList.remove('active');
+    var c = t.querySelector('.af-tab-count');
+    if(c) c.style.opacity = '0.7';
+  });
+  if(btn){
+    btn.style.background = 'var(--blue)';
+    btn.style.color = 'white';
+    btn.classList.add('active');
+    var c = btn.querySelector('.af-tab-count');
+    if(c) c.style.opacity = '0.85';
+  }
+  renderAfaire();
+}
+
 function renderAfaire(){
   const tot=afaire.filter(a=>!a.done).length;
   const done=afaire.filter(a=>a.done).length;
   document.getElementById('af-sub').textContent=tot+' à faire · '+done+' faites';
+  
+  // Calcul des compteurs pour chaque onglet (uniquement les non-faits)
+  const cntAll = afaire.filter(a=>!a.done).length;
+  const cntDevis = afaire.filter(a=>!a.done && a.cat==='devis').length;
+  const cntTel = afaire.filter(a=>!a.done && a.cat==='tel').length;
+  const cntAutres = afaire.filter(a=>!a.done && a.cat!=='devis' && a.cat!=='tel').length;
+  // Mettre à jour les badges de chaque onglet
+  document.querySelectorAll('.af-tab').forEach(function(t){
+    var f = t.getAttribute('data-filter');
+    var c = t.querySelector('.af-tab-count');
+    if(c){
+      if(f==='all') c.textContent = cntAll;
+      else if(f==='devis') c.textContent = cntDevis;
+      else if(f==='tel') c.textContent = cntTel;
+      else if(f==='autres') c.textContent = cntAutres;
+    }
+  });
+  
   const el=document.getElementById('afaire-list');
   if(!afaire.length){el.innerHTML='<div class="empty"><div class="ei">🧠</div><p>Ta tête est libre !</p><span>Ajoute ce qui te tracasse</span></div>';return;}
-  const sorted=[...afaire].sort((a,b)=>{
+  
+  // Filtrer selon l'onglet sélectionné
+  var filtered = afaire.filter(function(a){
+    if(afaireFilter==='all') return true;
+    if(afaireFilter==='devis') return a.cat==='devis';
+    if(afaireFilter==='tel') return a.cat==='tel';
+    if(afaireFilter==='autres') return a.cat!=='devis' && a.cat!=='tel';
+    return true;
+  });
+  
+  if(!filtered.length){
+    var emoji = afaireFilter==='devis'?'📋':afaireFilter==='tel'?'📞':'📌';
+    var label = afaireFilter==='devis'?'devis':afaireFilter==='tel'?'appel':'autre';
+    el.innerHTML='<div class="empty"><div class="ei">'+emoji+'</div><p>Rien à faire dans cette catégorie !</p><span>Aucun '+label+' en attente</span></div>';
+    return;
+  }
+  
+  const sorted=[...filtered].sort((a,b)=>{
     if(a.done!==b.done)return a.done?1:-1;
     const po={urgent:0,normal:1,attente:2};
     return (po[a.prio]||1)-(po[b.prio]||1);
