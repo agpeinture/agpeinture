@@ -487,10 +487,11 @@ function checkPwd(){
   <div class="sh"><div><div class="st">🧠 Ma tête</div><div class="ss" id="af-sub"></div></div><button class="fab" onclick="openModal('afaire')">＋ Ajouter</button></div>
   <!-- Sous-onglets pour filtrer Ma tête -->
   <div class="af-tabs" id="af-tabs" style="display:flex;gap:6px;background:white;padding:6px;border-radius:14px;margin-bottom:12px;box-shadow:var(--shadow);overflow-x:auto;-webkit-overflow-scrolling:touch">
-    <button class="af-tab active" data-filter="all" onclick="setAfaireFilter('all',this)" style="flex:1;min-width:auto;padding:9px 10px;border:none;background:var(--blue);color:white;border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>🧠 Tous</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.85">0</span></button>
-    <button class="af-tab" data-filter="devis" onclick="setAfaireFilter('devis',this)" style="flex:1;min-width:auto;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📋 Devis</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
-    <button class="af-tab" data-filter="tel" onclick="setAfaireFilter('tel',this)" style="flex:1;min-width:auto;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📞 Appels</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
-    <button class="af-tab" data-filter="autres" onclick="setAfaireFilter('autres',this)" style="flex:1;min-width:auto;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:12px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📌 Autres</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab active" data-filter="all" onclick="setAfaireFilter('all',this)" style="flex:1;min-width:auto;padding:9px 8px;border:none;background:var(--blue);color:white;border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>🧠 Tous</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.85">0</span></button>
+    <button class="af-tab" data-filter="devis" onclick="setAfaireFilter('devis',this)" style="flex:1;min-width:auto;padding:9px 8px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📋 Devis</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab" data-filter="facture" onclick="setAfaireFilter('facture',this)" style="flex:1;min-width:auto;padding:9px 8px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>💶 Factures</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab" data-filter="tel" onclick="setAfaireFilter('tel',this)" style="flex:1;min-width:auto;padding:9px 8px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📞 Appels</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab" data-filter="autres" onclick="setAfaireFilter('autres',this)" style="flex:1;min-width:auto;padding:9px 8px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📌 Autres</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
   </div>
   <div class="cards" id="afaire-list"></div>
 </div>
@@ -794,12 +795,11 @@ function checkPwd(){
   <button class="nb" id="nb-afaire" onclick="showTab('afaire',this)"><span class="ni">🧠</span>Ma tête</button>
   <button class="nb" id="nb-chantiers" onclick="showTab('chantiers',this)"><span class="ni">🔧</span>Chantiers</button>
   <button class="nb" id="nb-patron" onclick="showTab('patron',this)"><span class="ni">👔</span>Patron</button>
-  <button class="nb" id="nb-factures" onclick="showTab('factures',this)"><span class="ni">💶</span>Factures</button>
 </nav>
 
 
-<!-- FACTURES -->
-<div class="sec" id="s-factures">
+<!-- FACTURES (déplacé dans Ma tête — section cachée mais conservée pour compatibilité) -->
+<div class="sec" id="s-factures" style="display:none !important">
   <div class="sh">
     <div><div class="st">💶 Factures à faire</div><div class="ss" id="fact-sub">À faire</div></div>
     <button class="fab" onclick="openModal('facture')">＋ Ajouter</button>
@@ -970,6 +970,7 @@ function save(){
 const CATS=[
   {id:'tel',label:'📞 Appeler client',color:'ag',tc:'tg'},
   {id:'devis',label:'📋 Faire un devis',color:'ab',tc:'tb'},
+  {id:'facture',label:'💶 Faire une facture',color:'ag',tc:'tg'},
   {id:'echan',label:'🎨 Échantillon',color:'ap',tc:'tp'},
   {id:'cmd',label:'📦 Commande matériel',color:'ao',tc:'to'},
   {id:'ctrl',label:'✅ Contrôler commande',color:'ab',tc:'tt'},
@@ -1205,6 +1206,7 @@ const prioMap=Object.fromEntries(PRIOS.map(p=>[p.id,p]));
 function renderHome(){
   const afU=afaire.filter(a=>a.prio==='urgent'&&!a.done).length;
   const dvAF=afaire.filter(a=>a.cat==='devis'&&!a.done).length;
+  const fcAF=afaire.filter(a=>a.cat==='facture'&&!a.done).length;
   document.getElementById('dash-grid').innerHTML=`
     <!-- Boutons d'action rapide -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
@@ -1229,15 +1231,19 @@ function renderHome(){
         <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px">À faire</div>
       </button>
     </div>
-    <!-- Mini stats -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px">
-      <div onclick="document.getElementById('nb-afaire').click()" style="background:white;border-radius:var(--radius);padding:12px 8px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-left:3px solid var(--blue)">
+    <!-- Mini stats : Devis · Factures · Urgents (clickables, filtre Ma tête) -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px">
+      <div onclick="goToAfaireWithFilter('devis')" style="background:white;border-radius:var(--radius);padding:12px 6px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-left:3px solid var(--blue)">
         <div style="font-size:20px;font-weight:900;color:var(--blue)">${dvAF}</div>
-        <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">📋 Devis à faire</div>
+        <div style="font-size:8px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">📋 Devis à faire</div>
       </div>
-      <div onclick="document.getElementById('nb-afaire').click()" style="background:white;border-radius:var(--radius);padding:12px 8px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-left:3px solid var(--red)">
+      <div onclick="goToAfaireWithFilter('facture')" style="background:white;border-radius:var(--radius);padding:12px 6px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-left:3px solid var(--green)">
+        <div style="font-size:20px;font-weight:900;color:var(--green)">${fcAF}</div>
+        <div style="font-size:8px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">💶 Factures à faire</div>
+      </div>
+      <div onclick="goToAfaireWithFilter('all')" style="background:white;border-radius:var(--radius);padding:12px 6px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-left:3px solid var(--red)">
         <div style="font-size:20px;font-weight:900;color:var(--red)">${afU}</div>
-        <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">🔴 Urgents</div>
+        <div style="font-size:8px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">🔴 Urgents</div>
       </div>
     </div>
   `;
@@ -1248,6 +1254,15 @@ function renderHome(){
   // badge
   const nb=document.getElementById('nb-afaire');
   nb.innerHTML=`<span class="ni">🧠</span>Ma tête${afU>0?'<span class="nbadge">'+afU+'</span>':''}`;
+}
+
+// Va sur Ma tête + applique un filtre (depuis l'accueil)
+function goToAfaireWithFilter(filter){
+  document.getElementById('nb-afaire').click();
+  setTimeout(function(){
+    var btn = document.querySelector('.af-tab[data-filter="'+filter+'"]');
+    if(btn) setAfaireFilter(filter, btn);
+  }, 100);
 }
 
 // Boutons d'action rapide depuis l'accueil
@@ -1329,8 +1344,9 @@ function renderAfaire(){
   // Calcul des compteurs pour chaque onglet (uniquement les non-faits)
   const cntAll = afaire.filter(a=>!a.done).length;
   const cntDevis = afaire.filter(a=>!a.done && a.cat==='devis').length;
+  const cntFacture = afaire.filter(a=>!a.done && a.cat==='facture').length;
   const cntTel = afaire.filter(a=>!a.done && a.cat==='tel').length;
-  const cntAutres = afaire.filter(a=>!a.done && a.cat!=='devis' && a.cat!=='tel').length;
+  const cntAutres = afaire.filter(a=>!a.done && a.cat!=='devis' && a.cat!=='tel' && a.cat!=='facture').length;
   // Mettre à jour les badges de chaque onglet
   document.querySelectorAll('.af-tab').forEach(function(t){
     var f = t.getAttribute('data-filter');
@@ -1338,6 +1354,7 @@ function renderAfaire(){
     if(c){
       if(f==='all') c.textContent = cntAll;
       else if(f==='devis') c.textContent = cntDevis;
+      else if(f==='facture') c.textContent = cntFacture;
       else if(f==='tel') c.textContent = cntTel;
       else if(f==='autres') c.textContent = cntAutres;
     }
@@ -1350,14 +1367,15 @@ function renderAfaire(){
   var filtered = afaire.filter(function(a){
     if(afaireFilter==='all') return true;
     if(afaireFilter==='devis') return a.cat==='devis';
+    if(afaireFilter==='facture') return a.cat==='facture';
     if(afaireFilter==='tel') return a.cat==='tel';
-    if(afaireFilter==='autres') return a.cat!=='devis' && a.cat!=='tel';
+    if(afaireFilter==='autres') return a.cat!=='devis' && a.cat!=='tel' && a.cat!=='facture';
     return true;
   });
   
   if(!filtered.length){
-    var emoji = afaireFilter==='devis'?'📋':afaireFilter==='tel'?'📞':'📌';
-    var label = afaireFilter==='devis'?'devis':afaireFilter==='tel'?'appel':'autre';
+    var emoji = afaireFilter==='devis'?'📋':afaireFilter==='facture'?'💶':afaireFilter==='tel'?'📞':'📌';
+    var label = afaireFilter==='devis'?'devis':afaireFilter==='facture'?'facture':afaireFilter==='tel'?'appel':'autre';
     el.innerHTML='<div class="empty"><div class="ei">'+emoji+'</div><p>Rien à faire dans cette catégorie !</p><span>Aucun '+label+' en attente</span></div>';
     return;
   }
@@ -2562,6 +2580,37 @@ setTimeout(function(){try{loadRDV();}catch(e){console.error('rdv error:',e);}},3
 
 // FACTURES
 var factures = JSON.parse(localStorage.getItem('ag4_factures')||'[]');
+
+// MIGRATION : convertir les anciennes factures en tâches Ma tête (catégorie facture)
+// Une seule fois — marqueur stocké dans localStorage
+if(!localStorage.getItem('ag4_facture_migrated_v1') && factures.length > 0){
+  try{
+    var migratedCount = 0;
+    factures.forEach(function(f){
+      // créer une tâche Ma tête équivalente
+      var title = f.client || 'Facture';
+      var note = f.desc || '';
+      if(f.montant && parseFloat(f.montant) > 0){
+        note = (note ? note + ' · ' : '') + parseFloat(f.montant).toLocaleString('fr-CH',{minimumFractionDigits:2}) + ' CHF';
+      }
+      afaire.unshift({
+        id: Date.now() + Math.floor(Math.random()*1000) + migratedCount,
+        title: title,
+        note: note,
+        cat: 'facture',
+        prio: 'normal',
+        done: !!f.faite,
+        date: f.date || todayStr
+      });
+      migratedCount++;
+    });
+    if(migratedCount > 0){
+      localStorage.setItem('ag4_af', JSON.stringify(afaire));
+      console.log('Migration : ' + migratedCount + ' factures déplacées dans Ma tête');
+    }
+    localStorage.setItem('ag4_facture_migrated_v1', 'done');
+  }catch(e){console.error('Erreur migration factures:', e);}
+}
 
 function saveFactures(){localStorage.setItem('ag4_factures',JSON.stringify(factures));if(window.fbSave){clearTimeout(window.fbSaveTimer);window.fbSaveTimer=setTimeout(window.fbSave,2000);var el=document.getElementById('fb-status');if(el){el.textContent='☁️ Sauvegarde...';el.style.color='#f39c12';}}}
 
