@@ -2722,6 +2722,20 @@ setInterval(function() {
   }
 }, 30000);
 
+// Sauvegarde forcée AVANT fermeture de Safari (protège contre la perte de données)
+window.addEventListener('beforeunload', function(){
+  if(fbHasChanges && window.fbSave){
+    try{ window.fbSave(); }catch(e){}
+  }
+});
+
+// Sauvegarde aussi quand Safari passe en arrière-plan (iOS)
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'hidden' && fbHasChanges && window.fbSave){
+    try{ window.fbSave(); fbHasChanges = false; }catch(e){}
+  }
+});
+
 </script>
 
 <!-- PRINT AREA (liste chantier) -->
