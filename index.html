@@ -2547,6 +2547,27 @@ function renderFactures(){
 window.initApp = function() {
   try{renderHome();renderAfaire();renderDevis();renderChantiers();renderPatrols();renderNuanciers();renderPlanning();renderNotes();renderRoutine();renderFactures();}catch(e){console.error('render error:',e);}
 };
+
+// Recharge toutes les variables depuis localStorage puis re-render — utilisé après une synchro cloud
+window.refreshAllViews = function() {
+  try{
+    afaire = JSON.parse(localStorage.getItem('ag4_af')||'[]');
+    devis = JSON.parse(localStorage.getItem('ag4_dv')||'[]');
+    chantiers = JSON.parse(localStorage.getItem('ag4_ch')||'[]');
+    nuanciers = JSON.parse(localStorage.getItem('ag4_nu')||'[]');
+    agenda = JSON.parse(localStorage.getItem('ag4_ag')||'[]');
+    notes = JSON.parse(localStorage.getItem('ag4_no')||'[]');
+    patrols = JSON.parse(localStorage.getItem('ag4_pa')||'[]');
+    planningData = JSON.parse(localStorage.getItem('ag4_plan')||'{}');
+    if(typeof routineData !== 'undefined') routineData = JSON.parse(localStorage.getItem('ag4_routine') || '{}');
+    if(typeof rdvState !== 'undefined') rdvState = JSON.parse(localStorage.getItem('ag4_rdv')||'{}');
+    if(typeof rdvChecks !== 'undefined') rdvChecks = JSON.parse(localStorage.getItem('ag4_rdvc')||'{}');
+    if(typeof metreHistorique !== 'undefined') metreHistorique = JSON.parse(localStorage.getItem('ag4_metre_hist')||'[]');
+    if(typeof cmdHistorique !== 'undefined') cmdHistorique = JSON.parse(localStorage.getItem('ag4_cmd_hist')||'[]');
+    if(typeof factures !== 'undefined') factures = JSON.parse(localStorage.getItem('ag4_factures')||'[]');
+    window.initApp();
+  }catch(e){console.error('refresh error:',e);}
+};
 // If Firebase not available yet, init directly
 if(!window.fbLoad) window.initApp();
 
