@@ -355,8 +355,16 @@ header img{height:42px}
             fbStarted = true;
             if(window.initApp) window.initApp();
           } else if(changed) {
-            // Data changed from another device - reload page
-            setTimeout(function(){ location.reload(); }, 1000);
+            // Données modifiées par un autre appareil — refresh discret en arrière-plan
+            // (au lieu de location.reload qui fait clignoter toute la page)
+            try{
+              if(window.refreshAllViews) window.refreshAllViews();
+              else if(window.initApp) window.initApp();
+              fbSetStatus('☁️ Mis à jour', '#27ae60');
+            }catch(e){
+              // Si la mise à jour douce échoue, on tombe sur reload classique
+              setTimeout(function(){ location.reload(); }, 500);
+            }
           }
         } else {
           fbSetStatus('☁️ Prêt', '#27ae60');
@@ -376,7 +384,7 @@ header img{height:42px}
 
     window.fbLoad();
 
-    // Force reload manuel : fetch direct + reload page (avec feedback visible)
+    // Force reload manuel : fetch direct, refresh sans recharger la page
     window.fbForceReload = function() {
       fbSetStatus('☁️ Chargement...', '#f39c12');
       DOC_REF.get().then(function(doc) {
@@ -387,8 +395,14 @@ header img{height:42px}
             if(data[k]) localStorage.setItem(k, data[k]);
           });
           window._fbLoading = false;
-          fbSetStatus('✅ Données chargées !', '#27ae60');
-          setTimeout(function(){ location.reload(); }, 700);
+          fbSetStatus('✅ Données chargées', '#27ae60');
+          // Refresh doux : essaie de mettre à jour les vues sans reload
+          try{
+            if(window.refreshAllViews) window.refreshAllViews();
+            else if(window.initApp) window.initApp();
+          }catch(e){
+            setTimeout(function(){ location.reload(); }, 500);
+          }
         } else {
           fbSetStatus('☁️ Aucune donnée cloud', '#f39c12');
         }
