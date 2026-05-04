@@ -324,7 +324,7 @@ header img{height:42px}
     var db = firebase.firestore();
     var DOC_REF = db.collection("appdata").doc("agpeinture-data");
     var KEYS = ['ag4_af','ag4_ch','ag4_dv','ag4_nu','ag4_pa','ag4_plan','ag4_ag','ag4_no','ag4_routine',
-                'ag4_rdv','ag4_rdvc','ag4_rdvt','ag4_metre_hist','ag4_cmd_hist','ag4_factures'];
+                'ag4_rdv','ag4_rdvc','ag4_rdvt','ag4_rdv_hist','ag4_metre_hist','ag4_cmd_hist','ag4_factures'];
 
     fbSetStatus('☁️ Connexion...', '#f39c12');
 
@@ -492,18 +492,22 @@ function checkPwd(){
   <div class="sh"><div><div class="st">🧠 Ma tête</div><div class="ss" id="af-sub"></div></div><button class="fab" onclick="openModal('afaire')">＋ Ajouter</button></div>
   <!-- Sous-onglets pour filtrer Ma tête -->
   <div class="af-tabs" id="af-tabs" style="display:flex;gap:6px;background:white;padding:6px;border-radius:14px;margin-bottom:12px;box-shadow:var(--shadow);overflow-x:auto;-webkit-overflow-scrolling:touch">
-    <button class="af-tab active" data-filter="all" onclick="setAfaireFilter('all',this)" style="flex:1;min-width:auto;padding:9px 8px;border:none;background:var(--blue);color:white;border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>🧠 Tous</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.85">0</span></button>
-    <button class="af-tab" data-filter="devis" onclick="setAfaireFilter('devis',this)" style="flex:1;min-width:auto;padding:9px 8px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📋 Devis</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
-    <button class="af-tab" data-filter="facture" onclick="setAfaireFilter('facture',this)" style="flex:1;min-width:auto;padding:9px 8px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>💶 Factures</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
-    <button class="af-tab" data-filter="tel" onclick="setAfaireFilter('tel',this)" style="flex:1;min-width:auto;padding:9px 8px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📞 Appels</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
-    <button class="af-tab" data-filter="autres" onclick="setAfaireFilter('autres',this)" style="flex:1;min-width:auto;padding:9px 8px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📌 Autres</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab active" data-filter="all" onclick="setAfaireFilter('all',this)" style="flex-shrink:0;min-width:72px;padding:9px 10px;border:none;background:var(--blue);color:white;border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>🧠 Tous</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.85">0</span></button>
+    <button class="af-tab" data-filter="devis" onclick="setAfaireFilter('devis',this)" style="flex-shrink:0;min-width:72px;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📋 Devis</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab" data-filter="facture" onclick="setAfaireFilter('facture',this)" style="flex-shrink:0;min-width:72px;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>💶 Fact.</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab" data-filter="tel" onclick="setAfaireFilter('tel',this)" style="flex-shrink:0;min-width:72px;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📞 Appels</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab" data-filter="echan" onclick="setAfaireFilter('echan',this)" style="flex-shrink:0;min-width:72px;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>🎨 Échan.</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab" data-filter="cmd" onclick="setAfaireFilter('cmd',this)" style="flex-shrink:0;min-width:72px;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📦 Cmd.</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab" data-filter="ctrl" onclick="setAfaireFilter('ctrl',this)" style="flex-shrink:0;min-width:72px;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>✅ Ctrl.</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab" data-filter="chant" onclick="setAfaireFilter('chant',this)" style="flex-shrink:0;min-width:72px;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>🔧 Chant.</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
+    <button class="af-tab" data-filter="autre" onclick="setAfaireFilter('autre',this)" style="flex-shrink:0;min-width:72px;padding:9px 10px;border:none;background:#f3f4f6;color:var(--text);border-radius:10px;font-weight:800;font-size:11px;cursor:pointer;font-family:Nunito,sans-serif;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:1px"><span>📌 Autre</span><span class="af-tab-count" style="font-size:10px;font-weight:700;opacity:0.7">0</span></button>
   </div>
   <div class="cards" id="afaire-list"></div>
 </div>
 
 <!-- Section Devis retirée (utilisation logiciel bureau) -->
 
-<div class="sec" id="s-chantiers">
+<div class="sec" id="s-chantiers" style="display:none">
   <div class="sh print-no"><div><div class="st">🔧 Chantiers</div><div class="ss" id="ch-sub"></div></div><div style="display:flex;gap:8px"><button class="fab" style="background:var(--green)" onclick="generatePDFListeChantiers()">📄 PDF Liste</button><button class="fab" onclick="openModal('chantiers')">＋ Ajouter</button></div></div>
   <div id="ch-list"></div>
 </div>
@@ -557,10 +561,22 @@ function checkPwd(){
 
   <!-- FICHE RDV CHANTIER -->
   <div id="pt-rdv-sec" style="display:none">
+
+    <!-- Vue liste historique -->
+    <div id="rdv-historique-view">
+      <div class="sh print-no">
+        <div><div class="st">📋 Fiches RDV</div><div class="ss" id="rdv-hist-sub">Historique des rendez-vous</div></div>
+        <button class="fab" onclick="nouvelleFicheRDV()">＋ Nouveau</button>
+      </div>
+      <div id="rdv-hist-list"></div>
+    </div>
+
+    <!-- Vue édition fiche RDV -->
+    <div id="rdv-edit-view" style="display:none">
     <div class="sh"><div><div class="st">📋 Fiche RDV Chantier</div><div class="ss">Visite • Métré • Suivi • Réception</div></div>
       <div style="display:flex;gap:8px">
-        <button class="fab print-no" style="background:#27ae60" onclick="generatePDFFicheRDV()">📄 Générer PDF</button>
-        <button class="fab print-no" onclick="resetFicheRDV()">🔄 Vider</button>
+        <button class="fab print-no" style="background:var(--muted)" onclick="retourRDVHist()">← Retour</button>
+        <button class="fab print-no" style="background:#27ae60" onclick="generatePDFFicheRDV()">📄 PDF</button>
       </div>
     </div>
     <div class="rdv-form" id="rdv-form">
@@ -649,6 +665,7 @@ function checkPwd(){
       </div>
       <div class="rdv-footer">Newflash SA • Case postale Nyon 2, 1260 Nyon • 079 489.16.39 • info@agpeinture.ch • www.agpeinture.ch</div>
     </div>
+    </div><!-- end rdv-edit-view -->
   </div>
 
 
@@ -795,11 +812,26 @@ function checkPwd(){
 </div>
 
 <!-- NAV -->
+<!-- RECHERCHE GLOBALE -->
+<div class="sec" id="s-search">
+  <div class="sh">
+    <div><div class="st">🔍 Recherche</div><div class="ss" id="search-sub">Cherche dans toute l'app</div></div>
+  </div>
+  <div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;margin-bottom:12px">
+    <input type="text" id="search-input" placeholder="Tape un nom de client, chantier, mot-clé..." 
+      oninput="doGlobalSearch(this.value)" 
+      style="width:100%;border:2px solid var(--blue);border-radius:12px;padding:13px 16px;font-size:15px;font-family:Nunito,sans-serif;font-weight:600;outline:none;box-sizing:border-box"
+      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">Cherche dans : Ma tête · Fiches RDV · Métrés · Commandes · Nuanciers · Notes · Factures</div>
+  </div>
+  <div id="search-results"></div>
+</div>
+
 <nav class="bnav">
   <button class="nb active" id="nb-home" onclick="showTab('home',this)"><span class="ni">🏠</span>Accueil</button>
   <button class="nb" id="nb-afaire" onclick="showTab('afaire',this)"><span class="ni">🧠</span>Ma tête</button>
-  <button class="nb" id="nb-chantiers" onclick="showTab('chantiers',this)"><span class="ni">🔧</span>Chantiers</button>
   <button class="nb" id="nb-patron" onclick="showTab('patron',this)"><span class="ni">👔</span>Patron</button>
+  <button class="nb" id="nb-search" onclick="showTab('search',this)"><span class="ni">🔍</span>Recherche</button>
 </nav>
 
 
@@ -1023,6 +1055,11 @@ function showTab(t,btn){
   if(qb) qb.className='qbar'+(t==='afaire'?' show':'');
   if(t==='home')renderHome();
   if(t==='patron')showPatronTab('checklist');
+  if(t==='search'){
+    var inp=document.getElementById('search-input');
+    if(inp){ setTimeout(function(){inp.focus();},100); }
+    doGlobalSearch(inp?inp.value:'');
+  }
 }
 
 // PATRON TABS
@@ -1033,6 +1070,160 @@ function showPatronTab(t){
     const btn=document.getElementById('pt-'+x);
     if(btn) btn.className='chip'+(x===t?' ab':'');
   });
+  // Quand on ouvre RDV : revenir à la vue historique et afficher la liste
+  if(t==='rdv'){
+    rdvCurrentId=null;
+    var hv=document.getElementById('rdv-historique-view');
+    var ev=document.getElementById('rdv-edit-view');
+    if(hv) hv.style.display='block';
+    if(ev) ev.style.display='none';
+    if(typeof renderRDVHist==='function') renderRDVHist();
+  }
+  if(t==='metre'){
+    if(typeof renderMetreHist==='function') renderMetreHist();
+  }
+}
+
+// ========================
+// RECHERCHE GLOBALE
+// ========================
+function doGlobalSearch(query){
+  var el=document.getElementById('search-results');
+  var sub=document.getElementById('search-sub');
+  if(!el) return;
+  query=(query||'').trim().toLowerCase();
+  
+  if(!query){
+    el.innerHTML='<div class="empty"><div class="ei">🔍</div><p>Tape pour chercher</p><span>Tâches, fiches RDV, métrés, commandes, nuanciers, notes...</span></div>';
+    if(sub) sub.textContent='Cherche dans toute l\'app';
+    return;
+  }
+  
+  if(query.length<2){
+    el.innerHTML='<div class="empty"><div class="ei">⌨️</div><p>Tape au moins 2 lettres</p></div>';
+    if(sub) sub.textContent='En attente...';
+    return;
+  }
+  
+  var results=[];
+  var match=function(text){return text && String(text).toLowerCase().indexOf(query)!==-1;};
+  
+  // 1. Ma tête (tâches)
+  try{
+    (afaire||[]).forEach(function(a){
+      if(a.done) return;
+      if(match(a.text) || match(a.note)){
+        var cat=CATS.find(function(c){return c.id===a.cat;});
+        var emoji=cat?cat.label.split(' ')[0]:'📌';
+        results.push({
+          icon:emoji, type:'Ma tête',
+          title:a.text||'Sans titre',
+          subtitle:(a.note||'')+(a.date?' · '+a.date.split('-').reverse().join('/'):''),
+          color:'var(--blue)',
+          onclick:"showTab('afaire',document.getElementById('nb-afaire'))"
+        });
+      }
+    });
+  }catch(e){}
+  
+  // 2. Fiches RDV
+  try{
+    (rdvHistorique||[]).forEach(function(r){
+      var s=r.state||{};
+      if(match(s.client)||match(s.chantier)||match(s.adresse)||match(s.objectif)||match(s.notes)||match(s.decisions)||match(s.mesures)){
+        var date=s.date?s.date.split('-').reverse().join('/'):(new Date(r.createdAt)).toLocaleDateString('fr-CH');
+        results.push({
+          icon:'📋', type:'Fiche RDV',
+          title:s.client||s.chantier||'Sans nom',
+          subtitle:(s.adresse||'')+' · '+date,
+          color:'var(--blue)',
+          onclick:"showTab('patron',document.getElementById('nb-patron'));setTimeout(function(){showPatronTab('rdv');setTimeout(function(){ouvrirFicheRDV("+r.id+");},100);},100)"
+        });
+      }
+    });
+  }catch(e){}
+  
+  // 3. Métrés
+  try{
+    (metreHistorique||[]).forEach(function(m){
+      if(match(m.client)||match(m.adresse)||match(m.notes)||match(m.code)){
+        var date=m.date?m.date.split('-').reverse().join('/'):(new Date(m.createdAt)).toLocaleDateString('fr-CH');
+        results.push({
+          icon:'📐', type:'Métré',
+          title:m.client||'Sans nom',
+          subtitle:(m.adresse||'')+' · '+date,
+          color:'#16a085',
+          onclick:"showTab('patron',document.getElementById('nb-patron'));setTimeout(function(){showPatronTab('metre');setTimeout(function(){ouvrirMetre("+m.id+");},100);},100)"
+        });
+      }
+    });
+  }catch(e){}
+  
+  // 4. Commandes
+  try{
+    (cmdHistorique||[]).forEach(function(c){
+      if(match(c.chantier)||match(c.fournisseur)||match(c.notes)){
+        var date=c.date?c.date.split('-').reverse().join('/'):(new Date(c.createdAt)).toLocaleDateString('fr-CH');
+        results.push({
+          icon:'📦', type:'Commande',
+          title:c.chantier||c.fournisseur||'Sans nom',
+          subtitle:(c.fournisseur||'')+' · '+date,
+          color:'var(--orange)',
+          onclick:"showTab('patron',document.getElementById('nb-patron'));setTimeout(function(){showPatronTab('commande');setTimeout(function(){if(typeof ouvrirCmd==='function')ouvrirCmd("+c.id+");},100);},100)"
+        });
+      }
+    });
+  }catch(e){}
+  
+  // 5. Nuanciers
+  try{
+    (nuanciers||[]).forEach(function(n){
+      if(match(n.client)||match(n.code)||match(n.notes)){
+        results.push({
+          icon:'🎨', type:'Nuancier',
+          title:n.client||'Sans nom',
+          subtitle:(n.code||'')+(n.notes?' · '+n.notes:''),
+          color:'var(--purple)',
+          onclick:"showTab('patron',document.getElementById('nb-patron'));setTimeout(function(){showPatronTab('nuanciers');},100)"
+        });
+      }
+    });
+  }catch(e){}
+  
+  // 6. Notes
+  try{
+    (notes||[]).forEach(function(n){
+      if(match(n.text)||match(n.title)){
+        results.push({
+          icon:'📝', type:'Note',
+          title:n.title||(n.text||'').substring(0,40)||'Sans titre',
+          subtitle:(n.text||'').substring(0,80),
+          color:'#d4a017',
+          onclick:"showTab('patron',document.getElementById('nb-patron'));setTimeout(function(){showPatronTab('notes');},100)"
+        });
+      }
+    });
+  }catch(e){}
+  
+  // Affichage
+  if(sub) sub.textContent=results.length+' résultat'+(results.length>1?'s':'');
+  
+  if(!results.length){
+    el.innerHTML='<div class="empty"><div class="ei">🤷</div><p>Aucun résultat</p><span>Essaie un autre mot-clé</span></div>';
+    return;
+  }
+  
+  el.innerHTML=results.map(function(r){
+    return '<div onclick="'+r.onclick+'" style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:13px 14px;margin-bottom:8px;border-left:4px solid '+r.color+';cursor:pointer;display:flex;align-items:center;gap:12px">'
+      +'<div style="font-size:24px;flex-shrink:0">'+r.icon+'</div>'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:10px;font-weight:800;color:'+r.color+';text-transform:uppercase;letter-spacing:0.5px">'+r.type+'</div>'
+        +'<div style="font-size:14px;font-weight:800;color:var(--text);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.title+'</div>'
+        +(r.subtitle?'<div style="font-size:11px;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+r.subtitle+'</div>':'')
+      +'</div>'
+      +'<div style="font-size:20px;color:#ddd;flex-shrink:0">›</div>'
+    +'</div>';
+  }).join('');
 }
 
 // MODAL
@@ -1348,20 +1539,17 @@ function renderAfaire(){
   
   // Calcul des compteurs pour chaque onglet (uniquement les non-faits)
   const cntAll = afaire.filter(a=>!a.done).length;
-  const cntDevis = afaire.filter(a=>!a.done && a.cat==='devis').length;
-  const cntFacture = afaire.filter(a=>!a.done && a.cat==='facture').length;
-  const cntTel = afaire.filter(a=>!a.done && a.cat==='tel').length;
-  const cntAutres = afaire.filter(a=>!a.done && a.cat!=='devis' && a.cat!=='tel' && a.cat!=='facture').length;
+  const cntByCat = {};
+  ['devis','facture','tel','echan','cmd','ctrl','chant','autre'].forEach(function(cat){
+    cntByCat[cat] = afaire.filter(a=>!a.done && a.cat===cat).length;
+  });
   // Mettre à jour les badges de chaque onglet
   document.querySelectorAll('.af-tab').forEach(function(t){
     var f = t.getAttribute('data-filter');
     var c = t.querySelector('.af-tab-count');
     if(c){
       if(f==='all') c.textContent = cntAll;
-      else if(f==='devis') c.textContent = cntDevis;
-      else if(f==='facture') c.textContent = cntFacture;
-      else if(f==='tel') c.textContent = cntTel;
-      else if(f==='autres') c.textContent = cntAutres;
+      else if(cntByCat[f]!==undefined) c.textContent = cntByCat[f];
     }
   });
   
@@ -1371,17 +1559,13 @@ function renderAfaire(){
   // Filtrer selon l'onglet sélectionné
   var filtered = afaire.filter(function(a){
     if(afaireFilter==='all') return true;
-    if(afaireFilter==='devis') return a.cat==='devis';
-    if(afaireFilter==='facture') return a.cat==='facture';
-    if(afaireFilter==='tel') return a.cat==='tel';
-    if(afaireFilter==='autres') return a.cat!=='devis' && a.cat!=='tel' && a.cat!=='facture';
-    return true;
+    return a.cat===afaireFilter;
   });
   
   if(!filtered.length){
-    var emoji = afaireFilter==='devis'?'📋':afaireFilter==='facture'?'💶':afaireFilter==='tel'?'📞':'📌';
-    var label = afaireFilter==='devis'?'devis':afaireFilter==='facture'?'facture':afaireFilter==='tel'?'appel':'autre';
-    el.innerHTML='<div class="empty"><div class="ei">'+emoji+'</div><p>Rien à faire dans cette catégorie !</p><span>Aucun '+label+' en attente</span></div>';
+    var labels = {devis:['📋','devis'],facture:['💶','facture'],tel:['📞','appel'],echan:['🎨','échantillon'],cmd:['📦','commande'],ctrl:['✅','contrôle'],chant:['🔧','chantier'],autre:['📌','autre']};
+    var info = labels[afaireFilter] || ['📌','tâche'];
+    el.innerHTML='<div class="empty"><div class="ei">'+info[0]+'</div><p>Rien à faire dans cette catégorie !</p><span>Aucun '+info[1]+' en attente</span></div>';
     return;
   }
   
@@ -1692,28 +1876,149 @@ function renderRoutine(){
 // INIT
 
 // FICHE RDV
-var rdvState = JSON.parse(localStorage.getItem('ag4_rdv')||'{}');
-var rdvChecks = JSON.parse(localStorage.getItem('ag4_rdvc')||'{}');
-var rdvType = localStorage.getItem('ag4_rdvt')||'';
+// ========================
+// FICHE RDV - Avec historique (comme Métré/Commande)
+// ========================
+var rdvHistorique = JSON.parse(localStorage.getItem('ag4_rdv_hist')||'[]');
+
+// Migration unique : convertir l'ancienne fiche RDV (si elle existe et n'a pas déjà été migrée)
+(function migrateOldRDV(){
+  if(localStorage.getItem('ag4_rdv_migrated_v1')) return;
+  var oldState = localStorage.getItem('ag4_rdv');
+  if(oldState){
+    try{
+      var s = JSON.parse(oldState);
+      // Vérifier que la fiche a au moins un champ rempli
+      var hasContent = false;
+      for(var k in s){ if(s[k] && String(s[k]).trim()){ hasContent=true; break; } }
+      if(hasContent){
+        var oldChecks = JSON.parse(localStorage.getItem('ag4_rdvc')||'{}');
+        var oldType = localStorage.getItem('ag4_rdvt')||'';
+        rdvHistorique.unshift({
+          id: Date.now(),
+          createdAt: new Date().toISOString(),
+          state: s,
+          checks: oldChecks,
+          type: oldType
+        });
+        localStorage.setItem('ag4_rdv_hist', JSON.stringify(rdvHistorique));
+      }
+    }catch(e){}
+  }
+  localStorage.setItem('ag4_rdv_migrated_v1','1');
+})();
+var rdvCurrentId = null;
+// Variables legacy conservées pour compat avec le PDF generator
+var rdvState = {};
+var rdvChecks = {};
+var rdvType = '';
+
+function getRDVCurrent(){
+  if(!rdvCurrentId) return null;
+  return rdvHistorique.find(function(r){return r.id===rdvCurrentId;})||null;
+}
+
+function saveRDVHist(){
+  localStorage.setItem('ag4_rdv_hist',JSON.stringify(rdvHistorique));
+}
+
+function nouvelleFicheRDV(){
+  var r={
+    id:Date.now(),
+    createdAt:new Date().toISOString(),
+    state:{},
+    checks:{},
+    type:''
+  };
+  rdvHistorique.unshift(r);
+  saveRDVHist();
+  ouvrirFicheRDV(r.id);
+}
+
+function ouvrirFicheRDV(id){
+  rdvCurrentId=id;
+  var r=getRDVCurrent();
+  if(!r) return;
+  rdvState=r.state||{};
+  rdvChecks=r.checks||{};
+  rdvType=r.type||'';
+  document.getElementById('rdv-historique-view').style.display='none';
+  document.getElementById('rdv-edit-view').style.display='block';
+  loadRDV();
+}
+
+function retourRDVHist(){
+  saveRDV();
+  rdvCurrentId=null;
+  document.getElementById('rdv-edit-view').style.display='none';
+  document.getElementById('rdv-historique-view').style.display='block';
+  renderRDVHist();
+}
+
+function supprimerRDV(id,e){
+  e.stopPropagation();
+  if(!confirm('Supprimer cette fiche RDV ?')) return;
+  rdvHistorique=rdvHistorique.filter(function(r){return r.id!==id;});
+  saveRDVHist();
+  renderRDVHist();
+}
+
+function renderRDVHist(){
+  var el=document.getElementById('rdv-hist-list');
+  var sub=document.getElementById('rdv-hist-sub');
+  if(sub) sub.textContent=rdvHistorique.length+' fiche'+(rdvHistorique.length>1?'s':'');
+  if(!el) return;
+  if(!rdvHistorique.length){
+    el.innerHTML='<div class="empty"><div class="ei">📋</div><p>Aucune fiche RDV</p><span>Appuie sur ＋ Nouveau pour commencer</span></div>';
+    return;
+  }
+  var typeLabels={'metre':'Métré / Visite','suivi':'Suivi chantier','recep':'Réception travaux','recla':'Réclamation client','':'—'};
+  el.innerHTML=rdvHistorique.map(function(r){
+    var s=r.state||{};
+    var date=s.date?s.date.split('-').reverse().join('/'):(new Date(r.createdAt)).toLocaleDateString('fr-CH');
+    var typeLabel=typeLabels[r.type||'']||'—';
+    return '<div onclick="ouvrirFicheRDV('+r.id+')" style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px;border-left:4px solid var(--blue);cursor:pointer;display:flex;justify-content:space-between;align-items:center">'
+      +'<div>'
+        +'<div style="font-size:15px;font-weight:900;color:var(--text)">'+(s.client||s.chantier||'Sans nom')+'</div>'
+        +'<div style="font-size:12px;color:var(--muted);margin-top:3px">'+(s.adresse||'—')+' · '+date+'</div>'
+        +'<div style="font-size:12px;font-weight:800;color:var(--blue);margin-top:4px">'+typeLabel+(s.heure?' · '+s.heure:'')+'</div>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:10px">'
+        +'<div style="font-size:22px;color:#ddd">›</div>'
+        +'<button onclick="supprimerRDV('+r.id+',event)" style="background:var(--red-bg);border:none;border-radius:8px;padding:6px 10px;color:var(--red);font-size:13px;cursor:pointer">🗑️</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
 
 function saveRDV(){
+  if(!rdvCurrentId) return;
   var fields=['chantier','client','adresse','tel','resp','date','heure','presents','objectif','mesures','notes','materiel','decisions','prochrdv','prochheure','prochavec'];
   fields.forEach(function(f){
     var el=document.getElementById('rdv-'+f);
     if(el) rdvState[f]=el.value;
   });
-  localStorage.setItem('ag4_rdv',JSON.stringify(rdvState));
+  var r=getRDVCurrent();
+  if(r){
+    r.state=rdvState;
+    r.checks=rdvChecks;
+    r.type=rdvType;
+    saveRDVHist();
+  }
 }
 
 function loadRDV(){
   var fields=['chantier','client','adresse','tel','resp','date','heure','presents','objectif','mesures','notes','materiel','decisions','prochrdv','prochheure','prochavec'];
   fields.forEach(function(f){
     var el=document.getElementById('rdv-'+f);
-    if(el && rdvState[f]) el.value=rdvState[f];
+    if(el) el.value=rdvState[f]||'';
   });
-  if(rdvType) selRDVType(rdvType,true);
+  ['metre','suivi','recep','recla'].forEach(function(x){
+    var btn=document.getElementById('rdvt-'+x);
+    if(btn) btn.className='rdv-type-btn'+(x===rdvType?' sel':'');
+  });
   ['devis','photos','extras'].forEach(function(k){
-    if(rdvChecks[k]) applyRDVCheck(k,true);
+    applyRDVCheck(k,!!rdvChecks[k]);
   });
 }
 
@@ -1723,13 +2028,13 @@ function selRDVType(t, noSave){
     var btn=document.getElementById('rdvt-'+x);
     if(btn) btn.className='rdv-type-btn'+(x===t?' sel':'');
   });
-  if(!noSave) localStorage.setItem('ag4_rdvt',t);
+  if(!noSave) saveRDV();
 }
 
 function toggleRDVCheck(k){
   rdvChecks[k]=!rdvChecks[k];
   applyRDVCheck(k,rdvChecks[k]);
-  localStorage.setItem('ag4_rdvc',JSON.stringify(rdvChecks));
+  saveRDV();
 }
 
 function applyRDVCheck(k,val){
@@ -1740,15 +2045,13 @@ function applyRDVCheck(k,val){
 }
 
 function resetFicheRDV(){
-  if(!confirm('Vider la fiche RDV pour un nouveau rendez-vous ?')) return;
+  if(!confirm('Vider les champs de cette fiche RDV ?')) return;
   rdvState={};rdvChecks={};rdvType='';
-  localStorage.removeItem('ag4_rdv');
-  localStorage.removeItem('ag4_rdvc');
-  localStorage.removeItem('ag4_rdvt');
   var fields=['chantier','client','adresse','tel','resp','date','heure','presents','objectif','mesures','notes','materiel','decisions','prochrdv','prochheure','prochavec'];
   fields.forEach(function(f){var el=document.getElementById('rdv-'+f);if(el)el.value='';});
   ['metre','suivi','recep','recla'].forEach(function(x){var btn=document.getElementById('rdvt-'+x);if(btn)btn.className='rdv-type-btn';});
   ['devis','photos','extras'].forEach(function(k){applyRDVCheck(k,false);});
+  saveRDV();
 }
 
 var typeLabels={'metre':'Métré / Visite','suivi':'Suivi chantier','recep':'Réception travaux','recla':'Réclamation client'};
@@ -2578,9 +2881,7 @@ function generatePDFCmd(){
   doc.save('BonCommande_'+(c.chantier||'chantier').replace(/\s+/g,'_')+'_'+(c.date||new Date().toISOString().split('T')[0])+'.pdf');
 }
 
-setTimeout(function(){try{renderMetreHist();renderCmdHist();}catch(e){console.error('hist error:',e);}},350);
-
-setTimeout(function(){try{loadRDV();}catch(e){console.error('rdv error:',e);}},300);
+setTimeout(function(){try{renderMetreHist();renderCmdHist();renderRDVHist();}catch(e){console.error('hist error:',e);}},350);
 
 
 // FACTURES
@@ -2681,6 +2982,7 @@ window.refreshAllViews = function() {
     if(typeof routineData !== 'undefined') routineData = JSON.parse(localStorage.getItem('ag4_routine') || '{}');
     if(typeof rdvState !== 'undefined') rdvState = JSON.parse(localStorage.getItem('ag4_rdv')||'{}');
     if(typeof rdvChecks !== 'undefined') rdvChecks = JSON.parse(localStorage.getItem('ag4_rdvc')||'{}');
+    if(typeof rdvHistorique !== 'undefined') rdvHistorique = JSON.parse(localStorage.getItem('ag4_rdv_hist')||'[]');
     if(typeof metreHistorique !== 'undefined') metreHistorique = JSON.parse(localStorage.getItem('ag4_metre_hist')||'[]');
     if(typeof cmdHistorique !== 'undefined') cmdHistorique = JSON.parse(localStorage.getItem('ag4_cmd_hist')||'[]');
     if(typeof factures !== 'undefined') factures = JSON.parse(localStorage.getItem('ag4_factures')||'[]');
