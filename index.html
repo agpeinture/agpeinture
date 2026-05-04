@@ -2547,7 +2547,7 @@ function renderMetreList(){
       +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+photos
       +'<button onclick="addPhotoTopiece('+p.id+')" style="width:75px;height:75px;border-radius:10px;border:2px dashed var(--blue);background:var(--blue-bg);color:var(--blue);font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center">📷</button>'
       +'</div></div>';
-  }).join('');
+  }).join('') + '<button onclick="addMetrePiece()" style="width:100%;padding:14px;border:2px dashed var(--blue);border-radius:12px;background:var(--blue-bg);color:var(--blue);font-family:Nunito,sans-serif;font-size:15px;font-weight:900;cursor:pointer;margin-top:8px;margin-bottom:16px">＋ Ajouter une pièce</button>';
 }
 
 function generatePDFMetre(){
