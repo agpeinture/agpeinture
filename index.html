@@ -880,6 +880,11 @@ function checkPwd(){
     <div class="frow"><label>Détail</label><textarea id="af-note" placeholder="Plus d'infos..."></textarea></div>
     <div class="frow"><label>Date</label><input id="af-date" type="date"></div>
     <div class="frow"><label>Catégorie</label><div class="chips" id="af-cat-chips"></div></div>
+    <div id="af-tel-fields" style="display:none">
+      <div class="frow"><label>📞 Téléphone</label><input id="af-tel" type="tel" placeholder="079 xxx xx xx" inputmode="tel"></div>
+      <div class="frow"><label>📧 Email</label><input id="af-email" type="email" placeholder="client@exemple.ch" inputmode="email"></div>
+      <div class="frow"><label>📍 Adresse</label><input id="af-adresse" type="text" placeholder="Rue, Ville"></div>
+    </div>
     <div class="frow"><label>Priorité</label><div class="chips" id="af-prio-chips"></div></div>
     <div class="mbtns"><button class="bcancel" onclick="closeModal('afaire')">Annuler</button><button class="bsave" onclick="saveAfaire()">Enregistrer</button></div>
   </div>
@@ -1042,6 +1047,11 @@ function selChip(k,id){
   const m={afCat:CATS,afPrio:PRIOS,dStatus:DSTATUTS,cStatus:CSTATUTS,aType:ATYPES,nColor:NCOLORS};
   sel[k]=id;
   m[k].forEach(it=>{const el=document.getElementById('chip-'+k+'-'+it.id);if(el)el.className='chip '+(it.id===id?it.color:'');});
+  // Afficher/cacher les champs téléphone si catégorie "tel" sélectionnée
+  if(k==='afCat'){
+    var telFields=document.getElementById('af-tel-fields');
+    if(telFields) telFields.style.display=(id==='tel')?'block':'none';
+  }
 }
 
 // TABS
@@ -1112,7 +1122,7 @@ function doGlobalSearch(query){
   try{
     (afaire||[]).forEach(function(a){
       if(a.done) return;
-      if(match(a.title) || match(a.note)){
+      if(match(a.title) || match(a.note) || match(a.tel) || match(a.email) || match(a.adresse)){
         var cat=CATS.find(function(c){return c.id===a.cat;});
         var emoji=cat?cat.label.split(' ')[0]:'📌';
         results.push({
@@ -1260,7 +1270,7 @@ function doGlobalSearch(query){
 
 // MODAL
 function openModal(t){
-  if(t==='afaire'){buildChips('af-cat-chips',CATS,'afCat','tel');buildChips('af-prio-chips',PRIOS,'afPrio','urgent');document.getElementById('af-date').value=todayStr;}
+  if(t==='afaire'){buildChips('af-cat-chips',CATS,'afCat','tel');buildChips('af-prio-chips',PRIOS,'afPrio','urgent');document.getElementById('af-date').value=todayStr;document.getElementById('af-tel-fields').style.display='block';}
   if(t==='devis'){buildChips('d-status-chips',DSTATUTS,'dStatus','afaire');}
   if(t==='chantiers'){buildChips('c-status-chips',CSTATUTS,'cStatus','encours');document.getElementById('c-prog').value=0;document.getElementById('cpv').textContent='0%';}
   if(t==='agenda'){buildChips('a-type-chips',ATYPES,'aType','visite');document.getElementById('a-date').value=todayStr;}
@@ -1317,9 +1327,16 @@ document.getElementById('qi').addEventListener('keydown',e=>{if(e.key==='Enter')
 function saveAfaire(){
   const title=document.getElementById('af-title').value.trim();
   if(!title){alert('Écris ce que tu dois faire !');return;}
-  afaire.unshift({id:Date.now()*1000+Math.floor(Math.random()*1000),title,note:document.getElementById('af-note').value.trim(),date:document.getElementById('af-date').value,cat:sel.afCat,prio:sel.afPrio,done:false});
+  var tel=document.getElementById('af-tel'),email=document.getElementById('af-email'),adr=document.getElementById('af-adresse');
+  var task={id:Date.now()*1000+Math.floor(Math.random()*1000),title,note:document.getElementById('af-note').value.trim(),date:document.getElementById('af-date').value,cat:sel.afCat,prio:sel.afPrio,done:false};
+  if(sel.afCat==='tel'){
+    task.tel=tel?tel.value.trim():'';
+    task.email=email?email.value.trim():'';
+    task.adresse=adr?adr.value.trim():'';
+  }
+  afaire.unshift(task);
   save();renderAfaire();renderHome();closeModal('afaire');
-  ['af-title','af-note'].forEach(id=>document.getElementById(id).value='');
+  ['af-title','af-note','af-tel','af-email','af-adresse'].forEach(id=>{var e=document.getElementById(id);if(e)e.value='';});
 }
 function saveDevis(){
   const client=document.getElementById('d-client').value.trim();
@@ -1363,8 +1380,37 @@ function saveNote(){
 }
 
 // TOGGLES
-function toggleAf(id){const i=afaire.find(a=>a.id===id);if(i)i.done=!i.done;save();renderAfaire();renderHome();}
-function delAf(id){afaire=afaire.filter(a=>a.id!==id);save();renderAfaire();renderHome();}
+function toggleAf(id){
+  const i=afaire.find(a=>a.id===id);
+  if(i){
+    i.done=!i.done;
+    // Si la tâche est liée à un métré, mettre à jour son statut devis
+    if(i.metreLinkId){
+      var m=metreHistorique.find(function(x){return x.id===i.metreLinkId;});
+      if(m){
+        m.devisStatus=i.done?'fait':'afaire';
+        saveMetreHist();
+      }
+    }
+  }
+  save();renderAfaire();renderHome();
+  if(typeof renderMetreHist==='function') renderMetreHist();
+}
+function delAf(id){
+  // Si la tâche est liée à un métré, nettoyer le lien
+  var t=afaire.find(a=>a.id===id);
+  if(t && t.metreLinkId){
+    var m=metreHistorique.find(function(x){return x.id===t.metreLinkId;});
+    if(m){
+      m.devisStatus='aucun';
+      delete m.tacheDevisId;
+      saveMetreHist();
+    }
+  }
+  afaire=afaire.filter(a=>a.id!==id);
+  save();renderAfaire();renderHome();
+  if(typeof renderMetreHist==='function') renderMetreHist();
+}
 function toggleDv(id){const i=devis.find(d=>d.id===id);if(i)i.done=!i.done;save();renderDevis();}
 function delDv(id){devis=devis.filter(d=>d.id!==id);save();renderDevis();renderHome();}
 function delCh(id){chantiers=chantiers.filter(c=>c.id!==id);save();renderChantiers();renderHome();}
@@ -1524,6 +1570,22 @@ function quickAction(type){
 function afCard(a){
   const cat=catMap[a.cat]||{label:'📌',tc:'tgr'};
   const prio=prioMap[a.prio]||{label:'',tc:'tgr'};
+  // Boutons d'action si c'est une tâche "Appeler"
+  var actionBtns='';
+  if(a.cat==='tel' && !a.done){
+    var btns=[];
+    if(a.tel){
+      var telClean=a.tel.replace(/\s/g,'');
+      btns.push('<a href="tel:'+telClean+'" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:#22c55e;color:white;padding:6px 10px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:800;margin-right:6px;margin-top:6px">📞 '+a.tel+'</a>');
+    }
+    if(a.email){
+      btns.push('<a href="mailto:'+encodeURIComponent(a.email)+'" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--blue);color:white;padding:6px 10px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:800;margin-right:6px;margin-top:6px">📧 Email</a>');
+    }
+    if(a.adresse){
+      btns.push('<a href="https://maps.apple.com/?q='+encodeURIComponent(a.adresse)+'" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--orange);color:white;padding:6px 10px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:800;margin-right:6px;margin-top:6px">📍 Plans</a>');
+    }
+    if(btns.length) actionBtns='<div style="margin-top:4px">'+btns.join('')+'</div>';
+  }
   return `<div class="card ${a.done?'done':''} ${a.prio==='urgent'&&!a.done?'urg':''}">
     <div class="ccheck" onclick="toggleAf(${a.id})">
       <svg class="ck" width="13" height="13" viewBox="0 0 13 13"><polyline points="2,7 5.5,10.5 11,3" stroke="white" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1531,6 +1593,7 @@ function afCard(a){
     <div class="cbody">
       <div class="ctitle">${a.title}</div>
       ${a.note?`<div class="csub">${a.note}</div>`:''}
+      ${actionBtns}
       <div class="ctags">
         <span class="tag ${cat.tc}">${cat.label}</span>
         ${a.prio!=='normal'?`<span class="tag ${prio.tc}">${prio.label}</span>`:''}
@@ -2353,18 +2416,91 @@ function renderMetreHist(){
     var totalM2=0;
     (m.pieces||[]).forEach(function(p){(p.lignes||[]).forEach(function(l){totalM2+=parseFloat(l.m2)||0;});});
     var date=m.date?m.date.split('-').reverse().join('/'):(new Date(m.createdAt)).toLocaleDateString('fr-CH');
-    return '<div onclick="ouvrirMetre('+m.id+')" style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px;border-left:4px solid var(--blue);cursor:pointer;display:flex;justify-content:space-between;align-items:center">'
-      +'<div>'
-        +'<div style="font-size:15px;font-weight:900;color:var(--text)">'+(m.client||'Client sans nom')+'</div>'
-        +'<div style="font-size:12px;color:var(--muted);margin-top:3px">'+(m.adresse||'—')+' · '+date+'</div>'
-        +'<div style="font-size:12px;font-weight:800;color:var(--blue);margin-top:4px">'+(m.pieces||[]).length+' pièce'+(((m.pieces||[]).length)>1?'s':'')+' · '+(totalM2>0?totalM2.toFixed(2)+' m²':'0 m²')+'</div>'
+    // Statut devis : 'aucun' (défaut), 'afaire', 'fait'
+    // On synchronise depuis la tâche liée si elle existe
+    if(m.tacheDevisId){
+      var t=afaire.find(function(a){return a.id===m.tacheDevisId;});
+      if(!t){
+        // La tâche a été supprimée → reset
+        m.devisStatus='aucun';
+        delete m.tacheDevisId;
+      } else if(t.done){
+        m.devisStatus='fait';
+      } else {
+        m.devisStatus='afaire';
+      }
+    }
+    var status=m.devisStatus||'aucun';
+    var borderColor='var(--blue)';
+    var btnHTML='';
+    if(status==='aucun'){
+      btnHTML='<button onclick="toggleDevisAFaire('+m.id+',event)" style="margin-top:10px;width:100%;padding:10px;border:1.5px solid #e5e7eb;background:white;color:var(--muted);border-radius:10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><span style="opacity:0.5">📋</span><span>Marquer "Devis à faire"</span></button>';
+    } else if(status==='afaire'){
+      borderColor='var(--orange)';
+      btnHTML='<button onclick="toggleDevisAFaire('+m.id+',event)" style="margin-top:10px;width:100%;padding:10px;border:1.5px solid var(--orange);background:#fff7ed;color:var(--orange);border-radius:10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><span>📋</span><span>DEVIS À FAIRE</span></button>';
+    } else if(status==='fait'){
+      borderColor='var(--green)';
+      btnHTML='<button onclick="toggleDevisAFaire('+m.id+',event)" style="margin-top:10px;width:100%;padding:10px;border:1.5px solid var(--green);background:#d4f7dd;color:#0f7a3a;border-radius:10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><span>✅</span><span>DEVIS FAIT</span></button>';
+    }
+    return '<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px;border-left:4px solid '+borderColor+'">'
+      +'<div onclick="ouvrirMetre('+m.id+')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center">'
+        +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:15px;font-weight:900;color:var(--text)">'+(m.client||'Client sans nom')+'</div>'
+          +'<div style="font-size:12px;color:var(--muted);margin-top:3px">'+(m.adresse||'—')+' · '+date+'</div>'
+          +'<div style="font-size:12px;font-weight:800;color:var(--blue);margin-top:4px">'+(m.pieces||[]).length+' pièce'+(((m.pieces||[]).length)>1?'s':'')+' · '+(totalM2>0?totalM2.toFixed(2)+' m²':'0 m²')+'</div>'
+        +'</div>'
+        +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
+          +'<div style="font-size:22px;color:#ddd">›</div>'
+          +'<button onclick="supprimerMetre('+m.id+',event)" style="background:var(--red-bg);border:none;border-radius:8px;padding:6px 10px;color:var(--red);font-size:13px;cursor:pointer">🗑️</button>'
+        +'</div>'
       +'</div>'
-      +'<div style="display:flex;align-items:center;gap:10px">'
-        +'<div style="font-size:22px;color:#ddd">›</div>'
-        +'<button onclick="supprimerMetre('+m.id+',event)" style="background:var(--red-bg);border:none;border-radius:8px;padding:6px 10px;color:var(--red);font-size:13px;cursor:pointer">🗑️</button>'
-      +'</div>'
+      +btnHTML
     +'</div>';
   }).join('');
+}
+
+function toggleDevisAFaire(metreId,event){
+  if(event){event.stopPropagation();}
+  var m=metreHistorique.find(function(x){return x.id===metreId;});
+  if(!m)return;
+  var status=m.devisStatus||'aucun';
+  if(status==='aucun'){
+    // aucun → afaire : créer tâche
+    m.devisStatus='afaire';
+    var titre='Faire devis pour '+(m.client||'client sans nom');
+    var note=(m.adresse?'📍 '+m.adresse:'')+(m.tel?'\n📞 '+m.tel:'');
+    var task={
+      id:Date.now()*1000+Math.floor(Math.random()*1000),
+      title:titre,
+      note:note,
+      date:todayStr,
+      cat:'devis',
+      prio:'normal',
+      done:false,
+      metreLinkId:m.id
+    };
+    afaire.unshift(task);
+    m.tacheDevisId=task.id;
+  } else if(status==='afaire'){
+    // afaire → fait : marquer la tâche comme faite
+    m.devisStatus='fait';
+    if(m.tacheDevisId){
+      var t=afaire.find(function(a){return a.id===m.tacheDevisId;});
+      if(t) t.done=true;
+    }
+  } else if(status==='fait'){
+    // fait → aucun : supprimer la tâche et reset
+    m.devisStatus='aucun';
+    if(m.tacheDevisId){
+      afaire=afaire.filter(function(a){return a.id!==m.tacheDevisId;});
+      delete m.tacheDevisId;
+    }
+  }
+  saveMetreHist();
+  save();
+  renderMetreHist();
+  renderAfaire();
+  renderHome();
 }
 
 function saveMetreInfo(){
