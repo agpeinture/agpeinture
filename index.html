@@ -2318,6 +2318,7 @@ function nouveauMetre(){
 
 function ouvrirMetre(id){
   metreCurrentId=id;
+  metreLignesFaites.clear(); // Reset des coches au changement de métré
   document.getElementById('metre-historique-view').style.display='none';
   document.getElementById('metre-edit-view').style.display='block';
   loadMetreInfo();
@@ -2465,6 +2466,16 @@ function pieceTotalM2(p){
 }
 // Liste des unités disponibles dans Métré
 var METRE_UNITES=['m²','pce','ml','bloc','forf'];
+var metreLignesFaites=new Set(); // Surlignage temporaire (pas sauvé)
+function toggleLigneFaite(ligneId){
+  if(metreLignesFaites.has(ligneId)) metreLignesFaites.delete(ligneId);
+  else metreLignesFaites.add(ligneId);
+  renderMetreList();
+}
+function resetLignesFaites(){
+  metreLignesFaites.clear();
+  renderMetreList();
+}
 function nextUnite(cur){
   var idx=METRE_UNITES.indexOf(cur||'m²');
   if(idx<0) idx=0;
@@ -2517,15 +2528,23 @@ function renderMetreList(){
     el.innerHTML='<div class="empty"><div class="ei">📐</div><p>Aucune pièce</p><span>Appuie sur ＋ Pièce pour commencer</span></div>';
     return;
   }
-  el.innerHTML=m.pieces.map(function(p){
+  // Banner "Tout décocher" si au moins 1 ligne marquée
+  var resetBanner='';
+  if(metreLignesFaites.size>0){
+    resetBanner='<div style="background:#d4f7dd;border:1.5px solid var(--green);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:800;color:#0f7a3a">✓ '+metreLignesFaites.size+' ligne'+(metreLignesFaites.size>1?'s':'')+' reprise'+(metreLignesFaites.size>1?'s':'')+' dans le devis</span><button onclick="resetLignesFaites()" style="background:white;border:1.5px solid var(--green);color:var(--green);border-radius:8px;padding:6px 12px;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer">↻ Tout décocher</button></div>';
+  }
+  el.innerHTML=resetBanner+m.pieces.map(function(p){
     var ptm2=pieceTotalM2(p);
     var lignesHTML=(p.lignes||[]).map(function(l){
       var unite=l.unite||'m²';
       var unitLbl=unite.toUpperCase();
-      return '<div style="display:grid;grid-template-columns:1fr 70px 60px 28px;gap:5px;align-items:center;margin-bottom:8px">'
-        +'<input value="'+(l.desc||'')+'" placeholder="Description..." style="border:1.5px solid var(--border);border-radius:8px;padding:9px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveLigne('+p.id+','+l.id+',\'desc\',this.value)">'
-        +'<input type="number" step="0.01" value="'+(l.m2||'')+'" placeholder="0" style="border:1.5px solid var(--blue);border-radius:8px;padding:8px 4px;font-family:Nunito,sans-serif;font-size:14px;font-weight:900;color:var(--blue);background:var(--blue-bg);outline:none;width:100%;text-align:center" oninput="saveLigne('+p.id+','+l.id+',\'m2\',this.value)">'
-        +'<select onchange="saveLigne('+p.id+','+l.id+',\'unite\',this.value);renderMetreList();" style="border:1.5px solid var(--blue);border-radius:8px;padding:8px 2px;font-family:Nunito,sans-serif;font-size:12px;font-weight:900;color:var(--blue);background:var(--blue-bg);outline:none;cursor:pointer;height:36px;width:100%;text-align:center">'
+      var faite=metreLignesFaites.has(l.id);
+      var rowBg=faite?'background:#d4f7dd;border-radius:8px;padding:4px;':'';
+      return '<div style="display:grid;grid-template-columns:32px 1fr 70px 60px 28px;gap:5px;align-items:center;margin-bottom:8px;'+rowBg+'">'
+        +'<button onclick="toggleLigneFaite('+l.id+')" title="Marquer comme repris dans le devis" style="border:2px solid '+(faite?'var(--green)':'#d4d4d4')+';background:'+(faite?'var(--green)':'white')+';color:'+(faite?'white':'#bbb')+';border-radius:8px;width:32px;height:36px;font-size:16px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+(faite?'✓':'○')+'</button>'
+        +'<input value="'+(l.desc||'')+'" placeholder="Description..." style="border:1.5px solid var(--border);border-radius:8px;padding:9px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:'+(faite?'#f0fdf4':'var(--bg)')+';outline:none;width:100%'+(faite?';text-decoration:line-through;opacity:0.7':'')+'" oninput="saveLigne('+p.id+','+l.id+',\'desc\',this.value)">'
+        +'<input type="number" step="0.01" value="'+(l.m2||'')+'" placeholder="0" style="border:1.5px solid var(--blue);border-radius:8px;padding:8px 4px;font-family:Nunito,sans-serif;font-size:14px;font-weight:900;color:var(--blue);background:var(--blue-bg);outline:none;width:100%;text-align:center'+(faite?';opacity:0.6':'')+'" oninput="saveLigne('+p.id+','+l.id+',\'m2\',this.value)">'
+        +'<select onchange="saveLigne('+p.id+','+l.id+',\'unite\',this.value);renderMetreList();" style="border:1.5px solid var(--blue);border-radius:8px;padding:8px 2px;font-family:Nunito,sans-serif;font-size:12px;font-weight:900;color:var(--blue);background:var(--blue-bg);outline:none;cursor:pointer;height:36px;width:100%;text-align:center'+(faite?';opacity:0.6':'')+'">'
         +METRE_UNITES.map(function(o){return '<option value="'+o+'"'+((l.unite||'m²')===o?' selected':'')+'>'+o+'</option>';}).join('')
         +'</select>'
         +'<button onclick="delLigne('+p.id+','+l.id+')" style="background:none;border:1.5px solid #eee;border-radius:8px;color:#ccc;font-size:14px;cursor:pointer;width:28px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0">✕</button>'
@@ -2542,7 +2561,8 @@ function renderMetreList(){
       +'</div>'
       +'<button onclick="delMetrePiece('+p.id+')" style="background:none;border:none;color:#ccc;font-size:18px;cursor:pointer;margin-left:8px">✕</button>'
       +'</div>'
-      +'<div style="display:grid;grid-template-columns:1fr 70px 60px 28px;gap:5px;margin-bottom:6px">'
+      +'<div style="display:grid;grid-template-columns:32px 1fr 70px 60px 28px;gap:5px;margin-bottom:6px">'
+      +'<div style="font-size:9px;font-weight:800;color:var(--green);text-transform:uppercase;text-align:center">Fait</div>'
       +'<div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;padding-left:2px">Description</div>'
       +'<div style="font-size:9px;font-weight:800;color:var(--blue);text-transform:uppercase;text-align:center">Qté</div>'
       +'<div style="font-size:9px;font-weight:800;color:var(--blue);text-transform:uppercase;text-align:center">Unité</div>'
