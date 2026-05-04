@@ -2854,7 +2854,7 @@ function generatePDFCmd(){
   doc.setFillColor(cBlue[0],cBlue[1],cBlue[2]);doc.rect(mg,y,W,7,'F');
   doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(255,255,255);
   doc.text('(2) LISTE DU MATÉRIEL',mg+3,y+5);y+=7;
-  var cols=[18,90,28,40,12,12];
+  var cols=[16,92,20,30,12,16];
   var hdrs=['Qté','Désignation','Unité','Fournisseur','Urg.','Reçu'];
   doc.setFillColor(cBlue[0],cBlue[1],cBlue[2]);
   var x=mg;cols.forEach(function(w){doc.rect(x,y,w,6,'F');x+=w;});
