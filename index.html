@@ -2811,15 +2811,14 @@ function renderCmdLignes(){
       +'</div>'
       +'<button onclick="delCmdLigne('+l.id+')" style="background:none;border:none;color:#ddd;font-size:18px;cursor:pointer;padding:0;margin-top:20px">✕</button>'
       +'</div>'
-      +'<div style="padding:0 14px 10px;display:grid;grid-template-columns:1fr;gap:8px">'
-      +'<div><div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:3px">Fournisseur</div>'
-      +'<input type="text" value="'+(l.fourn||'')+'" placeholder="Sikkens, Brouwers..." style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:12px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveCmdLigne('+l.id+',\'fourn\',this.value)"></div>'
+      +'<div style="padding:0 14px 8px">'
+      +'<input type="text" value="'+(l.fourn||'')+'" placeholder="🏪 Fournisseur (si différent du principal)" style="border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-family:Nunito,sans-serif;font-size:11px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveCmdLigne('+l.id+',\'fourn\',this.value)">'
       +'</div>'
       +'<div style="border-top:1px solid var(--border);padding:8px 14px;display:flex;gap:10px">'
       +'<button onclick="toggleCmdCheck('+l.id+',\'urgent\')" style="flex:1;padding:8px;border-radius:10px;border:2px solid '+(l.urgent?'var(--red)':'var(--border)')+';background:'+(l.urgent?'var(--red)':'white')+';font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;color:'+(l.urgent?'white':'var(--muted)')+'">🔴 URGENT</button>'
       +'<button onclick="toggleCmdCheck('+l.id+',\'recu\')" style="flex:1;padding:8px;border-radius:10px;border:2px solid '+(l.recu?'var(--green)':'var(--border)')+';background:'+(l.recu?'var(--green)':'white')+';font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;color:'+(l.recu?'white':'var(--muted)')+'">✅ REÇU</button>'
       +'</div></div>';
-  }).join('');
+  }).join('') + '<button onclick="addCmdLigne()" style="width:100%;padding:12px;border:1.5px dashed var(--orange);border-radius:10px;background:#fff7ed;color:var(--orange);font-family:Nunito,sans-serif;font-size:14px;font-weight:800;cursor:pointer;margin-top:6px;margin-bottom:12px">＋ Ajouter une ligne</button>';
   updateCmdStats();
 }
 
