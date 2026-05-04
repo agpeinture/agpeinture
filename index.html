@@ -2522,7 +2522,9 @@ function renderMetreList(){
       return '<div style="display:grid;grid-template-columns:1fr 70px 60px 28px;gap:5px;align-items:center;margin-bottom:8px">'
         +'<input value="'+(l.desc||'')+'" placeholder="Description..." style="border:1.5px solid var(--border);border-radius:8px;padding:9px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveLigne('+p.id+','+l.id+',\'desc\',this.value)">'
         +'<input type="number" step="0.01" value="'+(l.m2||'')+'" placeholder="0" style="border:1.5px solid var(--blue);border-radius:8px;padding:8px 4px;font-family:Nunito,sans-serif;font-size:14px;font-weight:900;color:var(--blue);background:var(--blue-bg);outline:none;width:100%;text-align:center" oninput="saveLigne('+p.id+','+l.id+',\'m2\',this.value)">'
-        +'<button onclick="cycleLigneUnit('+p.id+','+l.id+')" title="Tape pour changer d\'unité" style="border:1.5px solid var(--blue);border-radius:8px;padding:8px 2px;font-family:Nunito,sans-serif;font-size:11px;font-weight:900;color:white;background:var(--blue);cursor:pointer;height:36px;display:flex;align-items:center;justify-content:center">'+unitLbl+'</button>'
+        +'<select onchange="saveLigne('+p.id+','+l.id+',\'unite\',this.value);renderMetreList();" style="border:1.5px solid var(--blue);border-radius:8px;padding:8px 2px;font-family:Nunito,sans-serif;font-size:12px;font-weight:900;color:var(--blue);background:var(--blue-bg);outline:none;cursor:pointer;height:36px;width:100%;text-align:center">'
+        +METRE_UNITES.map(function(o){return '<option value="'+o+'"'+((l.unite||'m²')===o?' selected':'')+'>'+o+'</option>';}).join('')
+        +'</select>'
         +'<button onclick="delLigne('+p.id+','+l.id+')" style="background:none;border:1.5px solid #eee;border-radius:8px;color:#ccc;font-size:14px;cursor:pointer;width:28px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0">✕</button>'
         +'</div>';
     }).join('');
