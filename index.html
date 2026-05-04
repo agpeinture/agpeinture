@@ -1112,12 +1112,12 @@ function doGlobalSearch(query){
   try{
     (afaire||[]).forEach(function(a){
       if(a.done) return;
-      if(match(a.text) || match(a.note)){
+      if(match(a.title) || match(a.note)){
         var cat=CATS.find(function(c){return c.id===a.cat;});
         var emoji=cat?cat.label.split(' ')[0]:'📌';
         results.push({
           icon:emoji, type:'Ma tête',
-          title:a.text||'Sans titre',
+          title:a.title||'Sans titre',
           subtitle:(a.note||'')+(a.date?' · '+a.date.split('-').reverse().join('/'):''),
           color:'var(--blue)',
           onclick:"showTab('afaire',document.getElementById('nb-afaire'))"
@@ -1129,11 +1129,11 @@ function doGlobalSearch(query){
   // 2. Chantiers (de l'app)
   try{
     (chantiers||[]).forEach(function(c){
-      if(match(c.name)||match(c.client)||match(c.adresse)||match(c.notes)||match(c.tel)){
+      if(match(c.title)||match(c.client)||match(c.adresse)||match(c.notes)){
         results.push({
           icon:'🔧', type:'Chantier',
-          title:c.name||c.client||'Sans nom',
-          subtitle:(c.adresse||c.client||'')+(c.tel?' · '+c.tel:''),
+          title:c.title||c.client||'Sans nom',
+          subtitle:(c.adresse||c.client||''),
           color:'#d4a017',
           onclick:"showTab('afaire',document.getElementById('nb-afaire'))"
         });
@@ -1177,14 +1177,14 @@ function doGlobalSearch(query){
   // 4. Commandes
   try{
     (cmdHistorique||[]).forEach(function(c){
-      if(match(c.chantier)||match(c.fournisseur)||match(c.notes)){
+      if(match(c.chantier)||match(c.fourn)||match(c.notes)||match(c.chef)){
         var date=c.date?c.date.split('-').reverse().join('/'):(new Date(c.createdAt)).toLocaleDateString('fr-CH');
         results.push({
           icon:'📦', type:'Commande',
-          title:c.chantier||c.fournisseur||'Sans nom',
-          subtitle:(c.fournisseur||'')+' · '+date,
+          title:c.chantier||c.fourn||'Sans nom',
+          subtitle:(c.fourn||'')+' · '+date,
           color:'var(--orange)',
-          onclick:"showTab('patron',document.getElementById('nb-patron'));setTimeout(function(){showPatronTab('commande');setTimeout(function(){if(typeof ouvrirCmd==='function')ouvrirCmd("+c.id+");},100);},100)"
+          onclick:"showTab('patron',document.getElementById('nb-patron'));setTimeout(function(){showPatronTab('commande');setTimeout(function(){if(typeof ouvrirCommande==='function')ouvrirCommande("+c.id+");else if(typeof ouvrirCmd==='function')ouvrirCmd("+c.id+");},100);},100)"
         });
       }
     });
@@ -1193,11 +1193,11 @@ function doGlobalSearch(query){
   // 5. Nuanciers
   try{
     (nuanciers||[]).forEach(function(n){
-      if(match(n.client)||match(n.code)||match(n.notes)){
+      if(match(n.client)||match(n.ref)||match(n.note)||match(n.marque)||match(n.adresse)){
         results.push({
           icon:'🎨', type:'Nuancier',
-          title:n.client||'Sans nom',
-          subtitle:(n.code||'')+(n.notes?' · '+n.notes:''),
+          title:n.client||n.ref||'Sans nom',
+          subtitle:(n.ref||'')+(n.note?' · '+n.note:'')+(n.marque?' · '+n.marque:''),
           color:'var(--purple)',
           onclick:"showTab('patron',document.getElementById('nb-patron'));setTimeout(function(){showPatronTab('nuanciers');},100)"
         });
@@ -1208,13 +1208,30 @@ function doGlobalSearch(query){
   // 6. Notes
   try{
     (notes||[]).forEach(function(n){
-      if(match(n.text)||match(n.title)){
+      if(match(n.body)||match(n.title)){
         results.push({
           icon:'📝', type:'Note',
-          title:n.title||(n.text||'').substring(0,40)||'Sans titre',
-          subtitle:(n.text||'').substring(0,80),
+          title:n.title||(n.body||'').substring(0,40)||'Sans titre',
+          subtitle:(n.body||'').substring(0,80),
           color:'#d4a017',
           onclick:"showTab('patron',document.getElementById('nb-patron'));setTimeout(function(){showPatronTab('notes');},100)"
+        });
+      }
+    });
+  }catch(e){}
+  
+  // 7. Factures
+  try{
+    (factures||[]).forEach(function(f){
+      if(match(f.client)||match(f.desc)){
+        var date=f.date?f.date.split('-').reverse().join('/'):'';
+        var montant=f.montant?parseFloat(f.montant).toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF':'';
+        results.push({
+          icon:'💶', type:'Facture'+(f.faite?' ✅':''),
+          title:f.client||'Sans nom',
+          subtitle:(f.desc||'')+(montant?' · '+montant:'')+(date?' · '+date:''),
+          color:f.faite?'var(--green)':'var(--orange)',
+          onclick:"showTab('afaire',document.getElementById('nb-afaire'))"
         });
       }
     });
