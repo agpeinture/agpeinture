@@ -2639,9 +2639,31 @@ function addPhotoTopiece(id){
     var file=e.target.files[0];if(!file)return;
     var reader=new FileReader();
     reader.onload=function(ev){
-      var m=getMetreCurrent();if(!m)return;
-      var p=m.pieces.find(function(x){return x.id===id;});
-      if(p){if(!p.photos)p.photos=[];p.photos.push(ev.target.result);saveMetreFull();renderMetreList();}
+      // Compression automatique via canvas
+      var img=new Image();
+      img.onload=function(){
+        var maxDim=1280; // largeur/hauteur max (suffisant pour visualiser)
+        var w=img.width, h=img.height;
+        if(w>maxDim||h>maxDim){
+          if(w>h){h=Math.round(h*maxDim/w);w=maxDim;}
+          else{w=Math.round(w*maxDim/h);h=maxDim;}
+        }
+        var canvas=document.createElement('canvas');
+        canvas.width=w;canvas.height=h;
+        var ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        var compressed=canvas.toDataURL('image/jpeg',0.75); // qualité 75%
+        var m=getMetreCurrent();if(!m)return;
+        var p=m.pieces.find(function(x){return x.id===id;});
+        if(p){if(!p.photos)p.photos=[];p.photos.push(compressed);saveMetreFull();renderMetreList();}
+      };
+      img.onerror=function(){
+        // Fallback : si la compression échoue, sauve l'original
+        var m=getMetreCurrent();if(!m)return;
+        var p=m.pieces.find(function(x){return x.id===id;});
+        if(p){if(!p.photos)p.photos=[];p.photos.push(ev.target.result);saveMetreFull();renderMetreList();}
+      };
+      img.src=ev.target.result;
     };
     reader.readAsDataURL(file);
   };
