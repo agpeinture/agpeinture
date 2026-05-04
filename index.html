@@ -751,7 +751,7 @@ function checkPwd(){
           <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Urgentes</div>
           <div style="font-size:22px;font-weight:900;color:var(--red)" id="cmd-urgent-count">0</div>
         </div>
-        <div style="background:white;border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);border-top:3px solid var(--green)">
+        <div style="background:white;border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);border-top:3px solid var(--green);display:none">
           <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Total CHF</div>
           <div style="font-size:16px;font-weight:900;color:var(--green)" id="cmd-total-stat">—</div>
         </div>
@@ -786,7 +786,7 @@ function checkPwd(){
 
       <!-- Total + Signatures -->
       <div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px">
-        <div style="background:var(--text);padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+        <div style="background:var(--text);padding:14px 16px;display:none;justify-content:space-between;align-items:center">
           <div style="color:white;font-size:13px;font-weight:800">TOTAL COMMANDE</div>
           <div style="color:#4de87a;font-size:22px;font-weight:900" id="cmd-total">— CHF</div>
         </div>
@@ -1120,6 +1120,21 @@ function doGlobalSearch(query){
           title:a.text||'Sans titre',
           subtitle:(a.note||'')+(a.date?' · '+a.date.split('-').reverse().join('/'):''),
           color:'var(--blue)',
+          onclick:"showTab('afaire',document.getElementById('nb-afaire'))"
+        });
+      }
+    });
+  }catch(e){}
+  
+  // 2. Chantiers (de l'app)
+  try{
+    (chantiers||[]).forEach(function(c){
+      if(match(c.name)||match(c.client)||match(c.adresse)||match(c.notes)||match(c.tel)){
+        results.push({
+          icon:'🔧', type:'Chantier',
+          title:c.name||c.client||'Sans nom',
+          subtitle:(c.adresse||c.client||'')+(c.tel?' · '+c.tel:''),
+          color:'#d4a017',
           onclick:"showTab('afaire',document.getElementById('nb-afaire'))"
         });
       }
@@ -2779,13 +2794,9 @@ function renderCmdLignes(){
       +'</div>'
       +'<button onclick="delCmdLigne('+l.id+')" style="background:none;border:none;color:#ddd;font-size:18px;cursor:pointer;padding:0;margin-top:20px">✕</button>'
       +'</div>'
-      +'<div style="padding:0 14px 10px;display:grid;grid-template-columns:1fr 90px 100px;gap:8px">'
+      +'<div style="padding:0 14px 10px;display:grid;grid-template-columns:1fr;gap:8px">'
       +'<div><div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:3px">Fournisseur</div>'
       +'<input type="text" value="'+(l.fourn||'')+'" placeholder="Sikkens, Brouwers..." style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:12px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveCmdLigne('+l.id+',\'fourn\',this.value)"></div>'
-      +'<div><div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:3px">P.U. CHF</div>'
-      +'<input type="number" step="0.01" value="'+(l.pu||'')+'" placeholder="0.00" style="border:1.5px solid var(--blue);border-radius:8px;padding:8px 6px;font-family:Nunito,sans-serif;font-size:14px;font-weight:800;color:var(--blue);background:var(--blue-bg);outline:none;width:100%;text-align:center" oninput="saveCmdLigne('+l.id+',\'pu\',this.value)"></div>'
-      +'<div><div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:3px">Total CHF</div>'
-      +'<div style="background:var(--green-bg);border-radius:8px;padding:9px 8px;font-size:13px;font-weight:900;color:var(--green);text-align:center;border:1.5px solid var(--green)">'+(tot>0?tot.toLocaleString('fr-CH',{minimumFractionDigits:2}):'—')+'</div></div>'
       +'</div>'
       +'<div style="border-top:1px solid var(--border);padding:8px 14px;display:flex;gap:10px">'
       +'<button onclick="toggleCmdCheck('+l.id+',\'urgent\')" style="flex:1;padding:8px;border-radius:10px;border:2px solid '+(l.urgent?'var(--red)':'var(--border)')+';background:'+(l.urgent?'var(--red)':'white')+';font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;color:'+(l.urgent?'white':'var(--muted)')+'">🔴 URGENT</button>'
