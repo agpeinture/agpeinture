@@ -495,7 +495,7 @@ function checkPwd(){
   </div>
   <div class="motiv"><div style="font-size:30px" id="mico"></div><div style="margin-left:2px"><div class="mt" id="mtxt"></div><div class="ms" id="msub"></div></div></div>
   <div class="dash-grid" id="dash-grid"></div>
-  <div class="sec-divider">⚡ Urgences du jour</div>
+  <div class="sec-divider" id="urgent-divider">🔴 Urgents</div>
   <div class="cards" id="home-urgent"></div>
 </div>
 
@@ -1489,56 +1489,78 @@ const prioMap=Object.fromEntries(PRIOS.map(p=>[p.id,p]));
 
 // RENDER HOME
 function renderHome(){
-  const afU=afaire.filter(a=>a.prio==='urgent'&&!a.done).length;
+  const urgentsAll=afaire.filter(a=>a.prio==='urgent'&&!a.done);
   const dvAF=afaire.filter(a=>a.cat==='devis'&&!a.done).length;
   const fcAF=afaire.filter(a=>a.cat==='facture'&&!a.done).length;
+  // Tri : date la plus ancienne en haut (les items qui traînent depuis le plus longtemps)
+  const urgentsSort=urgentsAll.slice().sort((a,b)=>{
+    const da=a.date||'9999-99-99';
+    const db=b.date||'9999-99-99';
+    return da.localeCompare(db);
+  });
   document.getElementById('dash-grid').innerHTML=`
-    <!-- Boutons d'action rapide -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-      <button onclick="quickAction('rdv')" style="background:white;border:none;border-radius:var(--radius);padding:18px 12px;box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;border-top:4px solid var(--blue);font-family:Nunito,sans-serif">
-        <div style="font-size:30px">📋</div>
-        <div style="font-size:13px;font-weight:900;color:var(--text)">Fiche RDV</div>
-        <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px">Visite client</div>
-      </button>
-      <button onclick="quickAction('metre')" style="background:white;border:none;border-radius:var(--radius);padding:18px 12px;box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;border-top:4px solid var(--blue);font-family:Nunito,sans-serif">
-        <div style="font-size:30px">📐</div>
-        <div style="font-size:13px;font-weight:900;color:var(--text)">Métré</div>
-        <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px">Nouveau</div>
-      </button>
-      <button onclick="quickAction('commande')" style="background:white;border:none;border-radius:var(--radius);padding:18px 12px;box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;border-top:4px solid var(--orange);font-family:Nunito,sans-serif">
-        <div style="font-size:30px">📦</div>
-        <div style="font-size:13px;font-weight:900;color:var(--text)">Commande</div>
-        <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px">Matériel</div>
-      </button>
-      <button onclick="quickAction('tache')" style="background:white;border:none;border-radius:var(--radius);padding:18px 12px;box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;border-top:4px solid var(--red);font-family:Nunito,sans-serif">
-        <div style="font-size:30px">＋</div>
-        <div style="font-size:13px;font-weight:900;color:var(--text)">Tâche</div>
-        <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px">À faire</div>
-      </button>
+    <!-- Bouton + Nouveau (déplie le menu) + Recherche -->
+    <div style="display:flex;gap:10px;margin-bottom:14px">
+      <button onclick="toggleQuickMenu()" id="btn-quick-new" style="flex:1;background:var(--blue);color:white;border:none;border-radius:var(--radius);padding:14px;font-family:Nunito,sans-serif;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 3px 10px rgba(61,184,212,0.3)">＋ Nouveau ▾</button>
+      <button onclick="showTab('search',document.getElementById('nb-search'))" style="background:white;color:var(--text);border:1.5px solid var(--border);border-radius:var(--radius);padding:14px 18px;font-family:Nunito,sans-serif;font-weight:800;font-size:18px;cursor:pointer">🔍</button>
     </div>
-    <!-- Mini stats : Devis · Factures · Urgents (clickables, filtre Ma tête) -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px">
-      <div onclick="goToAfaireWithFilter('devis')" style="background:white;border-radius:var(--radius);padding:12px 6px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-left:3px solid var(--blue)">
-        <div style="font-size:20px;font-weight:900;color:var(--blue)">${dvAF}</div>
-        <div style="font-size:8px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">📋 Devis à faire</div>
+    <!-- Menu d'action rapide (caché par défaut) -->
+    <div id="quick-menu" style="display:none;background:white;border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden">
+      <button onclick="quickAction('rdv');toggleQuickMenu();" style="width:100%;text-align:left;padding:14px;background:transparent;border:none;border-bottom:1px solid var(--border);font-family:Nunito,sans-serif;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:12px;color:var(--text)"><span style="font-size:22px">📋</span><span style="flex:1">Fiche RDV</span><span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.4px">Visite client</span></button>
+      <button onclick="quickAction('metre');toggleQuickMenu();" style="width:100%;text-align:left;padding:14px;background:transparent;border:none;border-bottom:1px solid var(--border);font-family:Nunito,sans-serif;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:12px;color:var(--text)"><span style="font-size:22px">📐</span><span style="flex:1">Métré</span><span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.4px">Chez le client</span></button>
+      <button onclick="quickAction('commande');toggleQuickMenu();" style="width:100%;text-align:left;padding:14px;background:transparent;border:none;border-bottom:1px solid var(--border);font-family:Nunito,sans-serif;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:12px;color:var(--text)"><span style="font-size:22px">📦</span><span style="flex:1">Commande</span><span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.4px">Matériel</span></button>
+      <button onclick="quickAction('tache');toggleQuickMenu();" style="width:100%;text-align:left;padding:14px;background:transparent;border:none;font-family:Nunito,sans-serif;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:12px;color:var(--text)"><span style="font-size:22px">＋</span><span style="flex:1">Tâche</span><span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.4px">Ma tête</span></button>
+    </div>
+    <!-- Stats compactes : Devis · Factures (cliquables) -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px">
+      <div onclick="goToAfaireWithFilter('devis')" style="background:white;border-radius:var(--radius);padding:10px 12px;box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:space-between;border-left:3px solid var(--blue)">
+        <div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px">📋 Devis à faire</div>
+        <div style="font-size:22px;font-weight:900;color:var(--blue)">${dvAF}</div>
       </div>
-      <div onclick="goToAfaireWithFilter('facture')" style="background:white;border-radius:var(--radius);padding:12px 6px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-left:3px solid var(--green)">
-        <div style="font-size:20px;font-weight:900;color:var(--green)">${fcAF}</div>
-        <div style="font-size:8px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">💶 Factures à faire</div>
-      </div>
-      <div onclick="goToAfaireWithFilter('all')" style="background:white;border-radius:var(--radius);padding:12px 6px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-left:3px solid var(--red)">
-        <div style="font-size:20px;font-weight:900;color:var(--red)">${afU}</div>
-        <div style="font-size:8px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">🔴 Urgents</div>
+      <div onclick="goToAfaireWithFilter('facture')" style="background:white;border-radius:var(--radius);padding:10px 12px;box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:space-between;border-left:3px solid var(--green)">
+        <div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px">💶 Factures</div>
+        <div style="font-size:22px;font-weight:900;color:var(--green)">${fcAF}</div>
       </div>
     </div>
   `;
-  const urgents=afaire.filter(a=>a.prio==='urgent'&&!a.done).slice(0,4);
+  // Mise à jour du titre de la section urgents avec le compteur
+  const divider=document.getElementById('urgent-divider');
+  if(divider) divider.innerHTML=urgentsAll.length>0?`🔴 Urgents (${urgentsAll.length})`:'🔴 Urgents';
+  // Affichage compact : 3 max + bouton "voir plus"
+  const visibleCount=3;
+  const urgents=urgentsSort.slice(0,visibleCount);
+  const hidden=urgentsSort.length-urgents.length;
   const el=document.getElementById('home-urgent');
-  if(!urgents.length){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px;font-weight:700;background:white;border-radius:var(--radius)">✅ Rien d\'urgent — tu es à jour !</div>';return;}
-  el.innerHTML=urgents.map(a=>afCard(a)).join('');
+  if(!urgentsSort.length){
+    el.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px;font-weight:700;background:white;border-radius:var(--radius)">✅ Rien d\'urgent — tu es à jour !</div>';
+  } else {
+    el.innerHTML=urgents.map(a=>compactUrgentCard(a)).join('')
+      +(hidden>0?`<button onclick="goToAfaireWithFilter('all')" style="width:100%;background:white;border:1.5px dashed var(--blue);color:var(--blue);border-radius:var(--radius);padding:12px;font-family:Nunito,sans-serif;font-weight:800;font-size:13px;cursor:pointer;margin-top:6px">voir les ${hidden} autres urgent${hidden>1?'s':''} →</button>`:'');
+  }
   // badge
   const nb=document.getElementById('nb-afaire');
-  nb.innerHTML=`<span class="ni">🧠</span>Ma tête${afU>0?'<span class="nbadge">'+afU+'</span>':''}`;
+  nb.innerHTML=`<span class="ni">🧠</span>Ma tête${urgentsAll.length>0?'<span class="nbadge">'+urgentsAll.length+'</span>':''}`;
+}
+
+// Carte compacte pour l'accueil : 1 ligne titre + 1 ligne tags discret
+function compactUrgentCard(a){
+  const cat=catMap[a.cat]||{label:'📌'};
+  return `<div style="background:white;border-radius:var(--radius);padding:11px 12px;box-shadow:var(--shadow);margin-bottom:6px;border-left:3px solid #ef4444;cursor:pointer;display:flex;align-items:center;gap:10px" onclick="goToAfaireWithFilter('all')">
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:800;font-size:14px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.title}</div>
+      <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:3px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span>${cat.label}</span>${a.date?'<span>📅 '+fmtDate(a.date)+'</span>':''}</div>
+    </div>
+    <div style="font-size:20px;color:var(--muted);flex-shrink:0">›</div>
+  </div>`;
+}
+
+function toggleQuickMenu(){
+  var m=document.getElementById('quick-menu');
+  var b=document.getElementById('btn-quick-new');
+  if(!m)return;
+  var open=m.style.display==='none';
+  m.style.display=open?'block':'none';
+  if(b) b.innerHTML=open?'＋ Nouveau ▴':'＋ Nouveau ▾';
 }
 
 // Va sur Ma tête + applique un filtre (depuis l'accueil)
