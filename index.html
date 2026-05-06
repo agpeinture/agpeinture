@@ -975,6 +975,7 @@ let chantiers=JSON.parse(localStorage.getItem('ag4_ch')||'[]');
 let nuanciers=JSON.parse(localStorage.getItem('ag4_nu')||'[]');
 let agenda=JSON.parse(localStorage.getItem('ag4_ag')||'[]');
 let notes=JSON.parse(localStorage.getItem('ag4_no')||'[]');
+let editingNoteId=null; // ID de la note en cours de modification (null = création)
 let patrols=JSON.parse(localStorage.getItem('ag4_pa')||'[]');
 let planningData=JSON.parse(localStorage.getItem('ag4_plan')||'{}');
 
@@ -1285,7 +1286,15 @@ function openModal(t){
   if(t==='devis'){buildChips('d-status-chips',DSTATUTS,'dStatus','afaire');}
   if(t==='chantiers'){buildChips('c-status-chips',CSTATUTS,'cStatus','encours');document.getElementById('c-prog').value=0;document.getElementById('cpv').textContent='0%';}
   if(t==='agenda'){buildChips('a-type-chips',ATYPES,'aType','visite');document.getElementById('a-date').value=todayStr;}
-  if(t==='notes'){buildChips('n-color-chips',NCOLORS,'nColor','blue');}
+  if(t==='notes'){
+    // Mode création : on s'assure que editingNoteId est null et que les champs sont vides
+    editingNoteId=null;
+    document.getElementById('n-title').value='';
+    document.getElementById('n-body').value='';
+    var h3n=document.querySelector('#ov-notes h3');
+    if(h3n) h3n.textContent='Nouvelle note';
+    buildChips('n-color-chips',NCOLORS,'nColor','blue');
+  }
   if(t==='nuancier'){
     document.getElementById('nu-date').value=todayStr;
     sel.nuColor='#FFFFFF';
@@ -1385,7 +1394,19 @@ function saveNote(){
   const title=document.getElementById('n-title').value.trim();
   const body=document.getElementById('n-body').value.trim();
   if(!title&&!body){alert('Écris quelque chose !');return;}
-  notes.unshift({id:Date.now(),title,body,color:sel.nColor});
+  if(editingNoteId !== null){
+    // ÉDITION : modifier la note existante en place
+    var n = notes.find(function(x){return x.id===editingNoteId;});
+    if(n){
+      n.title = title;
+      n.body = body;
+      n.color = sel.nColor;
+    }
+    editingNoteId = null;
+  } else {
+    // CRÉATION : nouvelle note
+    notes.unshift({id:Date.now(),title,body,color:sel.nColor});
+  }
   save();renderNotes();closeModal('notes');
   ['n-title','n-body'].forEach(id=>document.getElementById(id).value='');
 }
@@ -1870,11 +1891,28 @@ function renderNotes(){
   if(!notes.length){el.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">📝</div><p>Aucune note</p></div>';return;}
   const cc={blue:'',yellow:'cy',green:'cg2',purple:'cp2'};
   el.innerHTML=notes.map(n=>`
-    <div class="ncard ${cc[n.color]||''}">
-      <button class="ndel" onclick="delNo(${n.id})">✕</button>
+    <div class="ncard ${cc[n.color]||''}" onclick="openEditNote(${n.id})" style="cursor:pointer">
+      <button class="ndel" onclick="event.stopPropagation();delNo(${n.id})">✕</button>
       ${n.title?`<div class="ntitle">${n.title}</div>`:''}
       <div class="nbody">${n.body||''}</div>
     </div>`).join('');
+}
+
+// Ouvre le modal Notes en mode ÉDITION pour une note existante
+function openEditNote(id){
+  var n = notes.find(function(x){return x.id===id;});
+  if(!n) return;
+  editingNoteId = id;
+  // Pré-remplir les champs
+  document.getElementById('n-title').value = n.title || '';
+  document.getElementById('n-body').value = n.body || '';
+  // Construire les chips couleur avec la couleur actuelle pré-sélectionnée
+  buildChips('n-color-chips', NCOLORS, 'nColor', n.color || 'blue');
+  // Changer le titre du modal
+  var h3 = document.querySelector('#ov-notes h3');
+  if(h3) h3.textContent = 'Modifier la note';
+  // Afficher le modal
+  document.getElementById('ov-notes').classList.add('show');
 }
 
 
