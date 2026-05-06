@@ -975,7 +975,7 @@ let chantiers=JSON.parse(localStorage.getItem('ag4_ch')||'[]');
 let nuanciers=JSON.parse(localStorage.getItem('ag4_nu')||'[]');
 let agenda=JSON.parse(localStorage.getItem('ag4_ag')||'[]');
 let notes=JSON.parse(localStorage.getItem('ag4_no')||'[]');
-let editingNoteId=null; // ID de la note en cours de modification (null = création)
+let editingNoteId=null,editingAfaireId=null,editingChantierId=null,editingNuancierId=null; // ID de la note en cours de modification (null = création)
 let patrols=JSON.parse(localStorage.getItem('ag4_pa')||'[]');
 let planningData=JSON.parse(localStorage.getItem('ag4_plan')||'{}');
 
@@ -1282,9 +1282,22 @@ function doGlobalSearch(query){
 
 // MODAL
 function openModal(t){
-  if(t==='afaire'){buildChips('af-cat-chips',CATS,'afCat','tel');buildChips('af-prio-chips',PRIOS,'afPrio','urgent');document.getElementById('af-date').value=todayStr;document.getElementById('af-tel-fields').style.display='block';}
+  if(t==='afaire'){
+    editingAfaireId=null;
+    ['af-title','af-note','af-tel','af-email','af-adresse'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+    buildChips('af-cat-chips',CATS,'afCat','tel');
+    buildChips('af-prio-chips',PRIOS,'afPrio','urgent');
+    document.getElementById('af-date').value=todayStr;
+    document.getElementById('af-tel-fields').style.display='block';
+  }
   if(t==='devis'){buildChips('d-status-chips',DSTATUTS,'dStatus','afaire');}
-  if(t==='chantiers'){buildChips('c-status-chips',CSTATUTS,'cStatus','encours');document.getElementById('c-prog').value=0;document.getElementById('cpv').textContent='0%';}
+  if(t==='chantiers'){
+    editingChantierId=null;
+    ['c-title','c-client','c-adresse','c-notes','c-date'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+    buildChips('c-status-chips',CSTATUTS,'cStatus','encours');
+    document.getElementById('c-prog').value=0;
+    document.getElementById('cpv').textContent='0%';
+  }
   if(t==='agenda'){buildChips('a-type-chips',ATYPES,'aType','visite');document.getElementById('a-date').value=todayStr;}
   if(t==='notes'){
     // Mode création : on s'assure que editingNoteId est null et que les champs sont vides
@@ -1296,6 +1309,8 @@ function openModal(t){
     buildChips('n-color-chips',NCOLORS,'nColor','blue');
   }
   if(t==='nuancier'){
+    editingNuancierId=null;
+    ['nu-ref','nu-client','nu-adresse','nu-marque','nu-note'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
     document.getElementById('nu-date').value=todayStr;
     sel.nuColor='#FFFFFF';
     buildColorPicker();
@@ -1348,15 +1363,57 @@ function saveAfaire(){
   const title=document.getElementById('af-title').value.trim();
   if(!title){alert('Écris ce que tu dois faire !');return;}
   var tel=document.getElementById('af-tel'),email=document.getElementById('af-email'),adr=document.getElementById('af-adresse');
-  var task={id:Date.now()*1000+Math.floor(Math.random()*1000),title,note:document.getElementById('af-note').value.trim(),date:document.getElementById('af-date').value,cat:sel.afCat,prio:sel.afPrio,done:false};
-  if(sel.afCat==='tel'){
-    task.tel=tel?tel.value.trim():'';
-    task.email=email?email.value.trim():'';
-    task.adresse=adr?adr.value.trim():'';
+  if(editingAfaireId !== null){
+    // ÉDITION
+    var t = afaire.find(function(x){return x.id===editingAfaireId;});
+    if(t){
+      t.title = title;
+      t.note = document.getElementById('af-note').value.trim();
+      t.date = document.getElementById('af-date').value;
+      t.cat = sel.afCat;
+      t.prio = sel.afPrio;
+      if(sel.afCat==='tel'){
+        t.tel = tel?tel.value.trim():'';
+        t.email = email?email.value.trim():'';
+        t.adresse = adr?adr.value.trim():'';
+      } else {
+        delete t.tel; delete t.email; delete t.adresse;
+      }
+    }
+    editingAfaireId = null;
+  } else {
+    // CRÉATION
+    var task={id:Date.now()*1000+Math.floor(Math.random()*1000),title,note:document.getElementById('af-note').value.trim(),date:document.getElementById('af-date').value,cat:sel.afCat,prio:sel.afPrio,done:false};
+    if(sel.afCat==='tel'){
+      task.tel=tel?tel.value.trim():'';
+      task.email=email?email.value.trim():'';
+      task.adresse=adr?adr.value.trim():'';
+    }
+    afaire.unshift(task);
   }
-  afaire.unshift(task);
   save();renderAfaire();renderHome();closeModal('afaire');
   ['af-title','af-note','af-tel','af-email','af-adresse'].forEach(id=>{var e=document.getElementById(id);if(e)e.value='';});
+}
+
+function openEditAfaire(id){
+  var t = afaire.find(function(x){return x.id===id;});
+  if(!t) return;
+  editingAfaireId = id;
+  // Remplir le modal
+  document.getElementById('af-title').value = t.title || '';
+  document.getElementById('af-note').value = t.note || '';
+  document.getElementById('af-date').value = t.date || todayStr;
+  // Catégorie et priorité
+  buildChips('af-cat-chips',CATS,'afCat',t.cat||'tel');
+  buildChips('af-prio-chips',PRIOS,'afPrio',t.prio||'normal');
+  // Champs téléphone si applicable
+  document.getElementById('af-tel-fields').style.display = (t.cat==='tel')?'block':'block';
+  var telEl=document.getElementById('af-tel'),emailEl=document.getElementById('af-email'),adrEl=document.getElementById('af-adresse');
+  if(telEl) telEl.value = t.tel || '';
+  if(emailEl) emailEl.value = t.email || '';
+  if(adrEl) adrEl.value = t.adresse || '';
+  // Afficher
+  document.getElementById('ov-afaire').classList.add('open');
 }
 function saveDevis(){
   const client=document.getElementById('d-client').value.trim();
@@ -1370,17 +1427,76 @@ function saveDevis(){
 function saveChantier(){
   const title=document.getElementById('c-title').value.trim();
   if(!title){alert('Donne un nom au chantier !');return;}
-  chantiers.unshift({id:Date.now(),title,client:document.getElementById('c-client').value.trim(),adresse:document.getElementById('c-adresse').value.trim(),date:document.getElementById('c-date').value,prog:parseInt(document.getElementById('c-prog').value),status:sel.cStatus,notes:document.getElementById('c-notes').value.trim()});
+  if(editingChantierId !== null){
+    var c = chantiers.find(function(x){return x.id===editingChantierId;});
+    if(c){
+      c.title = title;
+      c.client = document.getElementById('c-client').value.trim();
+      c.adresse = document.getElementById('c-adresse').value.trim();
+      c.date = document.getElementById('c-date').value;
+      c.prog = parseInt(document.getElementById('c-prog').value);
+      c.status = sel.cStatus;
+      c.notes = document.getElementById('c-notes').value.trim();
+    }
+    editingChantierId = null;
+  } else {
+    chantiers.unshift({id:Date.now(),title,client:document.getElementById('c-client').value.trim(),adresse:document.getElementById('c-adresse').value.trim(),date:document.getElementById('c-date').value,prog:parseInt(document.getElementById('c-prog').value),status:sel.cStatus,notes:document.getElementById('c-notes').value.trim()});
+  }
   save();renderChantiers();renderHome();closeModal('chantiers');
   ['c-title','c-client','c-adresse','c-notes'].forEach(id=>document.getElementById(id).value='');
+}
+
+function openEditChantier(id){
+  var c = chantiers.find(function(x){return x.id===id;});
+  if(!c) return;
+  editingChantierId = id;
+  document.getElementById('c-title').value = c.title || '';
+  document.getElementById('c-client').value = c.client || '';
+  document.getElementById('c-adresse').value = c.adresse || '';
+  document.getElementById('c-date').value = c.date || '';
+  document.getElementById('c-prog').value = c.prog || 0;
+  document.getElementById('c-notes').value = c.notes || '';
+  var pv = document.getElementById('cpv');
+  if(pv) pv.textContent = (c.prog||0)+'%';
+  buildChips('c-status-chips',CSTATUTS,'cStatus',c.status||'encours');
+  document.getElementById('ov-chantiers').classList.add('open');
 }
 function saveNuancier(){
   const ref=document.getElementById('nu-ref').value.trim();
   const client=document.getElementById('nu-client').value.trim();
   if(!ref&&!client){alert('Remplis au moins la référence ou le client !');return;}
-  nuanciers.unshift({id:Date.now(),ref,client,adresse:document.getElementById('nu-adresse').value.trim(),date:document.getElementById('nu-date').value,marque:document.getElementById('nu-marque').value.trim(),note:document.getElementById('nu-note').value.trim(),color:sel.nuColor});
+  if(editingNuancierId !== null){
+    var n = nuanciers.find(function(x){return x.id===editingNuancierId;});
+    if(n){
+      n.ref = ref;
+      n.client = client;
+      n.adresse = document.getElementById('nu-adresse').value.trim();
+      n.date = document.getElementById('nu-date').value;
+      n.marque = document.getElementById('nu-marque').value.trim();
+      n.note = document.getElementById('nu-note').value.trim();
+      n.color = sel.nuColor;
+    }
+    editingNuancierId = null;
+  } else {
+    nuanciers.unshift({id:Date.now(),ref,client,adresse:document.getElementById('nu-adresse').value.trim(),date:document.getElementById('nu-date').value,marque:document.getElementById('nu-marque').value.trim(),note:document.getElementById('nu-note').value.trim(),color:sel.nuColor});
+  }
   save();renderNuanciers();closeModal('nuancier');
   ['nu-ref','nu-client','nu-adresse','nu-marque','nu-note'].forEach(id=>document.getElementById(id).value='');
+}
+
+function openEditNuancier(id){
+  var n = nuanciers.find(function(x){return x.id===id;});
+  if(!n) return;
+  editingNuancierId = id;
+  document.getElementById('nu-ref').value = n.ref || '';
+  document.getElementById('nu-client').value = n.client || '';
+  document.getElementById('nu-adresse').value = n.adresse || '';
+  document.getElementById('nu-date').value = n.date || todayStr;
+  document.getElementById('nu-marque').value = n.marque || '';
+  document.getElementById('nu-note').value = n.note || '';
+  sel.nuColor = n.color || '#FFFFFF';
+  buildColorPicker();
+  document.getElementById('ov-nuancier').classList.add('open');
 }
 function saveAgenda(){
   const title=document.getElementById('a-title').value.trim();
@@ -1654,7 +1770,8 @@ function afCard(a){
         ${a.date?`<span class="tag tgr">📅 ${fmtDate(a.date)}</span>`:''}
       </div>
     </div>
-    <button class="cdel" onclick="delAf(${a.id})">✕</button>
+    <button class="cdel" style="right:36px;background:var(--blue)" onclick="event.stopPropagation();openEditAfaire(${a.id})" title="Modifier">✏️</button>
+    <button class="cdel" onclick="event.stopPropagation();delAf(${a.id})">✕</button>
   </div>`;
 }
 
@@ -1747,6 +1864,7 @@ function renderChantiers(){
     <div class="chant-card ${bcl[c.status]||''}">
       <div class="ch-header">
         <div><div class="ch-title">${c.title}</div>${c.client?`<div class="ch-client">👤 ${c.client}${c.adresse?' · 📍 '+c.adresse:''}</div>`:''}</div>
+        <button class="ch-del" style="right:36px;color:var(--blue)" onclick="openEditChantier(${c.id})" title="Modifier">✏️</button>
         <button class="ch-del" onclick="delCh(${c.id})">✕</button>
       </div>
       <div class="ch-tags">
@@ -1850,6 +1968,7 @@ function renderNuanciers(){
         </div>
         ${n.note?`<div class="nuan-detail" style="margin-top:5px">💬 ${n.note}</div>`:''}
       </div>
+      <button class="nuan-del" style="right:36px;color:var(--blue)" onclick="openEditNuancier(${n.id})" title="Modifier">✏️</button>
       <button class="nuan-del" onclick="delNu(${n.id})">✕</button>
     </div>`).join('');
 }
