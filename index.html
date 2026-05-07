@@ -3802,7 +3802,16 @@ function renderMetreList(){
   if(metreLignesFaites.size>0){
     resetBanner='<div style="background:#d4f7dd;border:1.5px solid var(--green);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:800;color:#0f7a3a">✓ '+metreLignesFaites.size+' ligne'+(metreLignesFaites.size>1?'s':'')+' reprise'+(metreLignesFaites.size>1?'s':'')+' dans le devis</span><button onclick="resetLignesFaites()" style="background:white;border:1.5px solid var(--green);color:var(--green);border-radius:8px;padding:6px 12px;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer">↻ Tout décocher</button></div>';
   }
-  el.innerHTML=resetBanner+m.pieces.map(function(p){
+  // Couleurs rotatives pour bien différencier les pièces visuellement
+  var PIECE_COLORS = [
+    {main:'var(--blue)',   bg:'var(--blue-bg)'},
+    {main:'var(--teal)',   bg:'var(--teal-bg)'},
+    {main:'var(--purple)', bg:'var(--purple-bg)'},
+    {main:'var(--orange)', bg:'var(--orange-bg)'},
+    {main:'var(--green)',  bg:'var(--green-bg)'}
+  ];
+  el.innerHTML=resetBanner+m.pieces.map(function(p, idx){
+    var col = PIECE_COLORS[idx % PIECE_COLORS.length];
     var ptm2=pieceTotalM2(p);
     var lignesHTML=(p.lignes||[]).map(function(l){
       var unite=l.unite||'m²';
@@ -3822,13 +3831,17 @@ function renderMetreList(){
     var photos=(p.photos||[]).map(function(src,i){
       return '<div style="position:relative;display:inline-block"><img src="'+src+'" style="width:75px;height:75px;object-fit:cover;border-radius:10px;border:2px solid var(--border)"><button onclick="delPhoto('+p.id+','+i+')" style="position:absolute;top:-6px;right:-6px;background:var(--red);color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;line-height:1">✕</button></div>';
     }).join('');
-    return '<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:12px;border-left:4px solid var(--blue)">'
-      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
-      +'<input value="'+(p.nom||'')+'" placeholder="Nom de la pièce..." style="font-size:15px;font-weight:900;border:none;border-bottom:2px solid var(--blue);padding:4px 0;font-family:Nunito,sans-serif;color:var(--text);background:transparent;outline:none;flex:1" oninput="savePieceNom('+p.id+',this.value)">'
-      +'<div style="display:flex;flex-direction:column;align-items:flex-end;margin-left:10px;flex-shrink:0">'
-      +'<span style="font-size:13px;font-weight:900;color:var(--blue)">'+(ptm2>0?ptm2.toFixed(2)+' m²':'')+'</span>'
+    return '<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:18px;border-left:6px solid '+col.main+';overflow:hidden">'
+      +'<div style="background:'+col.main+';color:white;padding:8px 14px;display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-size:12px;font-weight:900;letter-spacing:1.2px">📐 PIÈCE '+(idx+1)+(p.nom?' · '+(p.nom.length>22?p.nom.substring(0,22)+'…':p.nom).toUpperCase():'')+'</span>'
+        +'<button onclick="delMetrePiece('+p.id+')" style="background:rgba(255,255,255,0.22);border:none;color:white;font-size:13px;font-weight:800;cursor:pointer;border-radius:6px;padding:3px 10px">✕</button>'
       +'</div>'
-      +'<button onclick="delMetrePiece('+p.id+')" style="background:none;border:none;color:#ccc;font-size:18px;cursor:pointer;margin-left:8px">✕</button>'
+      +'<div style="padding:14px 16px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">'
+      +'<input value="'+(p.nom||'')+'" placeholder="Nom de la pièce..." style="font-size:15px;font-weight:900;border:none;border-bottom:2px solid '+col.main+';padding:4px 0;font-family:Nunito,sans-serif;color:var(--text);background:transparent;outline:none;flex:1" oninput="savePieceNom('+p.id+',this.value)">'
+      +'<div style="display:flex;flex-direction:column;align-items:flex-end;margin-left:10px;flex-shrink:0">'
+      +'<span style="font-size:13px;font-weight:900;color:'+col.main+'">'+(ptm2>0?ptm2.toFixed(2)+' m²':'')+'</span>'
+      +'</div>'
       +'</div>'
       +'<div style="display:grid;grid-template-columns:32px 1fr 70px 60px 28px;gap:5px;margin-bottom:6px">'
       +'<div style="font-size:9px;font-weight:800;color:var(--green);text-transform:uppercase;text-align:center">Fait</div>'
@@ -3837,10 +3850,10 @@ function renderMetreList(){
       +'<div style="font-size:9px;font-weight:800;color:var(--blue);text-transform:uppercase;text-align:center">Unité</div>'
       +'<div></div></div>'
       +lignesHTML
-      +'<button onclick="addLigne('+p.id+')" style="width:100%;padding:8px;border:1.5px dashed var(--blue);border-radius:8px;background:var(--blue-bg);color:var(--blue);font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;margin-top:4px;margin-bottom:12px">＋ Ajouter une ligne</button>'
+      +'<button onclick="addLigne('+p.id+')" style="width:100%;padding:8px;border:1.5px dashed '+col.main+';border-radius:8px;background:'+col.bg+';color:'+col.main+';font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;margin-top:4px;margin-bottom:12px">＋ Ajouter une ligne</button>'
       +'<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+photos
-      +'<button onclick="addPhotoTopiece('+p.id+')" style="width:75px;height:75px;border-radius:10px;border:2px dashed var(--blue);background:var(--blue-bg);color:var(--blue);font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center">📷</button>'
-      +'</div></div>';
+      +'<button onclick="addPhotoTopiece('+p.id+')" style="width:75px;height:75px;border-radius:10px;border:2px dashed '+col.main+';background:'+col.bg+';color:'+col.main+';font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center">📷</button>'
+      +'</div></div></div>';
   }).join('') + '<button onclick="addMetrePiece()" style="width:100%;padding:14px;border:2px dashed var(--blue);border-radius:12px;background:var(--blue-bg);color:var(--blue);font-family:Nunito,sans-serif;font-size:15px;font-weight:900;cursor:pointer;margin-top:8px;margin-bottom:16px">＋ Ajouter une pièce</button>';
 }
 
