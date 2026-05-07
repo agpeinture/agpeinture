@@ -300,6 +300,31 @@ header img{height:42px}
 .liste-print-table tr:nth-child(even) td { background:#f8faff; }
 
 
+
+/* === MÉTÉO REPLIABLE === */
+.wp-widget{cursor:pointer;transition:padding 0.2s}
+.wp-widget.collapsed{padding:10px 12px}
+.wp-compact{display:none;align-items:center;gap:10px;flex-wrap:wrap}
+.wp-widget.collapsed .wp-compact{display:flex}
+.wp-widget.collapsed .wp-head,
+.wp-widget.collapsed .wp-now,
+.wp-widget.collapsed .wp-tip,
+.wp-widget.collapsed .wp-section-title,
+.wp-widget.collapsed .wp-hours,
+.wp-widget.collapsed .wp-days,
+.wp-widget.collapsed > div[style*="lever"]{display:none}
+.wp-c-icon{font-size:24px;line-height:1}
+.wp-c-temp{font-size:18px;font-weight:900;color:var(--text)}
+.wp-c-cond{font-size:12px;font-weight:700;color:var(--muted)}
+.wp-c-loc{margin-left:auto;font-size:11px;font-weight:700;color:var(--muted)}
+.wp-c-tip{flex-basis:100%;font-size:11px;font-weight:700;color:var(--text);padding-top:4px;border-top:1px solid var(--border);margin-top:2px;display:flex;align-items:center;gap:4px}
+.wp-c-tip.bad{color:#8a1f15}
+.wp-c-tip.warn{color:#9a5a00}
+.wp-c-tip.good{color:#1a6e3f}
+.wp-toggle{margin-left:6px;font-size:14px;color:var(--muted);transition:transform 0.2s}
+.wp-widget.collapsed .wp-toggle{transform:rotate(0deg)}
+.wp-widget:not(.collapsed) .wp-toggle{transform:rotate(180deg)}
+
 /* === MÉTÉO PEINTRE — détaillée === */
 .wp-widget{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:14px;box-shadow:var(--shadow);border:1.5px solid var(--border)}
 .wp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px}
@@ -559,7 +584,19 @@ function checkPwd(){
     <button onclick="if(window.fbSave){window.fbSave();}else{alert('Firebase non disponible');}" style="background:var(--green);color:white;border:none;border-radius:20px;padding:8px 16px;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(39,174,96,0.3)">☁️⬆️ Sauvegarder</button>
   </div>
   <div class="motiv"><div style="font-size:30px" id="mico"></div><div style="margin-left:2px"><div class="mt" id="mtxt"></div><div class="ms" id="msub"></div></div></div>
-      <div class="wp-widget wp-loading" id="weather">
+      <div class="wp-widget wp-loading collapsed" id="weather" onclick="toggleWeather(event)">
+    <!-- VUE COMPACTE -->
+    <div class="wp-compact">
+      <div class="wp-c-icon" id="wp-c-icon">⏳</div>
+      <div>
+        <div class="wp-c-temp" id="wp-c-temp">—°</div>
+        <div class="wp-c-cond" id="wp-c-cond">Chargement…</div>
+      </div>
+      <div class="wp-c-loc" id="wp-c-loc">📍 …</div>
+      <div class="wp-toggle">▼</div>
+      <div class="wp-c-tip" id="wp-c-tip"><span id="wp-c-tip-ico">💡</span><span id="wp-c-tip-text">…</span></div>
+    </div>
+    <!-- VUE DÉPLIÉE -->
     <div class="wp-head">
       <div class="wp-title">☁️ Météo · Spécial peintre</div>
       <div class="wp-loc" id="wp-loc">📍 Localisation…</div>
@@ -1073,15 +1110,85 @@ const todayStr=now.toISOString().split('T')[0];
 document.getElementById('hdate').textContent=DAYS[now.getDay()]+' '+now.getDate()+' '+MONTHS[now.getMonth()]+' '+now.getFullYear();
 
 const motivs=[
+  // Motivation pure (10)
   {i:'☀️',t:'Bonne journée patron !',s:'Tout ce qui est dans ta tête est ici. Respire.'},
   {i:'💪',t:'En avant AG Peinture !',s:'Chaque tâche cochée c\'est une victoire.'},
-  {i:'🎨',t:'La peinture c\'est ton métier !',s:'Laisse l\'appli gérer le reste.'},
   {i:'🚀',t:'Tu gères comme un chef !',s:'Vérifie tes urgences du jour.'},
+  {i:'⭐',t:'Aujourd\'hui sera une bonne journée',s:'Tu as tout en main pour réussir.'},
+  {i:'🔥',t:'Allez, on attaque !',s:'Une étape à la fois, et ça avance.'},
+  {i:'💯',t:'Donne tout aujourd\'hui',s:'Ce soir tu seras fier de toi.'},
+  {i:'🌟',t:'Le talent + le travail = succès',s:'Tu coches les deux cases.'},
+  {i:'⚡',t:'Énergie au max',s:'Un café, un coup d\'œil aux urgents, et c\'est parti.'},
+  {i:'🎯',t:'Reste focus sur l\'essentiel',s:'Le reste peut attendre.'},
+  {i:'✨',t:'Belle journée à toi',s:'Profite de chaque chantier.'},
+
+  // Spécial peintre / artisan (15)
+  {i:'🎨',t:'La peinture c\'est ton métier !',s:'Laisse l\'appli gérer le reste.'},
+  {i:'🖌️',t:'Un coup de pinceau à la fois',s:'C\'est comme ça qu\'on bâtit une réputation.'},
+  {i:'🏠',t:'Tu transformes des maisons',s:'Et tu rends des familles heureuses.'},
+  {i:'🪜',t:'Au boulot, sur l\'échafaudage !',s:'Sécurité d\'abord, beauté ensuite.'},
+  {i:'🎨',t:'Chaque chantier est unique',s:'Et tu y mets ta touche.'},
+  {i:'👷',t:'Artisan jusqu\'au bout des ongles',s:'C\'est ce qui fait la différence.'},
+  {i:'🧰',t:'Outils prêts, équipe prête',s:'Plus qu\'à peindre.'},
+  {i:'🖼️',t:'Le rendu final, ta signature',s:'On reconnaît ton travail à 10 mètres.'},
+  {i:'🎨',t:'La couleur, c\'est la vie',s:'Et toi tu en mets partout.'},
+  {i:'💡',t:'Conseille, propose, écoute',s:'Le client veut ton expertise.'},
+  {i:'🏗️',t:'Du devis à la dernière couche',s:'Tu maîtrises de A à Z.'},
+  {i:'📐',t:'Mesurer deux fois, peindre une fois',s:'Le secret du bon artisan.'},
+  {i:'🧹',t:'Un chantier propre = un client content',s:'Petit détail, gros effet.'},
+  {i:'🎨',t:'Peintre, pas magicien… mais presque',s:'Avant/après, c\'est toujours bluffant.'},
+  {i:'⚒️',t:'Le travail bien fait paie toujours',s:'Sur le long terme, c\'est gagnant.'},
+
+  // Organisation / gestion (12)
   {i:'💼',t:'Patron organisé = patron serein',s:'Ta tête est libre pour travailler.'},
-  {i:'⭐',t:'Belle semaine en vue !',s:'Prépare ton matériel pour lundi.'},
+  {i:'📋',t:'Une liste claire, l\'esprit léger',s:'Coche au fur et à mesure.'},
+  {i:'📊',t:'Tu as ta vision d\'ensemble',s:'Devis, factures, urgents — tout est là.'},
+  {i:'🗂️',t:'Tout est rangé dans l\'appli',s:'Ta vraie tête est libre pour le métier.'},
+  {i:'📝',t:'Un mot vite noté = un souci en moins',s:'Utilise la note rapide.'},
+  {i:'⏰',t:'Le temps c\'est ton outil n°1',s:'Planifie, priorise, exécute.'},
+  {i:'🔔',t:'Pense à relancer les devis en attente',s:'Un appel = un chantier de plus.'},
+  {i:'💶',t:'Facture à temps, paye à temps',s:'Le cash flow, c\'est la santé de la boîte.'},
+  {i:'📞',t:'Un appel par jour aux clients',s:'C\'est ce qui crée la fidélité.'},
+  {i:'🗓️',t:'Planifie ta semaine ce matin',s:'Le dimanche soir te dira merci.'},
+  {i:'☑️',t:'Mieux vaut fait que parfait',s:'Coche, avance, recommence.'},
+  {i:'🎯',t:'Une priorité par jour suffit',s:'Le reste, c\'est du bonus.'},
+
+  // Métier / fierté (10)
   {i:'🏆',t:'AG Peinture au top !',s:'Un artisan de confiance, c\'est toi.'},
+  {i:'👑',t:'Tu es le patron, et un bon !',s:'Ne l\'oublie jamais.'},
+  {i:'🥇',t:'La qualité, c\'est ta marque',s:'Et ça se voit.'},
+  {i:'🤝',t:'Bouche-à-oreille, ton meilleur ami',s:'Chaque client satisfait ramène 2 nouveaux.'},
+  {i:'💎',t:'Travail soigné = client fidèle',s:'Investissement long terme.'},
+  {i:'🏅',t:'Des années d\'expérience',s:'Ça ne s\'achète pas, ça se construit.'},
+  {i:'🌟',t:'Ton travail parle pour toi',s:'Pas besoin de t\'auto-promouvoir.'},
+  {i:'🤩',t:'Le client va adorer',s:'Tu as encore frappé fort.'},
+  {i:'🏠',t:'Suisse romande, ton terrain',s:'On te connaît, on te recommande.'},
+  {i:'⭐',t:'5 étoiles, encore et toujours',s:'C\'est ta routine.'},
+
+  // Semaine / moment (8)
+  {i:'☕',t:'Lundi matin, on attaque fort',s:'La semaine se gagne ce matin.'},
+  {i:'🔋',t:'Mardi, on garde l\'élan',s:'Reste sur ta lancée.'},
+  {i:'🎯',t:'Mercredi, milieu de semaine',s:'Demi-tour ou plein gaz ? Plein gaz !'},
+  {i:'⚡',t:'Jeudi, presque le sprint final',s:'Encore deux jours et c\'est le week-end.'},
+  {i:'🏁',t:'Vendredi, on finit en beauté',s:'Boucle les chantiers, le week-end approche.'},
+  {i:'🛠️',t:'Samedi, on peut bosser tranquille',s:'Pas de circulation, pas de stress.'},
+  {i:'🌿',t:'Dimanche, repos mérité',s:'Tu l\'as bien gagné, profite.'},
+  {i:'🌅',t:'Belle semaine en vue !',s:'Prépare ton matériel et go.'},
+
+  // Vie / équilibre (8)
+  {i:'❤️',t:'Pense aussi à toi',s:'Une pause café, c\'est sacré.'},
+  {i:'👨‍👩‍👧',t:'La famille avant tout',s:'Le boulot peut attendre 5 minutes.'},
+  {i:'🧘',t:'Respire un coup',s:'Tu fais déjà énormément.'},
+  {i:'😊',t:'Le sourire, ton meilleur outil',s:'Avec les clients comme avec l\'équipe.'},
+  {i:'🍕',t:'Pause de midi sacrée',s:'On bosse mieux le ventre plein.'},
+  {i:'💤',t:'Bien dormir = bien bosser',s:'Couche-toi tôt ce soir.'},
+  {i:'🎉',t:'Célèbre les petites victoires',s:'Un devis signé, une facture payée…'},
+  {i:'🌞',t:'Profite du beau temps',s:'Et fuis les façades quand il pleut !'},
 ];
-const mv=motivs[now.getDay()%motivs.length];
+// Sélection sur jour de l'année (1 phrase différente par jour pendant ~70 jours)
+const startYear = new Date(now.getFullYear(), 0, 0);
+const dayOfYear = Math.floor((now - startYear) / 86400000);
+const mv=motivs[dayOfYear % motivs.length];
 document.getElementById('mico').textContent=mv.i;
 document.getElementById('mtxt').textContent=mv.t;
 document.getElementById('msub').textContent=mv.s;
@@ -3610,6 +3717,12 @@ document.addEventListener('visibilitychange', function(){
     return d.getHours().toString().padStart(2,'0') + 'h' + d.getMinutes().toString().padStart(2,'0');
   }
 
+  window.toggleWeather = function(e){
+    if(e && e.target && (e.target.tagName === 'A' || e.target.tagName === 'BUTTON')) return;
+    const w = document.getElementById('weather');
+    if(w) w.classList.toggle('collapsed');
+  };
+
   async function loadWeather(lat, lon, cityName){
     const el = document.getElementById('weather');
     const cityEl = document.getElementById('wp-loc');
@@ -3649,6 +3762,15 @@ document.addEventListener('visibilitychange', function(){
       tipEl.className = 'wp-tip ' + tip.cls;
       tipEl.querySelector('.wp-tip-ico').textContent = tip.ico;
       document.getElementById('wp-tip-text').textContent = tip.txt;
+
+      // === VUE COMPACTE ===
+      document.getElementById('wp-c-icon').textContent = wmoIcon(c.weather_code, !isDay);
+      document.getElementById('wp-c-temp').textContent = Math.round(c.temperature_2m) + '°';
+      document.getElementById('wp-c-cond').textContent = wmoText(c.weather_code) + ' · ☔' + rain + '% 💨' + wind;
+      const cTipEl = document.getElementById('wp-c-tip');
+      cTipEl.className = 'wp-c-tip ' + tip.cls;
+      document.getElementById('wp-c-tip-ico').textContent = tip.ico;
+      document.getElementById('wp-c-tip-text').textContent = tip.txt;
 
       // === SOLEIL ===
       document.getElementById('wp-sunrise').textContent = fmtTime(data.daily.sunrise[0]);
@@ -3691,13 +3813,16 @@ document.addEventListener('visibilitychange', function(){
       el.classList.remove('wp-loading');
 
       // Ville
-      if(cityName){ cityEl.textContent = '📍 ' + cityName; }
+      const cLocEl = document.getElementById('wp-c-loc');
+      if(cityName){ cityEl.textContent = '📍 ' + cityName; if(cLocEl) cLocEl.textContent = '📍 ' + cityName; }
       else{
         try{
           const gr = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=fr&count=1`);
           const gd = await gr.json();
-          cityEl.textContent = '📍 ' + ((gd.results && gd.results[0]) ? gd.results[0].name : `${lat.toFixed(2)}, ${lon.toFixed(2)}`);
-        } catch { cityEl.textContent = '📍 Localisé'; }
+          const txt = '📍 ' + ((gd.results && gd.results[0]) ? gd.results[0].name : `${lat.toFixed(2)}, ${lon.toFixed(2)}`);
+          cityEl.textContent = txt;
+          if(cLocEl) cLocEl.textContent = txt;
+        } catch { cityEl.textContent = '📍 Localisé'; if(cLocEl) cLocEl.textContent = '📍 Localisé'; }
       }
     } catch(e){
       el.classList.remove('wp-loading');
