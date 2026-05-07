@@ -2111,40 +2111,54 @@ function quickAction(type){
 
 function afCard(a){
   const cat=catMap[a.cat]||{label:'📌',tc:'tgr'};
-  const prio=prioMap[a.prio]||{label:'',tc:'tgr'};
-  // Boutons d'action si c'est une tâche "Appeler"
-  var actionBtns='';
-  if(a.cat==='tel' && !a.done){
-    var btns=[];
-    if(a.tel){
-      var telClean=a.tel.replace(/\s/g,'');
-      btns.push('<a href="tel:'+telClean+'" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:#22c55e;color:white;padding:6px 10px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:800;margin-right:6px;margin-top:6px">📞 '+a.tel+'</a>');
-    }
-    if(a.email){
-      btns.push('<a href="mailto:'+encodeURIComponent(a.email)+'" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--blue);color:white;padding:6px 10px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:800;margin-right:6px;margin-top:6px">📧 Email</a>');
-    }
-    if(a.adresse){
-      btns.push('<a href="https://maps.apple.com/?q='+encodeURIComponent(a.adresse)+'" target="_blank" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:4px;background:var(--orange);color:white;padding:6px 10px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:800;margin-right:6px;margin-top:6px">📍 Plans</a>');
-    }
-    if(btns.length) actionBtns='<div style="margin-top:4px">'+btns.join('')+'</div>';
+
+  // Sous-titre : note OU adresse (sans surcharger)
+  var subParts = [];
+  if(a.note) subParts.push(a.note);
+  if(a.adresse && a.cat!=='tel') subParts.push('📍 '+a.adresse);
+  var subLine = subParts.length
+    ? '<div style="font-size:11px;color:#9ca3af;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+subParts.join(' · ')+'</div>'
+    : '';
+
+  // Action à droite : si tâche tel → bouton appel direct ; sinon → date courte en gris
+  var rightZone = '';
+  if(a.cat==='tel' && a.tel && !a.done){
+    var telClean = a.tel.replace(/\s/g,'');
+    rightZone = '<a href="tel:'+telClean+'" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;gap:3px;color:#16a34a;font-size:12px;font-weight:700;text-decoration:none;flex-shrink:0;padding:5px 9px;border:1px solid #86efac;border-radius:8px;background:#f0fdf4">📞</a>';
+  } else if(a.date){
+    // Format date court : DD/MM (sans année si même année que today) sinon DD/MM/YY
+    var dStr = '';
+    try {
+      var dParts = a.date.split('-'); // YYYY-MM-DD
+      var today = new Date();
+      if(dParts.length===3){
+        var sameYear = (parseInt(dParts[0])===today.getFullYear());
+        dStr = sameYear ? (dParts[2]+'/'+dParts[1]) : (dParts[2]+'/'+dParts[1]+'/'+dParts[0].slice(2));
+      } else { dStr = fmtDate(a.date); }
+    } catch(e){ dStr = fmtDate(a.date); }
+    rightZone = '<div style="font-size:12px;color:#9ca3af;flex-shrink:0;font-weight:500;letter-spacing:0.2px">'+dStr+'</div>';
   }
-  return `<div class="card ${a.done?'done':''} ${a.prio==='urgent'&&!a.done?'urg':''}">
-    <div class="ccheck" onclick="toggleAf(${a.id})">
-      <svg class="ck" width="13" height="13" viewBox="0 0 13 13"><polyline points="2,7 5.5,10.5 11,3" stroke="white" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </div>
-    <div class="cbody">
-      <div class="ctitle">${a.title}</div>
-      ${a.note?`<div class="csub">${a.note}</div>`:''}
-      ${actionBtns}
-      <div class="ctags">
-        <span class="tag ${cat.tc}">${cat.label}</span>
-        ${a.prio!=='normal'?`<span class="tag ${prio.tc}">${prio.label}</span>`:''}
-        ${a.date?`<span class="tag tgr">📅 ${fmtDate(a.date)}</span>`:''}
-      </div>
-    </div>
-    <button class="cedit" onclick="event.stopPropagation();openEditAfaire(${a.id})" title="Modifier">✏️</button>
-    <button class="cdel" onclick="event.stopPropagation();delAf(${a.id})">✕</button>
-  </div>`;
+
+  // Cercle checkbox : rouge si urgent, vert plein si fait, gris sinon
+  var cbBorder = a.done ? '#16a34a' : (a.prio==='urgent' ? '#ef4444' : '#d1d5db');
+  var cbBg = a.done ? '#16a34a' : 'transparent';
+  var cbCheck = a.done
+    ? '<svg width="11" height="11" viewBox="0 0 13 13"><polyline points="2,7 5.5,10.5 11,3" stroke="white" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    : '';
+
+  // Titre — 2 lignes max si trop long (au lieu d'être tronqué)
+  var titleStyle = 'font-size:14px;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden';
+  titleStyle += a.done ? ';color:#9ca3af;text-decoration:line-through' : ';color:#111';
+
+  return '<div onclick="openEditAfaire('+a.id+')" style="display:flex;align-items:center;gap:11px;padding:12px 4px;border-bottom:1px solid #f3f4f6;cursor:pointer">'
+    +    '<div onclick="event.stopPropagation();toggleAf('+a.id+')" style="width:20px;height:20px;border:1.5px solid '+cbBorder+';background:'+cbBg+';border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center">'+cbCheck+'</div>'
+    +    '<div style="flex:1;min-width:0">'
+    +      '<div style="'+titleStyle+'">'+a.title+'</div>'
+    +      subLine
+    +    '</div>'
+    +    rightZone
+    +    '<button onclick="event.stopPropagation();delAf('+a.id+')" style="background:transparent;border:none;color:#d1d5db;font-size:13px;cursor:pointer;padding:6px;flex-shrink:0">✕</button>'
+    +  '</div>';
 }
 
 // Filtre actuel pour Ma tête : 'all', 'devis', 'tel', 'autres'
@@ -2207,12 +2221,30 @@ function renderAfaire(){
     return;
   }
   
-  const sorted=[...filtered].sort((a,b)=>{
-    if(a.done!==b.done)return a.done?1:-1;
-    const po={urgent:0,normal:1,attente:2};
-    return (po[a.prio]||1)-(po[b.prio]||1);
+  // Regroupement par priorité, avec entête de section
+  var groups = {urgent:[], normal:[], attente:[], done:[]};
+  filtered.forEach(function(a){
+    if(a.done) groups.done.push(a);
+    else if(a.prio==='urgent') groups.urgent.push(a);
+    else if(a.prio==='attente') groups.attente.push(a);
+    else groups.normal.push(a);
   });
-  el.innerHTML=sorted.map(a=>afCard(a)).join('');
+  var sections = [
+    {key:'urgent', label:'🔴 Urgent', items:groups.urgent},
+    {key:'normal', label:'📋 À faire', items:groups.normal},
+    {key:'attente', label:'⏸ Plus tard', items:groups.attente},
+    {key:'done', label:'✓ Faites', items:groups.done}
+  ];
+  var html = '';
+  sections.forEach(function(s){
+    if(!s.items.length) return;
+    html += '<div style="margin:14px 0 6px 0;display:flex;align-items:center;gap:8px;padding:0 4px">'
+         +    '<span style="font-size:13px;font-weight:800;color:var(--text)">'+s.label+'</span>'
+         +    '<span style="font-size:11px;font-weight:700;color:var(--muted);background:#f3f4f6;padding:2px 8px;border-radius:10px">'+s.items.length+'</span>'
+         +  '</div>';
+    html += s.items.map(a=>afCard(a)).join('');
+  });
+  el.innerHTML = html;
 }
 
 function renderDevis(){
@@ -4521,7 +4553,7 @@ function generatePDFPv(){
   var doc = pdfNew('portrait');
   var pw=210, ph=297, mg=12, W=pw-2*mg;
   var dateStr = p.date ? pdfFmtDate(p.date) : pdfFmtDate(new Date());
-  var y = pdfHeader(doc, {title:'Plus-value', subtitle:'Travaux supplémentaires - AG Peinture', dateStr:dateStr});
+  var y = pdfHeader(doc, {title:'Plus-values', subtitle:'Travaux supplémentaires - AG Peinture', dateStr:dateStr});
 
   function ensureSpace(needed){
     if(y + needed > ph - 18){ pdfFooter(doc); doc.addPage(); y = mg+8; }
