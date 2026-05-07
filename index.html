@@ -298,6 +298,64 @@ header img{height:42px}
 .liste-print-table th { background:var(--blue); color:white; padding:8px 10px; text-align:left; font-size:11px; font-weight:800; }
 .liste-print-table td { padding:7px 10px; border-bottom:1px solid #eee; font-size:12px; font-weight:600; }
 .liste-print-table tr:nth-child(even) td { background:#f8faff; }
+
+
+/* === MÉTÉO PEINTRE — détaillée === */
+.wp-widget{background:var(--card);border-radius:var(--radius);padding:14px;margin-bottom:14px;box-shadow:var(--shadow);border:1.5px solid var(--border)}
+.wp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px}
+.wp-title{font-size:14px;font-weight:800;color:var(--text);display:flex;align-items:center;gap:6px}
+.wp-loc{font-size:12px;font-weight:700;color:var(--muted)}
+
+/* Vue actuelle (aujourd'hui détaillée) */
+.wp-now{background:linear-gradient(135deg,var(--blue),var(--blue2));color:white;border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:0 4px 14px rgba(61,184,212,0.25)}
+.wp-now-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.wp-now-left{display:flex;align-items:center;gap:10px}
+.wp-now-icon{font-size:42px;line-height:1}
+.wp-now-temp{font-size:32px;font-weight:900;line-height:1}
+.wp-now-sub{font-size:12px;font-weight:700;opacity:0.9;margin-top:2px}
+.wp-now-day{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;opacity:0.85;text-align:right}
+.wp-now-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.25)}
+.wp-now-item{text-align:center}
+.wp-now-item-ico{font-size:14px;line-height:1}
+.wp-now-item-val{font-size:13px;font-weight:900;margin-top:2px}
+.wp-now-item-lbl{font-size:9px;font-weight:700;text-transform:uppercase;opacity:0.85;letter-spacing:0.3px}
+
+/* Conseil peintre */
+.wp-tip{background:var(--yellow-bg);border-left:4px solid var(--yellow);border-radius:8px;padding:8px 10px;margin-bottom:10px;font-size:12px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.wp-tip.good{background:var(--green-bg);border-color:var(--green);color:#1a6e3f}
+.wp-tip.warn{background:var(--orange-bg);border-color:var(--orange);color:#9a5a00}
+.wp-tip.bad{background:var(--red-bg);border-color:var(--red);color:#8a1f15}
+.wp-tip-ico{font-size:16px;flex:none}
+
+/* 7 jours */
+.wp-section-title{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;margin:10px 0 6px;padding:0 2px}
+.wp-days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+@media(max-width:560px){.wp-days{display:flex;overflow-x:auto;gap:6px;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.wp-days::-webkit-scrollbar{display:none}.wp-day{flex:0 0 70px}}
+.wp-day{background:var(--blue-bg);border-radius:10px;padding:7px 3px;text-align:center;border:1.5px solid transparent}
+.wp-day.today{background:var(--blue);color:white;border-color:var(--blue2)}
+.wp-day-name{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.3px;opacity:0.85}
+.wp-day-icon{font-size:20px;margin:3px 0;line-height:1}
+.wp-day-tmax{font-size:13px;font-weight:900}
+.wp-day-tmin{font-size:9px;font-weight:700;opacity:0.7}
+.wp-day-rain{font-size:9px;font-weight:700;margin-top:2px;color:var(--blue2)}
+.wp-day.today .wp-day-rain{color:#cdf}
+.wp-day-wind{font-size:9px;font-weight:700;opacity:0.7}
+
+/* Heure par heure */
+.wp-hours{display:flex;overflow-x:auto;gap:6px;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.wp-hours::-webkit-scrollbar{display:none}
+.wp-hour{flex:0 0 56px;background:var(--bg);border-radius:10px;padding:6px 3px;text-align:center;border:1.5px solid var(--border)}
+.wp-hour-time{font-size:10px;font-weight:800;color:var(--muted)}
+.wp-hour-ico{font-size:18px;margin:2px 0;line-height:1}
+.wp-hour-temp{font-size:12px;font-weight:900;color:var(--text)}
+.wp-hour-rain{font-size:9px;font-weight:700;color:var(--blue2);margin-top:1px}
+
+/* États */
+.wp-loading .wp-now,.wp-loading .wp-day,.wp-loading .wp-hour{animation:wppulse 1.4s ease-in-out infinite}
+@keyframes wppulse{0%,100%{opacity:0.5}50%{opacity:0.85}}
+.wp-error{padding:14px;font-size:13px;color:var(--muted);text-align:center}
+.wp-error button{margin-top:8px;background:var(--blue);color:white;border:none;border-radius:20px;padding:8px 18px;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
 
@@ -501,6 +559,59 @@ function checkPwd(){
     <button onclick="if(window.fbSave){window.fbSave();}else{alert('Firebase non disponible');}" style="background:var(--green);color:white;border:none;border-radius:20px;padding:8px 16px;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(39,174,96,0.3)">☁️⬆️ Sauvegarder</button>
   </div>
   <div class="motiv"><div style="font-size:30px" id="mico"></div><div style="margin-left:2px"><div class="mt" id="mtxt"></div><div class="ms" id="msub"></div></div></div>
+      <div class="wp-widget wp-loading" id="weather">
+    <div class="wp-head">
+      <div class="wp-title">☁️ Météo · Spécial peintre</div>
+      <div class="wp-loc" id="wp-loc">📍 Localisation…</div>
+    </div>
+    <!-- Aujourd'hui en grand -->
+    <div class="wp-now">
+      <div class="wp-now-top">
+        <div class="wp-now-left">
+          <div class="wp-now-icon" id="wp-now-icon">⏳</div>
+          <div>
+            <div class="wp-now-temp" id="wp-now-temp">—°</div>
+            <div class="wp-now-sub" id="wp-now-sub">Chargement…</div>
+          </div>
+        </div>
+        <div class="wp-now-day" id="wp-now-day">—</div>
+      </div>
+      <div class="wp-now-grid">
+        <div class="wp-now-item"><div class="wp-now-item-ico">☔</div><div class="wp-now-item-val" id="wp-rain">—%</div><div class="wp-now-item-lbl">Pluie</div></div>
+        <div class="wp-now-item"><div class="wp-now-item-ico">💨</div><div class="wp-now-item-val" id="wp-wind">—</div><div class="wp-now-item-lbl">Vent</div></div>
+        <div class="wp-now-item"><div class="wp-now-item-ico">💧</div><div class="wp-now-item-val" id="wp-hum">—%</div><div class="wp-now-item-lbl">Humid.</div></div>
+        <div class="wp-now-item"><div class="wp-now-item-ico">☂️</div><div class="wp-now-item-val" id="wp-uv">—</div><div class="wp-now-item-lbl">UV</div></div>
+      </div>
+    </div>
+    <!-- Conseil peintre -->
+    <div class="wp-tip" id="wp-tip"><span class="wp-tip-ico">💡</span><span id="wp-tip-text">Analyse en cours…</span></div>
+    <!-- Soleil -->
+    <div style="display:flex;justify-content:space-around;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px;padding:0 4px">
+      <span>🌅 Lever <span id="wp-sunrise">—</span></span>
+      <span>🌇 Coucher <span id="wp-sunset">—</span></span>
+    </div>
+    <!-- Heure par heure -->
+    <div class="wp-section-title">⏰ Aujourd'hui · heure par heure</div>
+    <div class="wp-hours" id="wp-hours">
+      <div class="wp-hour"><div class="wp-hour-time">—</div><div class="wp-hour-ico">⏳</div><div class="wp-hour-temp">—</div></div>
+      <div class="wp-hour"><div class="wp-hour-time">—</div><div class="wp-hour-ico">⏳</div><div class="wp-hour-temp">—</div></div>
+      <div class="wp-hour"><div class="wp-hour-time">—</div><div class="wp-hour-ico">⏳</div><div class="wp-hour-temp">—</div></div>
+      <div class="wp-hour"><div class="wp-hour-time">—</div><div class="wp-hour-ico">⏳</div><div class="wp-hour-temp">—</div></div>
+      <div class="wp-hour"><div class="wp-hour-time">—</div><div class="wp-hour-ico">⏳</div><div class="wp-hour-temp">—</div></div>
+      <div class="wp-hour"><div class="wp-hour-time">—</div><div class="wp-hour-ico">⏳</div><div class="wp-hour-temp">—</div></div>
+    </div>
+    <!-- 7 jours -->
+    <div class="wp-section-title">📅 7 prochains jours</div>
+    <div class="wp-days" id="wp-days">
+      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
+      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
+      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
+      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
+      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
+      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
+      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
+    </div>
+  </div>
   <div class="dash-grid" id="dash-grid"></div>
   <div class="sec-divider" id="urgent-divider">🔴 Urgents</div>
   <div class="cards" id="home-urgent"></div>
@@ -3446,5 +3557,174 @@ document.addEventListener('visibilitychange', function(){
   <div class="liste-print" id="print-liste-content"></div>
 </div>
 
+
+<script>
+/* === MÉTÉO PEINTRE — Open-Meteo détaillée === */
+(function(){
+  const W_ICONS = { clear:'☀️', partly:'⛅', cloudy:'☁️', fog:'🌫️', rain:'🌧️', shower:'🌦️', snow:'❄️', storm:'⛈️', clearN:'🌙', partlyN:'☁️' };
+  function wmoIcon(c, isNight){
+    if(c===0) return isNight ? W_ICONS.clearN : W_ICONS.clear;
+    if([1,2].includes(c)) return isNight ? W_ICONS.partlyN : W_ICONS.partly;
+    if(c===3) return W_ICONS.cloudy;
+    if([45,48].includes(c)) return W_ICONS.fog;
+    if([51,53,55,56,57,61,63,65,66,67].includes(c)) return W_ICONS.rain;
+    if([80,81,82].includes(c)) return W_ICONS.shower;
+    if([71,73,75,77,85,86].includes(c)) return W_ICONS.snow;
+    if([95,96,99].includes(c)) return W_ICONS.storm;
+    return W_ICONS.cloudy;
+  }
+  function wmoText(c){
+    if(c===0) return 'Ciel dégagé';
+    if(c===1) return 'Plutôt dégagé';
+    if(c===2) return 'Partiellement nuageux';
+    if(c===3) return 'Couvert';
+    if([45,48].includes(c)) return 'Brouillard';
+    if([51,53,55].includes(c)) return 'Bruine';
+    if([61,63,65].includes(c)) return 'Pluie';
+    if([66,67].includes(c)) return 'Pluie verglaçante';
+    if([71,73,75,77].includes(c)) return 'Neige';
+    if([80,81,82].includes(c)) return 'Averses';
+    if([85,86].includes(c)) return 'Averses de neige';
+    if([95,96,99].includes(c)) return 'Orage';
+    return 'Nuageux';
+  }
+  const W_DAYS = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+  const W_DAYS_FULL = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+  const W_MONTHS = ['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+
+  function paintTip(rain, wind, temp, hum, code){
+    // Conseils spécial peinture
+    if([95,96,99].includes(code)) return {cls:'bad', ico:'⛔', txt:'Orage prévu — pas de chantier extérieur'};
+    if(rain >= 60 || [61,63,65,66,67,80,81,82].includes(code)) return {cls:'bad', ico:'☔', txt:'Pluie probable — pas de peinture extérieure'};
+    if(wind >= 30) return {cls:'bad', ico:'💨', txt:'Vent fort ('+wind+' km/h) — danger échafaudage, pas de pulvérisation'};
+    if(rain >= 30) return {cls:'warn', ico:'⚠️', txt:'Risque de pluie ('+rain+'%) — préparez des bâches'};
+    if(wind >= 20) return {cls:'warn', ico:'💨', txt:'Vent modéré ('+wind+' km/h) — attention en hauteur'};
+    if(temp < 5) return {cls:'warn', ico:'🥶', txt:'Trop froid ('+temp+'°) — peinture sèche mal sous 5°'};
+    if(temp > 30) return {cls:'warn', ico:'🥵', txt:'Très chaud ('+temp+'°) — séchage rapide, attention aux traces'};
+    if(hum >= 80) return {cls:'warn', ico:'💧', txt:'Humidité élevée ('+hum+'%) — séchage ralenti'};
+    return {cls:'good', ico:'✅', txt:'Conditions idéales pour peindre dehors'};
+  }
+
+  function fmtTime(iso){
+    const d = new Date(iso);
+    return d.getHours().toString().padStart(2,'0') + 'h' + d.getMinutes().toString().padStart(2,'0');
+  }
+
+  async function loadWeather(lat, lon, cityName){
+    const el = document.getElementById('weather');
+    const cityEl = document.getElementById('wp-loc');
+    if(!el) return;
+    try{
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
+        + `&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,precipitation_probability,is_day`
+        + `&hourly=temperature_2m,weather_code,precipitation_probability`
+        + `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,uv_index_max,sunrise,sunset`
+        + `&forecast_days=7&timezone=auto`;
+      const r = await fetch(url);
+      if(!r.ok) throw new Error('API');
+      const data = await r.json();
+
+      // === ACTUEL ===
+      const c = data.current;
+      const isDay = c.is_day === 1;
+      document.getElementById('wp-now-icon').textContent = wmoIcon(c.weather_code, !isDay);
+      document.getElementById('wp-now-temp').textContent = Math.round(c.temperature_2m) + '°';
+      document.getElementById('wp-now-sub').textContent = wmoText(c.weather_code);
+      const today = new Date();
+      document.getElementById('wp-now-day').textContent = W_DAYS_FULL[today.getDay()] + ' ' + today.getDate() + ' ' + W_MONTHS[today.getMonth()];
+
+      const rain = c.precipitation_probability ?? data.daily.precipitation_probability_max[0] ?? 0;
+      const wind = Math.round(c.wind_speed_10m);
+      const hum = c.relative_humidity_2m;
+      const uv = Math.round(data.daily.uv_index_max[0]);
+
+      document.getElementById('wp-rain').textContent = rain + '%';
+      document.getElementById('wp-wind').textContent = wind + ' km/h';
+      document.getElementById('wp-hum').textContent = hum + '%';
+      document.getElementById('wp-uv').textContent = uv;
+
+      // === CONSEIL PEINTRE ===
+      const tip = paintTip(rain, wind, Math.round(c.temperature_2m), hum, c.weather_code);
+      const tipEl = document.getElementById('wp-tip');
+      tipEl.className = 'wp-tip ' + tip.cls;
+      tipEl.querySelector('.wp-tip-ico').textContent = tip.ico;
+      document.getElementById('wp-tip-text').textContent = tip.txt;
+
+      // === SOLEIL ===
+      document.getElementById('wp-sunrise').textContent = fmtTime(data.daily.sunrise[0]);
+      document.getElementById('wp-sunset').textContent = fmtTime(data.daily.sunset[0]);
+
+      // === HEURE PAR HEURE (24h prochaines) ===
+      const nowH = new Date().getHours();
+      const today_str = new Date().toISOString().slice(0,10);
+      let hStart = data.hourly.time.findIndex(t => t.startsWith(today_str) && new Date(t).getHours() === nowH);
+      if (hStart < 0) hStart = 0;
+      const hoursHTML = [];
+      for(let i = 0; i < 24; i += 3){
+        const idx = hStart + i;
+        if(idx >= data.hourly.time.length) break;
+        const t = new Date(data.hourly.time[idx]);
+        const isDayH = t.getHours() >= 6 && t.getHours() < 21;
+        const hLbl = i === 0 ? 'Maint.' : t.getHours() + 'h';
+        const hIco = wmoIcon(data.hourly.weather_code[idx], !isDayH);
+        const hTemp = Math.round(data.hourly.temperature_2m[idx]) + '°';
+        const hRain = data.hourly.precipitation_probability[idx] ?? 0;
+        hoursHTML.push(`<div class="wp-hour"><div class="wp-hour-time">${hLbl}</div><div class="wp-hour-ico">${hIco}</div><div class="wp-hour-temp">${hTemp}</div>${hRain >= 20 ? `<div class="wp-hour-rain">☔${hRain}%</div>` : ''}</div>`);
+      }
+      document.getElementById('wp-hours').innerHTML = hoursHTML.join('');
+
+      // === 7 JOURS ===
+      const days = data.daily;
+      const daysHTML = days.time.map((dStr, i) => {
+        const d = new Date(dStr);
+        const isToday = i === 0;
+        const lbl = isToday ? 'Auj.' : W_DAYS[d.getDay()];
+        const max = Math.round(days.temperature_2m_max[i]);
+        const min = Math.round(days.temperature_2m_min[i]);
+        const ic = wmoIcon(days.weather_code[i], false);
+        const r = days.precipitation_probability_max[i] ?? 0;
+        const w = Math.round(days.wind_speed_10m_max[i]);
+        return `<div class="wp-day${isToday?' today':''}"><div class="wp-day-name">${lbl}</div><div class="wp-day-icon">${ic}</div><div class="wp-day-tmax">${max}°</div><div class="wp-day-tmin">${min}°</div><div class="wp-day-rain">☔${r}%</div><div class="wp-day-wind">💨${w}</div></div>`;
+      }).join('');
+      document.getElementById('wp-days').innerHTML = daysHTML;
+
+      el.classList.remove('wp-loading');
+
+      // Ville
+      if(cityName){ cityEl.textContent = '📍 ' + cityName; }
+      else{
+        try{
+          const gr = await fetch(`https://geocoding-api.open-meteo.com/v1/reverse?latitude=${lat}&longitude=${lon}&language=fr&count=1`);
+          const gd = await gr.json();
+          cityEl.textContent = '📍 ' + ((gd.results && gd.results[0]) ? gd.results[0].name : `${lat.toFixed(2)}, ${lon.toFixed(2)}`);
+        } catch { cityEl.textContent = '📍 Localisé'; }
+      }
+    } catch(e){
+      el.classList.remove('wp-loading');
+      el.innerHTML = `<div class="wp-error">☁️ Météo indisponible.<br><button onclick="window.initWeather()">Réessayer</button></div>`;
+    }
+  }
+
+  function initWeather(){
+    const el = document.getElementById('weather');
+    const cityEl = document.getElementById('wp-loc');
+    if(!el) return;
+    el.classList.add('wp-loading');
+    if(cityEl) cityEl.textContent = '📍 Localisation…';
+    if(!navigator.geolocation){ loadWeather(46.3833, 6.2333, 'Nyon'); return; }
+    navigator.geolocation.getCurrentPosition(
+      pos => loadWeather(pos.coords.latitude, pos.coords.longitude),
+      err => loadWeather(46.3833, 6.2333, 'Nyon'),
+      { timeout: 8000, maximumAge: 600000 }
+    );
+  }
+  window.initWeather = initWeather;
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initWeather);
+  } else {
+    initWeather();
+  }
+})();
+</script>
 </body>
 </html>
