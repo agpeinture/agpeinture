@@ -122,38 +122,14 @@ header img{height:42px}
 .pbtn{flex:1;padding:7px;border:1.5px solid var(--border);border-radius:10px;background:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;color:var(--muted)}
 .pbtn:active{background:var(--blue-bg);color:var(--blue);border-color:var(--blue)}
 
-/* CHECKLIST PATRON */
-.patrol-card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px}
-.patrol-header{background:var(--blue);color:white;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
-.patrol-header-title{font-size:14px;font-weight:800}
-.patrol-header-sub{font-size:11px;opacity:0.85;margin-top:1px}
-.patrol-arrow{font-size:16px;transition:transform 0.2s}
-.patrol-card.open .patrol-arrow{transform:rotate(180deg)}
-.patrol-body{display:none;padding:14px 16px}
-.patrol-card.open .patrol-body{display:block}
-.patrol-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+/* CHECKLIST PATRON : retirée (remplacée par Suivi Chantier).
+   Classes conservées car réutilisées ailleurs : .pi-field (formulaires),
+   .ps-title (métré), .patrol-reset (routine). */
 .pi-field{display:flex;flex-direction:column;gap:4px}
 .pi-field label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px}
 .pi-field input{border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none}
 .pi-field input:focus{border-color:var(--blue);background:white}
-.patrol-section{margin-bottom:14px}
 .ps-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.8px;color:var(--blue);margin-bottom:8px;padding-bottom:4px;border-bottom:1.5px solid var(--blue-bg)}
-.ps-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #f5f5f5;cursor:pointer}
-.ps-item:last-child{border-bottom:none}
-.ps-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s;margin-top:1px}
-.ps-item.checked .ps-check{background:var(--green);border-color:var(--green)}
-.ps-ck{display:none}
-.ps-item.checked .ps-ck{display:block}
-.ps-item.checked .ps-text{text-decoration:line-through;color:var(--muted)}
-.ps-text{font-size:13px;font-weight:600;color:var(--text);line-height:1.4;flex:1}
-.ps-input{width:100%;border:none;border-bottom:1.5px solid var(--border);padding:4px 0;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--text);background:transparent;outline:none;margin-top:4px}
-.ps-input:focus{border-color:var(--blue)}
-.eval-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.eval-btn{flex:1;min-width:80px;padding:9px 6px;border-radius:10px;border:2px solid var(--border);background:white;font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;cursor:pointer;color:var(--muted);text-align:center;transition:all 0.15s}
-.eval-btn.sel-green{background:var(--green-bg);border-color:var(--green);color:var(--green)}
-.eval-btn.sel-blue{background:var(--blue-bg);border-color:var(--blue);color:var(--blue)}
-.eval-btn.sel-orange{background:var(--orange-bg);border-color:var(--orange);color:var(--orange)}
-.eval-btn.sel-red{background:var(--red-bg);border-color:var(--red);color:var(--red)}
 .patrol-reset{background:none;border:1.5px solid var(--border);border-radius:10px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;color:var(--muted);margin-top:12px;width:100%}
 .patrol-reset:active{background:var(--red-bg);color:var(--red);border-color:var(--red)}
 
@@ -173,26 +149,7 @@ header img{height:42px}
 .color-dot.selected{border-color:var(--text)}
 
 /* PLANNING */
-.planning-week{background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px}
-.pw-header{background:var(--dark,#1a2533);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
-.pw-title{font-size:14px;font-weight:800}
-.pw-semaine{font-size:12px;opacity:0.7}
-.pw-day{border-bottom:1px solid var(--border)}
-.pw-day:last-child{border-bottom:none}
-.pw-day-header{background:var(--blue);color:white;padding:8px 16px;font-size:12px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase}
-.pw-day-header.lundi{background:#3DB8D4} .pw-day-header.mardi{background:#2da0ba}
-.pw-day-header.mercredi{background:#3DB8D4} .pw-day-header.jeudi{background:#2da0ba}
-.pw-day-header.vendredi{background:#1a2533} .pw-day-header.samedi{background:#7f8c9a}
-.pw-slot{padding:10px 16px;border-bottom:1px dashed #f0f0f0}
-.pw-slot:last-child{border-bottom:none}
-.pw-slot-lbl{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
-.pw-slot-default{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:4px}
-.pw-slot-input{width:100%;border:none;border-bottom:1.5px solid var(--border);padding:4px 0;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--text);background:transparent;outline:none}
-.pw-slot-input:focus{border-color:var(--blue)}
-.pw-notes{padding:10px 16px}
-.pw-notes-lbl{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px}
-.pw-notes-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;resize:none;height:60px}
-.pw-notes-input:focus{border-color:var(--blue)}
+/* PLANNING SEMAINE : retiré (jamais utilisé). */
 
 /* AGENDA */
 .rdvg{margin-bottom:14px}
@@ -414,7 +371,7 @@ header img{height:42px}
     var db = firebase.firestore();
     var DOC_REF = db.collection("appdata").doc("agpeinture-data");
     var KEYS = ['ag4_af','ag4_ch','ag4_dv','ag4_nu','ag4_pa','ag4_plan','ag4_ag','ag4_no','ag4_routine',
-                'ag4_rdv','ag4_rdvc','ag4_rdvt','ag4_rdv_hist','ag4_metre_hist','ag4_cmd_hist','ag4_factures'];
+                'ag4_rdv','ag4_rdvc','ag4_rdvt','ag4_rdv_hist','ag4_metre_hist','ag4_cmd_hist','ag4_factures','ag4_suivi_hist'];
 
     fbSetStatus('☁️ Connexion...', '#f39c12');
 
@@ -533,8 +490,6 @@ header img{height:42px}
   <input class="pwd-inp2" type="password" id="lockPwd" placeholder="••••••" autocomplete="off" onkeydown="if(event.key==='Enter')checkPwd()">
   <p id="lockErr" style="color:#e74c3c;font-size:13px;min-height:18px;font-weight:600;margin:0"></p>
   <button class="pwd-btn2" onclick="checkPwd()">Accéder</button>
-</div>
-  </div>
 </div>
 <script>
 (function(){
@@ -681,33 +636,17 @@ function checkPwd(){
 <div class="sec" id="s-patron">
   <!-- TABS internes -->
   <div style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none">
-    <button class="chip ab" id="pt-checklist" onclick="showPatronTab('checklist')">✅ Checklist chantier</button>
-    <button class="chip" id="pt-planning" onclick="showPatronTab('planning')">📅 Planning semaine</button>
+    <button class="chip ab" id="pt-suivi" onclick="showPatronTab('suivi')">🛠 Suivi chantier</button>
     <button class="chip" id="pt-nuanciers" onclick="showPatronTab('nuanciers')">🎨 Nuanciers</button>
-    <button class="chip" id="pt-routine" onclick="showPatronTab('routine')">🔄 Routine hebdo</button>
-    <button class="chip" id="pt-notes" onclick="showPatronTab('notes')">📝 Notes</button>
     <button class="chip" id="pt-rdv" onclick="showPatronTab('rdv')">📋 Fiche RDV</button>
     <button class="chip" id="pt-metre" onclick="showPatronTab('metre')">📐 Métré</button>
     <button class="chip" id="pt-commande" onclick="showPatronTab('commande')">📦 Commande</button>
+    <button class="chip" id="pt-plusvalue" onclick="showPatronTab('plusvalue')">🔨 Plus-value</button>
   </div>
 
-  <!-- CHECKLIST -->
-  <div id="pt-checklist-sec">
-    <div class="sh"><div><div class="st">✅ Checklist Chantier</div><div class="ss">Tournée 10 min par chantier</div></div><button class="fab" onclick="addPatrol()">＋ Chantier</button></div>
-    <div id="patrol-list"></div>
-  </div>
+  <!-- CHECKLIST : retirée (remplacée par Suivi Chantier) -->
 
-  <!-- PLANNING -->
-  <div id="pt-planning-sec" style="display:none">
-    <div class="sh"><div><div class="st">📅 Planning Semaine</div><div class="ss" id="plan-sub"></div></div></div>
-    <div class="planning-week">
-      <div class="pw-header">
-        <div class="pw-title">Semaine du patron</div>
-        <input style="background:transparent;border:none;color:rgba(255,255,255,0.8);font-family:Nunito,sans-serif;font-size:12px;font-weight:700;outline:none;text-align:right;width:120px" id="plan-semaine" placeholder="Sem. N°___">
-      </div>
-      <div id="planning-days"></div>
-    </div>
-  </div>
+  <!-- PLANNING : retiré (jamais utilisé) -->
 
   <!-- NUANCIERS -->
   <div id="pt-nuanciers-sec" style="display:none">
@@ -716,10 +655,94 @@ function checkPwd(){
   </div>
 
 
-  <!-- ROUTINE HEBDO -->
-  <div id="pt-routine-sec" style="display:none">
-    <div class="sh"><div><div class="st">🔄 Routine Hebdomadaire</div><div class="ss">Bureau · Contrôle chantiers</div></div></div>
-    <div id="routine-container"></div>
+  <!-- ROUTINE HEBDO : retirée de la nav, code JS conservé pour récupération éventuelle -->
+
+  <!-- SUIVI CHANTIER (tournée) -->
+  <div id="pt-suivi-sec">
+
+    <!-- Vue liste historique -->
+    <div id="suivi-historique-view">
+      <div class="sh print-no">
+        <div><div class="st">🛠 Suivi Chantier</div><div class="ss" id="suivi-hist-sub">Tournée · Une fiche par chantier</div></div>
+        <button class="fab" onclick="nouvelleFicheSuivi()">＋ Nouveau</button>
+      </div>
+      <div id="suivi-hist-list"></div>
+    </div>
+
+    <!-- Vue édition fiche Suivi -->
+    <div id="suivi-edit-view" style="display:none">
+      <div class="sh">
+        <div><div class="st">🛠 Suivi Chantier</div><div class="ss">Tournée · Contrôle hebdo</div></div>
+        <div style="display:flex;gap:8px">
+          <button class="fab print-no" style="background:var(--muted)" onclick="retourSuiviHist()">← Retour</button>
+          <button class="fab print-no" style="background:#27ae60" onclick="generatePDFSuivi()">📄 PDF</button>
+        </div>
+      </div>
+      <div class="rdv-form" id="suivi-form">
+
+        <!-- Infos -->
+        <div class="rdv-section">
+          <div class="rdv-section-title">① INFOS CHANTIER</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr">
+            <div class="rdv-field"><div class="rdv-label">Chantier</div><input class="rdv-input" id="su-chantier" placeholder="Nom du chantier..." oninput="saveSuivi()"></div>
+            <div class="rdv-field"><div class="rdv-label">Client</div><input class="rdv-input" id="su-client" placeholder="Nom du client..." oninput="saveSuivi()"></div>
+            <div class="rdv-field"><div class="rdv-label">Date</div><input class="rdv-input" id="su-date" type="date" oninput="saveSuivi()"></div>
+            <div class="rdv-field"><div class="rdv-label">Semaine N°</div><input class="rdv-input" id="su-semaine" type="number" placeholder="Ex: 19" oninput="saveSuivi()"></div>
+            <div class="rdv-field full"><div class="rdv-label">Chef d'équipe / Ouvriers présents</div><input class="rdv-input" id="su-equipe" placeholder="Noms..." oninput="saveSuivi()"></div>
+          </div>
+        </div>
+
+        <!-- Avancement -->
+        <div class="rdv-section">
+          <div class="rdv-section-title">② AVANCEMENT &amp; PLANNING</div>
+          <div id="su-checks-avan" style="padding:8px 14px"></div>
+          <div class="rdv-field full"><div class="rdv-label">Notes / Observations</div><textarea class="rdv-big-textarea" id="su-notes-avan" rows="2" placeholder="Ce qui ne va pas, à corriger, blocage..." oninput="saveSuivi()"></textarea></div>
+        </div>
+
+        <!-- Qualité -->
+        <div class="rdv-section">
+          <div class="rdv-section-title">③ QUALITÉ &amp; FINITIONS</div>
+          <div id="su-checks-qual" style="padding:8px 14px"></div>
+          <div class="rdv-field full"><div class="rdv-label">Notes / Observations</div><textarea class="rdv-big-textarea" id="su-notes-qual" rows="2" placeholder="Défauts, retouches à faire..." oninput="saveSuivi()"></textarea></div>
+        </div>
+
+        <!-- Sécurité -->
+        <div class="rdv-section">
+          <div class="rdv-section-title">④ SÉCURITÉ</div>
+          <div id="su-checks-secu" style="padding:8px 14px"></div>
+          <div class="rdv-field full"><div class="rdv-label">Notes / Observations</div><textarea class="rdv-big-textarea" id="su-notes-secu" rows="2" placeholder="Risques identifiés..." oninput="saveSuivi()"></textarea></div>
+        </div>
+
+        <!-- Suivi & commercial -->
+        <div class="rdv-section">
+          <div class="rdv-section-title">⑤ SUIVI &amp; COMMERCIAL</div>
+          <div id="su-checks-suiv" style="padding:8px 14px"></div>
+          <div class="rdv-field full"><div class="rdv-label">Notes / Observations</div><textarea class="rdv-big-textarea" id="su-notes-suiv" rows="2" placeholder="Plus-values, échanges client..." oninput="saveSuivi()"></textarea></div>
+        </div>
+
+        <!-- Défauts à corriger -->
+        <div class="rdv-section">
+          <div class="rdv-section-title">⑥ DÉFAUTS REMARQUÉS À CORRIGER</div>
+          <div id="su-defauts-list" style="padding:8px 14px"></div>
+          <div style="padding:6px 14px 14px">
+            <button onclick="addDefaut()" style="background:var(--orange);color:white;border:none;border-radius:8px;padding:9px 16px;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer">＋ Ajouter un défaut</button>
+          </div>
+        </div>
+
+        <!-- Notes globales -->
+        <div class="rdv-section">
+          <div class="rdv-section-title">⑦ NOTES GÉNÉRALES</div>
+          <div class="rdv-big-area"><textarea class="rdv-big-textarea" id="su-notes-global" rows="4" placeholder="Tout autre point important..." oninput="saveSuivi()" style="min-height:80px"></textarea></div>
+        </div>
+
+        <!-- Statut global (en bas, comme conclusion) -->
+        <div class="rdv-section" style="border-color:var(--blue);border-width:3px">
+          <div class="rdv-section-title" style="font-size:14px">⑧ STATUT GLOBAL DE LA SEMAINE</div>
+          <div style="padding:12px 14px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px" id="su-status-btns"></div>
+        </div>
+
+      </div>
+    </div>
   </div>
 
   <!-- AGENDA: section retirée (utilisation Calendrier iPhone) -->
@@ -970,6 +993,100 @@ function checkPwd(){
     </div>
   </div>
 
+  <!-- ====== PLUS-VALUE ====== -->
+  <div id="pt-plusvalue-sec" style="display:none">
+
+    <!-- Vue liste historique -->
+    <div id="pv-historique-view">
+      <div class="sh print-no">
+        <div><div class="st">🔨 Plus-values</div><div class="ss" id="pv-hist-sub">Historique</div></div>
+        <button class="fab" onclick="nouvellePlusValue()">＋ Nouvelle</button>
+      </div>
+      <div id="pv-hist-list"></div>
+    </div>
+
+    <!-- Vue édition plus-value -->
+    <div id="pv-edit-view" style="display:none">
+      <div class="sh print-no">
+        <div><div class="st">🔨 Plus-value</div><div class="ss" id="pv-edit-sub">En cours</div></div>
+        <div style="display:flex;gap:8px">
+          <button class="fab" style="background:var(--muted)" onclick="retourPvHist()">← Retour</button>
+          <button class="fab" style="background:var(--green)" onclick="generatePDFPv()">📄 PDF</button>
+          <button class="fab" style="background:var(--orange)" onclick="addPvLigne()">＋ Ligne</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px">
+        <div style="background:white;border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);border-top:3px solid var(--blue)">
+          <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Lignes</div>
+          <div style="font-size:22px;font-weight:900;color:var(--blue)" id="pv-count">0</div>
+        </div>
+        <div style="background:white;border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);border-top:3px solid var(--green)">
+          <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Faites</div>
+          <div style="font-size:22px;font-weight:900;color:var(--green)" id="pv-done-count">0</div>
+        </div>
+        <div style="background:white;border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);border-top:3px solid var(--orange)">
+          <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Total CHF</div>
+          <div style="font-size:18px;font-weight:900;color:var(--orange)" id="pv-total-stat">—</div>
+        </div>
+      </div>
+
+      <!-- Infos -->
+      <div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px">
+        <div style="background:linear-gradient(135deg,var(--blue),var(--blue2));padding:12px 16px">
+          <div style="color:white;font-size:14px;font-weight:900">📋 Informations plus-value</div>
+        </div>
+        <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="pi-field"><label>Chantier</label><input id="pv-chantier" class="rdv-input" placeholder="Nom du chantier..." oninput="savePvInfo()"></div>
+          <div class="pi-field"><label>Client</label><input id="pv-client" class="rdv-input" placeholder="Nom du client..." oninput="savePvInfo()"></div>
+          <div class="pi-field"><label>Date demande</label><input id="pv-date" type="date" class="rdv-input" oninput="savePvInfo()"></div>
+          <div class="pi-field"><label>Demandé par (sur place)</label><input id="pv-dempar" class="rdv-input" placeholder="Prénom Nom..." oninput="savePvInfo()"></div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px">
+        <div style="background:#16a085;padding:10px 16px"><div style="color:white;font-size:13px;font-weight:900">📝 Description / Objet</div></div>
+        <div style="padding:14px 16px">
+          <textarea id="pv-desc" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;resize:none;height:70px" placeholder="Travaux supplémentaires demandés par le client..." oninput="savePvInfo()"></textarea>
+        </div>
+      </div>
+
+      <!-- Liste travaux -->
+      <div style="margin-bottom:14px">
+        <div style="font-size:14px;font-weight:900;color:var(--text);margin-bottom:10px">🔨 Travaux à effectuer</div>
+        <div id="pv-lignes-list"></div>
+      </div>
+
+      <!-- Notes -->
+      <div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px">
+        <div style="background:#16a085;padding:10px 16px"><div style="color:white;font-size:13px;font-weight:900">📝 Notes / Observations</div></div>
+        <div style="padding:14px 16px">
+          <textarea id="pv-notes" style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:12px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;resize:none;height:70px" placeholder="Remarques, conditions, délais..." oninput="savePvInfo()"></textarea>
+        </div>
+      </div>
+
+      <!-- Total + Signatures -->
+      <div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px">
+        <div style="background:var(--text);padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
+          <div style="color:white;font-size:13px;font-weight:800">TOTAL HT</div>
+          <div style="color:#4de87a;font-size:22px;font-weight:900" id="pv-total">— CHF</div>
+        </div>
+        <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="border:1.5px solid var(--border);border-radius:12px;padding:14px">
+            <div style="font-size:11px;font-weight:900;color:var(--blue);margin-bottom:30px">Signature client :</div>
+            <div style="font-size:10px;color:var(--muted);border-top:1px solid var(--border);padding-top:6px">Date : _______________</div>
+          </div>
+          <div style="border:1.5px solid var(--border);border-radius:12px;padding:14px">
+            <div style="font-size:11px;font-weight:900;color:var(--blue);margin-bottom:30px">Visa AG Peinture :</div>
+            <div style="font-size:10px;color:var(--muted);border-top:1px solid var(--border);padding-top:6px">Date : _______________</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- NOTES -->
   <div id="pt-notes-sec" style="display:none">
     <div class="sh"><div><div class="st">📝 Notes</div><div class="ss" id="notes-sub"></div></div><button class="fab" onclick="openModal('notes')">＋ Note</button></div>
@@ -1204,6 +1321,61 @@ let editingNoteId=null,editingAfaireId=null,editingChantierId=null,editingNuanci
 let patrols=JSON.parse(localStorage.getItem('ag4_pa')||'[]');
 let planningData=JSON.parse(localStorage.getItem('ag4_plan')||'{}');
 
+// ====== UTILITAIRES SEMAINE ISO ======
+function getISOWeek(date){
+  var d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
+  var dayNum=d.getUTCDay()||7;
+  d.setUTCDate(d.getUTCDate()+4-dayNum);
+  var yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  var weekNo=Math.ceil(((d-yearStart)/86400000+1)/7);
+  return d.getUTCFullYear()+'-W'+String(weekNo).padStart(2,'0');
+}
+function getWeekDates(isoWeek){
+  var parts=isoWeek.split('-W');
+  var year=parseInt(parts[0]);
+  var week=parseInt(parts[1]);
+  var jan4=new Date(year,0,4);
+  var jan4Day=jan4.getDay()||7;
+  var monday=new Date(jan4);
+  monday.setDate(jan4.getDate()-jan4Day+1+(week-1)*7);
+  var sunday=new Date(monday);
+  sunday.setDate(monday.getDate()+6);
+  return {monday:monday,sunday:sunday};
+}
+function shiftWeek(isoWeek,days){
+  var dates=getWeekDates(isoWeek);
+  var newDate=new Date(dates.monday);
+  newDate.setDate(newDate.getDate()+days);
+  return getISOWeek(newDate);
+}
+function fmtWeekRange(isoWeek){
+  var d=getWeekDates(isoWeek);
+  var mois=['janv.','févr.','mars','avr.','mai','juin','juil.','août','sept.','oct.','nov.','déc.'];
+  var w=isoWeek.split('-W')[1];
+  var sameMonth=d.monday.getMonth()===d.sunday.getMonth();
+  if(sameMonth){
+    return 'Sem. '+w+' · '+d.monday.getDate()+' → '+d.sunday.getDate()+' '+mois[d.sunday.getMonth()]+' '+d.sunday.getFullYear();
+  }
+  return 'Sem. '+w+' · '+d.monday.getDate()+' '+mois[d.monday.getMonth()]+' → '+d.sunday.getDate()+' '+mois[d.sunday.getMonth()]+' '+d.sunday.getFullYear();
+}
+
+// ====== MIGRATION planningData : ancien (objet plat) -> multi-semaines ======
+(function migratePlanning(){
+  if(!planningData)planningData={};
+  if(!planningData.weeks){
+    var thisWeek=getISOWeek(new Date());
+    var oldKeys=Object.keys(planningData).filter(function(k){return k!=='currentWeek'&&k!=='weeks';});
+    var weeks={};
+    if(oldKeys.length>0){
+      var legacy={};
+      oldKeys.forEach(function(k){legacy[k]=planningData[k];});
+      weeks[thisWeek]=legacy;
+    }
+    planningData={currentWeek:thisWeek,weeks:weeks};
+    localStorage.setItem('ag4_plan',JSON.stringify(planningData));
+  }
+})();
+
 // Réparation auto des IDs en doublon (corrige le bug des cases à cocher)
 (function fixDuplicateIds(){
   var lists=[afaire,devis,chantiers,nuanciers,agenda,notes,patrols];
@@ -1311,7 +1483,7 @@ function showTab(t,btn){
 
 // PATRON TABS
 function showPatronTab(t){
-  ['checklist','planning','nuanciers','routine','notes','rdv','metre','commande'].forEach(x=>{
+  ['nuanciers','suivi','notes','rdv','metre','commande','plusvalue'].forEach(x=>{
     const sec=document.getElementById('pt-'+x+'-sec');
     if(sec) sec.style.display=x===t?'block':'none';
     const btn=document.getElementById('pt-'+x);
@@ -1326,8 +1498,27 @@ function showPatronTab(t){
     if(ev) ev.style.display='none';
     if(typeof renderRDVHist==='function') renderRDVHist();
   }
+  if(t==='suivi'){
+    suiviCurrentId=null;
+    var shv=document.getElementById('suivi-historique-view');
+    var sev=document.getElementById('suivi-edit-view');
+    if(shv) shv.style.display='block';
+    if(sev) sev.style.display='none';
+    if(typeof renderSuiviHist==='function') renderSuiviHist();
+  }
   if(t==='metre'){
     if(typeof renderMetreHist==='function') renderMetreHist();
+  }
+  if(t==='commande'){
+    if(typeof renderCmdHist==='function') renderCmdHist();
+  }
+  if(t==='plusvalue'){
+    pvCurrentId=null;
+    var pvh=document.getElementById('pv-historique-view');
+    var pve=document.getElementById('pv-edit-view');
+    if(pvh) pvh.style.display='block';
+    if(pve) pve.style.display='none';
+    if(typeof renderPvHist==='function') renderPvHist();
   }
 }
 
@@ -1792,55 +1983,11 @@ function delNu(id){nuanciers=nuanciers.filter(n=>n.id!==id);save();renderNuancie
 function delAg(id){agenda=agenda.filter(a=>a.id!==id);save();renderAgenda();renderHome();}
 function delNo(id){notes=notes.filter(n=>n.id!==id);save();renderNotes();}
 
-// PATROL (checklist chantier)
-function addPatrol(){
-  patrols.unshift({id:Date.now(),chantier:'',chef:'',date:todayStr,heure:'',checks:{},inputs:{},eval:'',action:{prob:'',action:'',resp:''},notes:'',open:true});
-  save();renderPatrols();
-}
-function togglePatrol(pid){const p=patrols.find(x=>x.id===pid);if(p)p.open=!p.open;save();renderPatrols();}
-function toggleCheck(pid,key){const p=patrols.find(x=>x.id===pid);if(p){p.checks[key]=!p.checks[key];}save();renderPatrols();}
-function setEval(pid,v){const p=patrols.find(x=>x.id===pid);if(p)p.eval=v;save();renderPatrols();}
-function delPatrol(pid){if(confirm('Supprimer cette checklist ?')){patrols=patrols.filter(p=>p.id!==pid);save();renderPatrols();}}
-function savePatrolField(pid,field,val){const p=patrols.find(x=>x.id===pid);if(p)p[field]=val;save();}
-function savePatrolAction(pid,field,val){const p=patrols.find(x=>x.id===pid);if(p){if(!p.action)p.action={};p.action[field]=val;}save();}
+// PATROL (checklist chantier) : retirée. La variable `patrols` est gardée
+// car référencée par save() et fixDuplicateIds, et ag4_pa reste synchronisé.
 
-const PATROL_SECTIONS=[
-  {key:'av',title:'1. Avancement & Productivité',items:[
-    {k:'av1',t:'Les ouvriers avancent au bon rythme'},
-    {k:'av2',t:'Pas de retard par rapport au planning'},
-    {k:'av3',t:'Le rythme permet de terminer dans les délais'},
-  ]},
-  {key:'org',title:'2. Organisation & Matériel',items:[
-    {k:'org1',t:'Tout le matériel nécessaire est disponible'},
-    {k:'org2',t:'Les protections sont en place (sols, fenêtres, meubles)'},
-    {k:'org3',t:'Aucune perte de temps à chercher du matériel'},
-  ]},
-  {key:'qua',title:'3. Qualité & Finitions',items:[
-    {k:'q1',t:'Le travail est conforme au devis'},
-    {k:'q2',t:'Pas de défauts visibles ou zones oubliées'},
-    {k:'q3',t:'Les retouches sont anticipées avant livraison'},
-  ]},
-  {key:'com',title:'4. Communication & Extras',items:[
-    {k:'c1',t:'Demandes particulières du client notées'},
-    {k:'c2',t:'Plus-values identifiées et notées'},
-    {k:'c3',t:'Ouvriers sans blocages ni questions en suspens'},
-  ]},
-  {key:'adm',title:'5. Administration',items:[
-    {k:'a1',t:'Heures des ouvriers bien notées'},
-    {k:'a2',t:'Surfaces réalisées notées pour mise à jour tableau'},
-    {k:'a3',t:'Matériel à commander pour la prochaine venue ?'},
-  ]},
-];
-
-// PLANNING DATA
-const PLAN_DAYS=[
-  {id:'lundi',label:'LUNDI',matin:'1–2 RDV clients / visites devis',apm:'Tournée chantiers + bureau (mails, factures, suivi rentabilité)'},
-  {id:'mardi',label:'MARDI',matin:'RDV clients ou contrôle qualité sur chantier clé',apm:'Approvisionnement matériel + gestion administrative'},
-  {id:'mercredi',label:'MERCREDI',matin:'1 RDV client + visite chantier délicat',apm:'Préparation et envoi devis + appels clients'},
-  {id:'jeudi',label:'JEUDI',matin:'RDV client + contrôle protections / finitions',apm:'Bureau (suivi compta, devis) + téléphone fournisseurs'},
-  {id:'vendredi',label:'VENDREDI',matin:'1 RDV client + mini-tournée chantiers (clôture semaine)',apm:'Tableau rentabilité, factures + point hebdo 15 min'},
-  {id:'samedi',label:'SAMEDI',matin:'RDV client particulier si besoin (optionnel)',apm:''},
-];
+// PLANNING SEMAINE : retiré (jamais utilisé). La variable `planningData` est
+// gardée car référencée par save(), et ag4_plan reste synchronisé.
 
 // FORMAT
 function fmtDate(d){if(!d)return'';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
@@ -2113,69 +2260,6 @@ function renderChantiers(){
     </div>`).join('');
 }
 
-function renderPatrols(){
-  const el=document.getElementById('patrol-list');
-  if(!patrols.length){el.innerHTML='<div class="empty"><div class="ei">✅</div><p>Aucune checklist</p><span>Ajoute un chantier à contrôler</span></div>';return;}
-  el.innerHTML=patrols.map(p=>{
-    const total=PATROL_SECTIONS.reduce((s,sec)=>s+sec.items.length,0);
-    const done=Object.values(p.checks||{}).filter(Boolean).length;
-    const pct=Math.round(done/total*100);
-    return `
-    <div class="patrol-card ${p.open?'open':''}">
-      <div class="patrol-header" onclick="togglePatrol(${p.id})">
-        <div>
-          <div class="patrol-header-title">🔧 ${p.chantier||'Nouveau chantier'}</div>
-          <div class="patrol-header-sub">${done}/${total} points · ${pct}% · ${p.date?fmtDate(p.date):''}</div>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <button onclick="event.stopPropagation();delPatrol(${p.id})" style="background:rgba(255,255,255,0.2);border:none;color:white;font-size:13px;padding:4px 8px;border-radius:8px;cursor:pointer">✕</button>
-          <span class="patrol-arrow">▼</span>
-        </div>
-      </div>
-      <div class="patrol-body">
-        <div class="patrol-info">
-          <div class="pi-field"><label>Chantier</label><input value="${p.chantier||''}" placeholder="Nom du chantier..." oninput="savePatrolField(${p.id},'chantier',this.value)"></div>
-          <div class="pi-field"><label>Chef équipe</label><input value="${p.chef||''}" placeholder="Nom..." oninput="savePatrolField(${p.id},'chef',this.value)"></div>
-          <div class="pi-field"><label>Date</label><input type="date" value="${p.date||''}" oninput="savePatrolField(${p.id},'date',this.value)"></div>
-          <div class="pi-field"><label>Heure</label><input type="time" value="${p.heure||''}" oninput="savePatrolField(${p.id},'heure',this.value)"></div>
-        </div>
-        ${PATROL_SECTIONS.map(sec=>`
-          <div class="patrol-section">
-            <div class="ps-title">${sec.title}</div>
-            ${sec.items.map(item=>`
-              <div class="ps-item ${p.checks&&p.checks[item.k]?'checked':''}" onclick="toggleCheck(${p.id},'${item.k}')">
-                <div class="ps-check">
-                  <svg class="ps-ck" width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9.5 10,2.5" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div>
-                <div class="ps-text">${item.t}</div>
-              </div>`).join('')}
-          </div>`).join('')}
-        <div class="patrol-section">
-          <div class="ps-title" style="color:var(--orange)">6. Action Immédiate</div>
-          <div style="display:flex;flex-direction:column;gap:8px">
-            <div class="pi-field"><label>Problème</label><input value="${p.action&&p.action.prob||''}" placeholder="Problème identifié..." oninput="savePatrolAction(${p.id},'prob',this.value)"></div>
-            <div class="pi-field"><label>Action à faire</label><input value="${p.action&&p.action.action||''}" placeholder="Que faire ?" oninput="savePatrolAction(${p.id},'action',this.value)"></div>
-            <div class="pi-field"><label>Responsable / Délai</label><input value="${p.action&&p.action.resp||''}" placeholder="Qui ? Pour quand ?" oninput="savePatrolAction(${p.id},'resp',this.value)"></div>
-          </div>
-        </div>
-        <div class="patrol-section">
-          <div class="ps-title">7. Notes & Décisions</div>
-          <textarea style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;resize:none;height:70px" placeholder="Notes libres..." oninput="savePatrolField(${p.id},'notes',this.value)">${p.notes||''}</textarea>
-        </div>
-        <div class="patrol-section">
-          <div class="ps-title">8. Évaluation rapide</div>
-          <div class="eval-row">
-            <button class="eval-btn ${p.eval==='top'?'sel-green':''}" onclick="setEval(${p.id},'top')">✅ En avance</button>
-            <button class="eval-btn ${p.eval==='ok'?'sel-blue':''}" onclick="setEval(${p.id},'ok')">🔵 Dans les temps</button>
-            <button class="eval-btn ${p.eval==='lent'?'sel-orange':''}" onclick="setEval(${p.id},'lent')">⚠️ Léger retard</button>
-            <button class="eval-btn ${p.eval==='crit'?'sel-red':''}" onclick="setEval(${p.id},'crit')">🔴 Retard critique</button>
-          </div>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
 function renderNuanciers(){
   document.getElementById('nuan-sub').textContent=nuanciers.length+' nuancier'+(nuanciers.length>1?'s':'')+' posé'+(nuanciers.length>1?'s':'');
   const el=document.getElementById('nuan-list');
@@ -2197,32 +2281,6 @@ function renderNuanciers(){
       <button class="nuan-del" onclick="delNu(${n.id})">✕</button>
     </div>`).join('');
 }
-
-function renderPlanning(){
-  document.getElementById('plan-sub').textContent='Planning type de la semaine patron';
-  const saved=planningData||{};
-  document.getElementById('plan-semaine').value=saved.semaine||'';
-  document.getElementById('planning-days').innerHTML=PLAN_DAYS.map(d=>`
-    <div class="pw-day">
-      <div class="pw-day-header ${d.id}">${d.label}</div>
-      <div class="pw-slot">
-        <div class="pw-slot-lbl">☀️ Matin</div>
-        <div class="pw-slot-default">${d.matin}</div>
-        <input class="pw-slot-input" value="${saved[d.id+'_matin']||''}" placeholder="Tes notes du matin..." oninput="savePlan('${d.id}_matin',this.value)">
-      </div>
-      ${d.apm?`<div class="pw-slot">
-        <div class="pw-slot-lbl">🌆 Après-midi</div>
-        <div class="pw-slot-default">${d.apm}</div>
-        <input class="pw-slot-input" value="${saved[d.id+'_apm']||''}" placeholder="Tes notes de l'après-midi..." oninput="savePlan('${d.id}_apm',this.value)">
-      </div>`:''}
-      <div class="pw-notes">
-        <div class="pw-notes-lbl">📝 Notes du jour</div>
-        <textarea class="pw-notes-input" placeholder="Notes libres..." oninput="savePlan('${d.id}_notes',this.value)">${saved[d.id+'_notes']||''}</textarea>
-      </div>
-    </div>`).join('');
-  document.getElementById('plan-semaine').addEventListener('input',function(){savePlan('semaine',this.value);});
-}
-function savePlan(key,val){if(!planningData)planningData={};planningData[key]=val;save();}
 
 function renderAgenda(){
   // Onglet Agenda retiré — fonction conservée pour compatibilité mais ne fait rien
@@ -2262,6 +2320,40 @@ function openEditNote(id){
 
 // ROUTINE HEBDO
 var routineData = JSON.parse(localStorage.getItem('ag4_routine') || '{}');
+
+// MIGRATION : ancienne structure (objet plat) -> nouvelle (multi-semaines)
+(function migrateRoutine(){
+  if(!routineData)routineData={};
+  if(!routineData.weeks){
+    var thisWeek=getISOWeek(new Date());
+    var oldKeys=Object.keys(routineData).filter(function(k){return k!=='currentWeek'&&k!=='weeks';});
+    var weeks={};
+    if(oldKeys.length>0){
+      var legacy={};
+      oldKeys.forEach(function(k){legacy[k]=routineData[k];});
+      weeks[thisWeek]=legacy;
+    }
+    routineData={currentWeek:thisWeek,weeks:weeks};
+    localStorage.setItem('ag4_routine',JSON.stringify(routineData));
+  }
+})();
+
+function getCurrentWeekRoutine(){
+  if(!routineData.weeks)routineData.weeks={};
+  var w=routineData.currentWeek;
+  if(!w){w=getISOWeek(new Date());routineData.currentWeek=w;}
+  if(!routineData.weeks[w])routineData.weeks[w]={};
+  return routineData.weeks[w];
+}
+function navRoutine(direction){
+  if(!routineData.currentWeek)routineData.currentWeek=getISOWeek(new Date());
+  if(direction==='today')routineData.currentWeek=getISOWeek(new Date());
+  else if(direction==='prev')routineData.currentWeek=shiftWeek(routineData.currentWeek,-7);
+  else if(direction==='next')routineData.currentWeek=shiftWeek(routineData.currentWeek,7);
+  localStorage.setItem('ag4_routine',JSON.stringify(routineData));
+  renderRoutine();
+}
+
 var ROUTINE_BUREAU = [
   'Allumer ordi + consulter tableau mural (chantiers du jour)',
   'Choisir 1 priorité du jour',
@@ -2286,32 +2378,37 @@ var RJOURS = ['lundi','mardi','mercredi','jeudi','vendredi'];
 var RJOURS_L = ['L','M','M','J','V'];
 
 function saveRoutine(key,val){
-  routineData[key]=val;
+  var data=getCurrentWeekRoutine();
+  data[key]=val;
   localStorage.setItem('ag4_routine',JSON.stringify(routineData));
 }
 
 function toggleRoutineCheck(sectionKey,idx,jour){
+  var data=getCurrentWeekRoutine();
   var key=sectionKey+'_'+idx+'_'+jour;
-  routineData[key]=!routineData[key];
+  data[key]=!data[key];
   localStorage.setItem('ag4_routine',JSON.stringify(routineData));
   renderRoutine();
 }
 
 function setRoutineEval(v){
-  routineData['bilan_eval']=v;
+  var data=getCurrentWeekRoutine();
+  data['bilan_eval']=v;
   localStorage.setItem('ag4_routine',JSON.stringify(routineData));
   renderRoutine();
 }
 
 function resetRoutine(){
-  if(confirm('Effacer la routine pour une nouvelle semaine ?')){
-    routineData={};
+  if(confirm('Effacer la routine de cette semaine ?')){
+    var w=routineData.currentWeek||getISOWeek(new Date());
+    if(routineData.weeks)delete routineData.weeks[w];
     localStorage.setItem('ag4_routine',JSON.stringify(routineData));
     renderRoutine();
   }
 }
 
 function buildCheckGrid(title, items, sectionKey, color){
+  var data=getCurrentWeekRoutine();
   var header='<div style="background:'+color+';color:white;padding:10px 16px;font-size:13px;font-weight:800">'+title+'</div>';
   var dayH='<div style="display:grid;grid-template-columns:1fr repeat(5,32px);gap:4px;padding:8px 14px 4px;border-bottom:1px solid var(--border)">'
     +'<div style="font-size:10px;font-weight:800;color:var(--muted)">TÂCHE</div>'
@@ -2319,7 +2416,7 @@ function buildCheckGrid(title, items, sectionKey, color){
     +'</div>';
   var rows=items.map(function(item,idx){
     var boxes=RJOURS.map(function(j){
-      var checked=!!routineData[sectionKey+'_'+idx+'_'+j];
+      var checked=!!data[sectionKey+'_'+idx+'_'+j];
       return '<div onclick="toggleRoutineCheck(\''+sectionKey+'\','+idx+',\''+j+'\')" style="width:26px;height:26px;border-radius:6px;border:2px solid '+(checked?'var(--green)':'var(--border)')+';background:'+(checked?'var(--green)':'white')+';display:flex;align-items:center;justify-content:center;cursor:pointer;margin:0 auto">'
         +(checked?'<svg width="11" height="11" viewBox="0 0 12 12"><polyline points="2,6 5,9.5 10,2.5" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')
         +'</div>';
@@ -2334,16 +2431,29 @@ function buildCheckGrid(title, items, sectionKey, color){
 function renderRoutine(){
   var el=document.getElementById('routine-container');
   if(!el)return;
+  var w=routineData.currentWeek||getISOWeek(new Date());
+  routineData.currentWeek=w;
+  var data=getCurrentWeekRoutine();
+  var thisWeekISO=getISOWeek(new Date());
+  var isCurrent=(w===thisWeekISO);
+  var nbWeeks=Object.keys(routineData.weeks||{}).length;
+  var sub=document.getElementById('routine-sub');
+  if(sub)sub.textContent=nbWeeks+' semaine'+(nbWeeks>1?'s':'')+' en mémoire'+(isCurrent?' · semaine en cours':'');
+
+  // Header navigation
+  var nav='<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:10px 12px;margin-bottom:12px;display:flex;gap:6px;align-items:center;justify-content:space-between">'
+    +'<button onclick="navRoutine(\'prev\')" style="background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:Nunito,sans-serif;font-size:13px;font-weight:800;padding:6px 12px;cursor:pointer">←</button>'
+    +'<div style="flex:1;text-align:center;color:var(--text);font-family:Nunito,sans-serif;font-size:14px;font-weight:900">'+fmtWeekRange(w)+'</div>'
+    +'<button onclick="navRoutine(\'next\')" style="background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:Nunito,sans-serif;font-size:13px;font-weight:800;padding:6px 12px;cursor:pointer">→</button>'
+    +(isCurrent?'':'<button onclick="navRoutine(\'today\')" style="background:var(--blue);border:none;border-radius:8px;color:white;font-family:Nunito,sans-serif;font-size:11px;font-weight:900;padding:6px 10px;cursor:pointer;margin-left:6px">🏠 Auj.</button>')
+    +'</div>';
 
   var semInfo='<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:12px">'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">'
-    +'<div class="pi-field"><label>Semaine N°</label><input value="'+(routineData.sem_num||'')+'" placeholder="___" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 8px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'sem_num\',this.value)"></div>'
-    +'<div class="pi-field"><label>Du</label><input type="date" value="'+(routineData.sem_du||'')+'" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 4px;font-family:Nunito,sans-serif;font-size:12px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'sem_du\',this.value)"></div>'
-    +'<div class="pi-field"><label>Chantier(s)</label><input value="'+(routineData.sem_chantier||'')+'" placeholder="Nom..." style="border:1.5px solid var(--border);border-radius:8px;padding:8px 8px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'sem_chantier\',this.value)"></div>'
-    +'</div></div>';
+    +'<div class="pi-field"><label>Chantier(s) de la semaine</label><input value="'+(data.sem_chantier||'').replace(/"/g,'&quot;')+'" placeholder="Nom..." style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'sem_chantier\',this.value)"></div>'
+    +'</div>';
 
   var prioInputs=RJOURS.map(function(j,i){
-    return '<div class="pi-field"><label>'+RJOURS_L[i]+'</label><input value="'+(routineData['prio_'+j]||'')+'" placeholder="..." style="border:1.5px solid var(--border);border-radius:8px;padding:8px 6px;font-family:Nunito,sans-serif;font-size:12px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'prio_'+j+'\',this.value)"></div>';
+    return '<div class="pi-field"><label>'+RJOURS_L[i]+'</label><input value="'+(data['prio_'+j]||'').replace(/"/g,'&quot;')+'" placeholder="..." style="border:1.5px solid var(--border);border-radius:8px;padding:8px 6px;font-family:Nunito,sans-serif;font-size:12px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'prio_'+j+'\',this.value)"></div>';
   }).join('');
   var prioCard='<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px">'
     +'<div style="background:var(--blue);color:white;padding:10px 16px;font-size:13px;font-weight:800">① PRIORITÉ DU JOUR — une action clé chaque matin</div>'
@@ -2356,7 +2466,7 @@ function renderRoutine(){
     {k:'prob',label:'🔴 Problème',c:'var(--red)'}
   ];
   var evalBtns=evalOpts.map(function(o){
-    var sel=routineData['bilan_eval']===o.k;
+    var sel=data['bilan_eval']===o.k;
     return '<button onclick="setRoutineEval(\''+o.k+'\')" style="flex:1;padding:8px 4px;border-radius:10px;border:2px solid '+(sel?o.c:'var(--border)')+';background:'+(sel?o.c+'22':'white')+';font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;color:'+(sel?o.c:'var(--muted)')+'">'+o.label+'</button>';
   }).join('');
 
@@ -2364,26 +2474,612 @@ function renderRoutine(){
     +'<div style="background:#1a2533;color:white;padding:10px 16px;font-size:13px;font-weight:800">④ BILAN DE SEMAINE</div>'
     +'<div style="padding:14px 16px;display:flex;flex-direction:column;gap:12px">'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
-    +'<div class="pi-field"><label>Heures facturées</label><input value="'+(routineData.bilan_heures||'')+'" placeholder="Ex: 38h" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'bilan_heures\',this.value)"></div>'
-    +'<div class="pi-field"><label>CA semaine (CHF)</label><input type="number" value="'+(routineData.bilan_ca||'')+'" placeholder="0" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'bilan_ca\',this.value)"></div>'
+    +'<div class="pi-field"><label>Heures facturées</label><input value="'+(data.bilan_heures||'').replace(/"/g,'&quot;')+'" placeholder="Ex: 38h" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'bilan_heures\',this.value)"></div>'
+    +'<div class="pi-field"><label>CA semaine (CHF)</label><input type="number" value="'+(data.bilan_ca||'')+'" placeholder="0" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'bilan_ca\',this.value)"></div>'
     +'</div>'
-    +'<div class="pi-field"><label>Priorité semaine suivante</label><input value="'+(routineData.bilan_prio||'')+'" placeholder="Quoi faire en priorité la semaine prochaine ?" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'bilan_prio\',this.value)"></div>'
+    +'<div class="pi-field"><label>Priorité semaine suivante</label><input value="'+(data.bilan_prio||'').replace(/"/g,'&quot;')+'" placeholder="Quoi faire en priorité la semaine prochaine ?" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'bilan_prio\',this.value)"></div>'
     +'<div><div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Évaluation</div><div style="display:flex;gap:7px">'+evalBtns+'</div></div>'
     +'</div></div>';
 
   var notesSem='<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px">'
     +'<div style="background:var(--blue);color:white;padding:10px 16px;font-size:13px;font-weight:800">⑤ NOTES / POINTS À AMÉLIORER</div>'
-    +'<div style="padding:14px 16px"><textarea style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;resize:none;height:90px" placeholder="Points à améliorer, observations de la semaine..." oninput="saveRoutine(\'notes_sem\',this.value)">'+(routineData.notes_sem||'')+'</textarea></div></div>';
+    +'<div style="padding:14px 16px"><textarea style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;resize:none;height:90px" placeholder="Points à améliorer, observations de la semaine..." oninput="saveRoutine(\'notes_sem\',this.value)">'+(data.notes_sem||'')+'</textarea></div></div>';
 
-  var resetBtn='<button class="patrol-reset" onclick="resetRoutine()">🔄 Nouvelle semaine — tout effacer</button>';
+  var resetBtn='<button class="patrol-reset" onclick="resetRoutine()">🗑 Effacer cette semaine</button>';
 
-  el.innerHTML = semInfo + prioCard
+  el.innerHTML = nav + semInfo + prioCard
     + buildCheckGrid('② TÂCHES BUREAU', ROUTINE_BUREAU, 'bureau', 'var(--blue)')
     + buildCheckGrid('③ CONTRÔLE CHANTIER', ROUTINE_CHANTIER, 'chantier', 'var(--teal)')
     + bilan + notesSem + resetBtn;
 }
 
 // INIT
+
+// ========================
+// SUIVI CHANTIER (tournée hebdo) - Historique de fiches
+// ========================
+var suiviHistorique = JSON.parse(localStorage.getItem('ag4_suivi_hist')||'[]');
+var suiviCurrentId = null;
+
+var SUIVI_CHECKS = {
+  avan: [
+    'Avancement OK (m²/h respecté)',
+    'Pas de retard sur planning',
+    'Matériel disponible (aucun blocage)',
+    'Rythme permet de tenir les délais',
+    'Aucune perte de temps à chercher matériel'
+  ],
+  qual: [
+    'Nombre de couches respecté',
+    'Qualité visuelle correcte (sans défauts)',
+    'Protections en place (sols, meubles, fenêtres)',
+    'Retouches anticipées avant livraison',
+    'Travail conforme au devis'
+  ],
+  secu: [
+    'Échafaudages / échelles conformes',
+    'EPI portés par toute l\u2019équipe'
+  ],
+  suiv: [
+    'Heures bien notées par ouvrier',
+    'Surfaces notées pour suivi rentabilité',
+    'Plus-values identifiées et notées',
+    'Client informé / satisfait',
+    'Demandes particulières du client notées',
+    'Ouvriers sans blocage ni question en suspens',
+    'Matériel à commander pour prochaine venue'
+  ]
+};
+var SUIVI_STATUS = [
+  {k:'ok',       label:'🟢 Tout OK',     color:'var(--green)',  bg:'var(--green-bg)'},
+  {k:'surveiller',label:'🟡 À surveiller',color:'#d4a017',      bg:'var(--yellow-bg)'},
+  {k:'retard',   label:'🟠 Léger retard', color:'var(--orange)',bg:'var(--orange-bg)'},
+  {k:'probleme', label:'🔴 Problème',     color:'var(--red)',   bg:'var(--red-bg)'}
+];
+
+function saveSuiviHist(){
+  localStorage.setItem('ag4_suivi_hist',JSON.stringify(suiviHistorique));
+}
+
+function getSuiviCurrent(){
+  if(!suiviCurrentId) return null;
+  return suiviHistorique.find(function(s){return s.id===suiviCurrentId;})||null;
+}
+
+function nouvelleFicheSuivi(){
+  var today = new Date().toISOString().split('T')[0];
+  var s = {
+    id: Date.now(),
+    createdAt: new Date().toISOString(),
+    chantier:'', client:'', date: today, semaine:'', equipe:'',
+    status:'',
+    checks:{},
+    notes_avan:'', notes_qual:'', notes_secu:'', notes_suiv:'', notes_global:''
+  };
+  // Pré-remplir n° de semaine ISO si possible
+  try{ s.semaine = String(getISOWeek(new Date())).split('-W')[1] || ''; }catch(e){}
+  suiviHistorique.unshift(s);
+  saveSuiviHist();
+  ouvrirFicheSuivi(s.id);
+}
+
+function ouvrirFicheSuivi(id){
+  suiviCurrentId = id;
+  var s = getSuiviCurrent();
+  if(!s) return;
+  document.getElementById('suivi-historique-view').style.display='none';
+  document.getElementById('suivi-edit-view').style.display='block';
+  loadSuivi();
+}
+
+function retourSuiviHist(){
+  saveSuivi();
+  // Auto-déplier le dossier de la fiche qu'on vient de quitter
+  var s = getSuiviCurrent();
+  if(s){
+    var key = ((s.chantier||'').trim() || 'Sans nom').toLowerCase();
+    try{
+      var c = JSON.parse(localStorage.getItem('ag4_suivi_collapsed')||'{}');
+      if(c[key]){ c[key] = false; localStorage.setItem('ag4_suivi_collapsed', JSON.stringify(c)); }
+    }catch(e){}
+  }
+  suiviCurrentId = null;
+  document.getElementById('suivi-edit-view').style.display='none';
+  document.getElementById('suivi-historique-view').style.display='block';
+  renderSuiviHist();
+}
+
+function supprimerSuivi(id, e){
+  if(e) e.stopPropagation();
+  if(!confirm('Supprimer cette fiche de suivi ?')) return;
+  suiviHistorique = suiviHistorique.filter(function(s){return s.id!==id;});
+  saveSuiviHist();
+  renderSuiviHist();
+}
+
+function dupliquerSuivi(id, e){
+  if(e) e.stopPropagation();
+  var src = suiviHistorique.find(function(s){return s.id===id;});
+  if(!src) return;
+  var copy = JSON.parse(JSON.stringify(src));
+  copy.id = Date.now();
+  copy.createdAt = new Date().toISOString();
+  copy.date = new Date().toISOString().split('T')[0];
+  // On garde chantier/client/équipe, on remet à zéro les checks et notes
+  copy.checks = {};
+  copy.status = '';
+  copy.defauts = [];
+  copy.notes_avan = ''; copy.notes_qual = ''; copy.notes_secu = ''; copy.notes_suiv = ''; copy.notes_global = '';
+  try{ copy.semaine = String(getISOWeek(new Date())).split('-W')[1] || ''; }catch(err){}
+  suiviHistorique.unshift(copy);
+  saveSuiviHist();
+  ouvrirFicheSuivi(copy.id);
+}
+
+function setSuiviStatus(k){
+  var s = getSuiviCurrent(); if(!s) return;
+  s.status = (s.status===k) ? '' : k;
+  saveSuiviHist();
+  renderSuiviStatusButtons();
+}
+
+function toggleSuiviCheck(cat, idx){
+  var s = getSuiviCurrent(); if(!s) return;
+  if(!s.checks) s.checks = {};
+  var key = cat+'_'+idx;
+  s.checks[key] = !s.checks[key];
+  saveSuiviHist();
+  renderSuiviChecks(cat);
+}
+
+// Toggle d'une case par jour (L/M/M/J/V)
+var SUIVI_DAYS = ['lun','mar','mer','jeu','ven'];
+var SUIVI_DAYS_L = ['L','M','M','J','V'];
+function toggleSuiviCheckDay(cat, idx, day){
+  var s = getSuiviCurrent(); if(!s) return;
+  if(!s.checks) s.checks = {};
+  var key = cat+'_'+idx+'_'+day;
+  s.checks[key] = !s.checks[key];
+  saveSuiviHist();
+  renderSuiviChecks(cat);
+}
+
+// === Défauts à corriger ===
+function addDefaut(){
+  var s = getSuiviCurrent(); if(!s) return;
+  if(!s.defauts) s.defauts = [];
+  s.defauts.push({
+    id: Date.now()+Math.floor(Math.random()*1000),
+    text:'', done:false, createdAt:new Date().toISOString()
+  });
+  saveSuiviHist();
+  renderDefauts();
+  // focus le champ qu'on vient d'ajouter
+  setTimeout(function(){
+    var inputs = document.querySelectorAll('#su-defauts-list input[data-defaut="1"]');
+    if(inputs.length) inputs[inputs.length-1].focus();
+  }, 50);
+}
+function removeDefaut(id){
+  var s = getSuiviCurrent(); if(!s) return;
+  s.defauts = (s.defauts||[]).filter(function(d){return d.id!==id;});
+  saveSuiviHist();
+  renderDefauts();
+}
+function toggleDefautDone(id){
+  var s = getSuiviCurrent(); if(!s) return;
+  var d = (s.defauts||[]).find(function(x){return x.id===id;});
+  if(!d) return;
+  d.done = !d.done;
+  if(d.done) d.doneAt = new Date().toISOString(); else delete d.doneAt;
+  saveSuiviHist();
+  renderDefauts();
+}
+function updateDefautText(id, val){
+  var s = getSuiviCurrent(); if(!s) return;
+  var d = (s.defauts||[]).find(function(x){return x.id===id;});
+  if(!d) return;
+  d.text = val;
+  saveSuiviHist();
+  // pas de re-render pour ne pas perdre le focus
+}
+function renderDefauts(){
+  var el = document.getElementById('su-defauts-list');
+  if(!el) return;
+  var s = getSuiviCurrent(); if(!s) return;
+  var defauts = s.defauts || [];
+  if(!defauts.length){
+    el.innerHTML = '<div style="color:var(--muted);font-size:12px;font-style:italic;padding:6px 0">Aucun défaut signalé pour le moment.</div>';
+    return;
+  }
+  var escVal = function(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
+  el.innerHTML = defauts.map(function(d){
+    var done = !!d.done;
+    var box = '<div onclick="toggleDefautDone('+d.id+')" style="width:24px;height:24px;border-radius:6px;border:2px solid '+(done?'var(--green)':'var(--orange)')+';background:'+(done?'var(--green)':'white')+';display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">'
+      +(done?'<svg width="11" height="11" viewBox="0 0 12 12"><polyline points="2,6 5,9.5 10,2.5" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')
+      +'</div>';
+    return '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed #f0f0f0">'
+      +box
+      +'<input type="text" data-defaut="1" value="'+escVal(d.text)+'" placeholder="Décrire le défaut..." oninput="updateDefautText('+d.id+',this.value)" style="flex:1;border:none;border-bottom:1.5px solid var(--border);padding:4px 0;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:'+(done?'var(--muted)':'var(--text)')+';background:transparent;outline:none;'+(done?'text-decoration:line-through':'')+'">'
+      +'<button onclick="removeDefaut('+d.id+')" style="background:transparent;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:4px 8px">🗑️</button>'
+      +'</div>';
+  }).join('');
+}
+
+function renderSuiviStatusButtons(){
+  var s = getSuiviCurrent(); if(!s) return;
+  var el = document.getElementById('su-status-btns'); if(!el) return;
+  el.innerHTML = SUIVI_STATUS.map(function(o){
+    var sel = (s.status===o.k);
+    return '<button onclick="setSuiviStatus(\''+o.k+'\')" style="padding:10px 8px;border-radius:10px;border:2px solid '+(sel?o.color:'var(--border)')+';background:'+(sel?o.bg:'white')+';color:'+(sel?o.color:'var(--muted)')+';font-family:Nunito,sans-serif;font-size:12px;font-weight:'+(sel?'900':'700')+';cursor:pointer">'+o.label+'</button>';
+  }).join('');
+}
+
+function renderSuiviChecks(cat){
+  var s = getSuiviCurrent(); if(!s) return;
+  var el = document.getElementById('su-checks-'+cat); if(!el) return;
+  var items = SUIVI_CHECKS[cat]||[];
+  if(!s.checks) s.checks = {};
+
+  // Migration auto : ancienne case unique cat_idx (boolean) -> 5 cases jour
+  // (on copie l'ancien état sur les 5 jours pour ne rien perdre)
+  items.forEach(function(item, idx){
+    var oldKey = cat+'_'+idx;
+    if(typeof s.checks[oldKey] === 'boolean'){
+      if(s.checks[oldKey]){
+        SUIVI_DAYS.forEach(function(day){ s.checks[cat+'_'+idx+'_'+day] = true; });
+      }
+      delete s.checks[oldKey];
+    }
+  });
+
+  // En-tête L M M J V
+  var header = '<div style="display:grid;grid-template-columns:1fr repeat(5,24px);gap:4px;padding:4px 0 6px;border-bottom:1px solid #f0f0f0;margin-bottom:2px">'
+    +'<div></div>'
+    + SUIVI_DAYS_L.map(function(d){return '<div style="font-size:10px;font-weight:900;color:var(--muted);text-align:center">'+d+'</div>';}).join('')
+    +'</div>';
+
+  var rows = items.map(function(item, idx){
+    var boxes = SUIVI_DAYS.map(function(day){
+      var key = cat+'_'+idx+'_'+day;
+      var checked = !!s.checks[key];
+      return '<div onclick="toggleSuiviCheckDay(\''+cat+'\','+idx+',\''+day+'\')" style="width:22px;height:22px;border-radius:5px;border:2px solid '+(checked?'var(--green)':'var(--border)')+';background:'+(checked?'var(--green)':'white')+';display:flex;align-items:center;justify-content:center;cursor:pointer;margin:0 auto">'
+        +(checked?'<svg width="10" height="10" viewBox="0 0 12 12"><polyline points="2,6 5,9.5 10,2.5" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')
+        +'</div>';
+    }).join('');
+    return '<div style="display:grid;grid-template-columns:1fr repeat(5,24px);gap:4px;padding:7px 0;border-bottom:1px dashed #f0f0f0;align-items:center">'
+      +'<div style="font-size:12.5px;font-weight:600;color:var(--text);line-height:1.3;padding-right:6px">'+item+'</div>'
+      +boxes+'</div>';
+  }).join('');
+
+  el.innerHTML = header + rows;
+}
+
+function loadSuivi(){
+  var s = getSuiviCurrent(); if(!s) return;
+  // Texte
+  ['chantier','client','date','semaine','equipe','notes_avan','notes_qual','notes_secu','notes_suiv','notes_global'].forEach(function(f){
+    var id = 'su-' + f.replace('_','-');
+    var el = document.getElementById(id);
+    if(el) el.value = s[f]||'';
+  });
+  // Statut + checks par catégorie
+  renderSuiviStatusButtons();
+  ['avan','qual','secu','suiv'].forEach(renderSuiviChecks);
+  renderDefauts();
+}
+
+function saveSuivi(){
+  if(!suiviCurrentId) return;
+  var s = getSuiviCurrent(); if(!s) return;
+  ['chantier','client','date','semaine','equipe','notes_avan','notes_qual','notes_secu','notes_suiv','notes_global'].forEach(function(f){
+    var id = 'su-' + f.replace('_','-');
+    var el = document.getElementById(id);
+    if(el) s[f] = el.value;
+  });
+  s.updatedAt = new Date().toISOString();
+  saveSuiviHist();
+}
+
+function toggleSuiviGroup(key){
+  var collapsed = {};
+  try{ collapsed = JSON.parse(localStorage.getItem('ag4_suivi_collapsed')||'{}'); }catch(e){}
+  collapsed[key] = !collapsed[key];
+  try{ localStorage.setItem('ag4_suivi_collapsed', JSON.stringify(collapsed)); }catch(e){}
+  renderSuiviHist();
+}
+
+function renderSuiviHist(){
+  var el = document.getElementById('suivi-hist-list');
+  var sub = document.getElementById('suivi-hist-sub');
+  if(!el) return;
+  if(!suiviHistorique.length){
+    if(sub) sub.textContent = '0 fiche · Tournée chantiers';
+    el.innerHTML='<div class="empty"><div class="ei">🛠</div><p>Aucune fiche de suivi</p><span>Appuie sur ＋ Nouveau pour ta première tournée</span></div>';
+    return;
+  }
+
+  // Grouper les fiches par nom de chantier (insensible à la casse)
+  var groups = {};
+  suiviHistorique.forEach(function(s){
+    var rawName = (s.chantier||'').trim() || 'Sans nom';
+    var key = rawName.toLowerCase();
+    if(!groups[key]){ groups[key] = {key:key, name:rawName, fiches:[]}; }
+    groups[key].fiches.push(s);
+    // Garder le nom de la fiche la plus récente comme nom canonique du dossier
+  });
+
+  // Trier les fiches dans chaque groupe (plus récente en haut)
+  var groupsArr = Object.keys(groups).map(function(k){ return groups[k]; });
+  groupsArr.forEach(function(g){
+    g.fiches.sort(function(a,b){
+      var da = a.date || a.createdAt || '';
+      var db = b.date || b.createdAt || '';
+      return db.localeCompare(da);
+    });
+    g.lastFiche = g.fiches[0];
+    g.lastDate = g.lastFiche.date || g.lastFiche.createdAt || '';
+    // Nom canonique = nom de la dernière fiche
+    if(g.lastFiche.chantier && g.lastFiche.chantier.trim()) g.name = g.lastFiche.chantier.trim();
+  });
+  // Trier les groupes par date la plus récente
+  groupsArr.sort(function(a,b){ return (b.lastDate||'').localeCompare(a.lastDate||''); });
+
+  // Sous-titre : N fiches dans M chantiers
+  var nbCh = groupsArr.length;
+  if(sub) sub.textContent = suiviHistorique.length+' fiche'+(suiviHistorique.length>1?'s':'')+' dans '+nbCh+' chantier'+(nbCh>1?'s':'');
+
+  // État replié (par dossier)
+  var collapsed = {};
+  try{ collapsed = JSON.parse(localStorage.getItem('ag4_suivi_collapsed')||'{}'); }catch(e){}
+
+  var totalChecksMax = Object.keys(SUIVI_CHECKS).reduce(function(n,c){return n+SUIVI_CHECKS[c].length;},0) * 5;
+  var escName = function(t){return String(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');};
+
+  el.innerHTML = groupsArr.map(function(g){
+    var isCollapsed = !!collapsed[g.key];
+    // Cumul des défauts ouverts sur tout le chantier
+    var aggOpen = 0, aggDone = 0;
+    g.fiches.forEach(function(s){
+      (s.defauts||[]).forEach(function(d){ if(d.done) aggDone++; else aggOpen++; });
+    });
+    var lastSt = SUIVI_STATUS.find(function(o){return o.k===g.lastFiche.status;}) || {label:'—', color:'var(--muted)', bg:'var(--bg)'};
+    var lastDateFmt = g.lastFiche.date ? g.lastFiche.date.split('-').reverse().join('/') : (g.lastFiche.createdAt ? (new Date(g.lastFiche.createdAt)).toLocaleDateString('fr-CH') : '');
+    var lastClient = (g.lastFiche.client||'').trim();
+
+    // En-tête du dossier
+    var header = '<div onclick="toggleSuiviGroup(\''+g.key.replace(/\\/g,'\\\\').replace(/\'/g,"\\'")+'\')" style="background:white;border-radius:var(--radius) var(--radius) '+(isCollapsed?'var(--radius) var(--radius)':'0 0')+';box-shadow:var(--shadow);padding:13px 14px;border-left:4px solid '+lastSt.color+';cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px">'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:15px;font-weight:900;color:var(--text)">📁 '+escName(g.name)+'</div>'
+        +'<div style="font-size:11px;color:var(--muted);margin-top:3px;display:flex;gap:6px;align-items:center;flex-wrap:wrap">'
+          +(lastClient?'<span>'+escName(lastClient)+'</span><span>·</span>':'')
+          +'<span>'+g.fiches.length+' fiche'+(g.fiches.length>1?'s':'')+'</span>'
+          +'<span>·</span>'
+          +'<span>dernière '+lastDateFmt+'</span>'
+        +'</div>'
+        +(aggOpen>0?'<div style="font-size:11px;font-weight:800;color:var(--orange);background:var(--orange-bg);padding:3px 8px;border-radius:6px;margin-top:6px;display:inline-block">⚠️ '+aggOpen+' défaut'+(aggOpen>1?'s':'')+' à corriger</div>':'')
+      +'</div>'
+      +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">'
+        +'<span style="font-size:11px;font-weight:800;color:'+lastSt.color+';background:'+lastSt.bg+';padding:3px 8px;border-radius:6px;white-space:nowrap">'+lastSt.label+'</span>'
+        +'<span style="font-size:18px;color:var(--muted);transition:transform 0.2s;display:inline-block;'+(isCollapsed?'':'transform:rotate(180deg)')+'">▾</span>'
+      +'</div>'
+    +'</div>';
+
+    // Corps du dossier (fiches)
+    var body = '';
+    if(!isCollapsed){
+      body = g.fiches.map(function(s){
+        var date = s.date ? s.date.split('-').reverse().join('/') : (s.createdAt ? (new Date(s.createdAt)).toLocaleDateString('fr-CH') : '');
+        var st = SUIVI_STATUS.find(function(o){return o.k===s.status;}) || {label:'— Non évalué', color:'var(--muted)', bg:'var(--bg)'};
+        var doneChecks = 0;
+        if(s.checks){
+          Object.keys(s.checks).forEach(function(k){
+            if(s.checks[k] && /_(lun|mar|mer|jeu|ven)$/.test(k)) doneChecks++;
+          });
+        }
+        var pct = totalChecksMax ? Math.round(doneChecks/totalChecksMax*100) : 0;
+        var hasNotes = !!(s.notes_avan||s.notes_qual||s.notes_secu||s.notes_suiv||s.notes_global);
+        var defauts = s.defauts || [];
+        var defOpen = defauts.filter(function(d){return !d.done;}).length;
+        var defDone = defauts.filter(function(d){return d.done;}).length;
+        var defLabel = '';
+        if(defauts.length){
+          if(defOpen>0) defLabel = '<span style="font-size:10px;font-weight:800;color:var(--orange);background:var(--orange-bg);padding:2px 6px;border-radius:5px">⚠️ '+defOpen+' à corriger</span>';
+          else defLabel = '<span style="font-size:10px;font-weight:700;color:var(--green);background:var(--green-bg);padding:2px 6px;border-radius:5px">✓ '+defDone+' corrigé'+(defDone>1?'s':'')+'</span>';
+        }
+        var titleLine = (s.semaine?'Semaine '+s.semaine+' · ':'')+date;
+        return '<div onclick="ouvrirFicheSuivi('+s.id+')" style="background:#fafcfd;border-top:1px solid var(--border);padding:11px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'
+          +'<div style="flex:1;min-width:0">'
+            +'<div style="font-size:13px;font-weight:800;color:var(--text)">'+titleLine+'</div>'
+            +'<div style="display:flex;gap:5px;align-items:center;margin-top:5px;flex-wrap:wrap">'
+              +'<span style="font-size:10px;font-weight:800;color:'+st.color+';background:'+st.bg+';padding:2px 6px;border-radius:5px">'+st.label+'</span>'
+              +'<span style="font-size:10px;font-weight:700;color:var(--muted)">✓ '+doneChecks+'/'+totalChecksMax+' ('+pct+'%)</span>'
+              +defLabel
+              +(hasNotes?'<span style="font-size:10px;font-weight:700;color:var(--blue)">📝</span>':'')
+            +'</div>'
+          +'</div>'
+          +'<div style="display:flex;gap:5px;flex-shrink:0">'
+            +'<button onclick="dupliquerSuivi('+s.id+',event)" title="Dupliquer pour la semaine en cours" style="background:var(--blue-bg);border:none;border-radius:7px;padding:5px 8px;color:var(--blue);font-size:13px;cursor:pointer">⎘</button>'
+            +'<button onclick="supprimerSuivi('+s.id+',event)" style="background:var(--red-bg);border:none;border-radius:7px;padding:5px 8px;color:var(--red);font-size:13px;cursor:pointer">🗑️</button>'
+          +'</div>'
+        +'</div>';
+      }).join('');
+      body = '<div style="background:white;border-radius:0 0 var(--radius) var(--radius);box-shadow:var(--shadow);overflow:hidden">'+body+'</div>';
+    }
+
+    return '<div style="margin-bottom:10px">'+header+body+'</div>';
+  }).join('');
+}
+
+function generatePDFSuivi(){
+  saveSuivi();
+  var s = getSuiviCurrent(); if(!s) return;
+  if(!window.jspdf){ alert('Module PDF non chargé.'); return; }
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var pw=210, ph=297, mg=12, W=pw-2*mg;
+  var cBlue=[61,184,212], cDark=[26,37,51], cMuted=[127,140,141], cLight=[232,248,252], cGreen=[39,174,96];
+
+  // Header
+  doc.setFillColor(cBlue[0],cBlue[1],cBlue[2]);
+  doc.rect(0,0,pw,18,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(255,255,255);
+  doc.text('Suivi Hebdomadaire Chantier',mg,11);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');
+  doc.text('Qualité · Rentabilité · Sécurité',mg,15.5);
+  var hdrDate = (new Date()).toLocaleDateString('fr-CH');
+  doc.text('Nyon · '+hdrDate, pw-mg, 15.5, {align:'right'});
+
+  var y = 24;
+
+  // Section helper
+  function sectionTitle(t){
+    doc.setFillColor(cBlue[0],cBlue[1],cBlue[2]);
+    doc.rect(mg,y,W,6,'F');
+    doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(9);
+    doc.text(t,mg+2,y+4.2);
+    y += 6;
+  }
+  function rowField(label, value, full){
+    var h = 8;
+    doc.setDrawColor(220,230,240);doc.setLineWidth(0.2);
+    doc.rect(mg, y, W, h, 'S');
+    doc.setTextColor(cBlue[0],cBlue[1],cBlue[2]);doc.setFont('helvetica','bold');doc.setFontSize(7);
+    doc.text(label.toUpperCase(),mg+2,y+3);
+    doc.setTextColor(cDark[0],cDark[1],cDark[2]);doc.setFont('helvetica','normal');doc.setFontSize(10);
+    doc.text(String(value||'—'),mg+2,y+6.5);
+    y += h;
+  }
+  function checkbox(x, yy, checked){
+    doc.setDrawColor(cDark[0],cDark[1],cDark[2]);doc.setLineWidth(0.3);
+    doc.rect(x, yy-2.5, 3, 3, 'S');
+    if(checked){
+      doc.setLineWidth(0.5);doc.setDrawColor(cGreen[0],cGreen[1],cGreen[2]);
+      doc.line(x+0.5, yy-1, x+1.3, yy-0.2);
+      doc.line(x+1.3, yy-0.2, x+2.7, yy-2);
+    }
+  }
+  function checkLines(catKey, items){
+    var DAYS_L = ['L','M','M','J','V'];
+    var DAYS_K = ['lun','mar','mer','jeu','ven'];
+    var labelW = W - 50; // 50mm pour les 5 colonnes jour
+    var colW = 10;
+    // En-tête L M M J V
+    doc.setFillColor(245,250,253);
+    doc.rect(mg, y, W, 5, 'F');
+    doc.setDrawColor(220,230,240);doc.setLineWidth(0.15);
+    doc.rect(mg, y, W, 5, 'S');
+    doc.setTextColor(cMuted[0],cMuted[1],cMuted[2]);doc.setFont('helvetica','bold');doc.setFontSize(7);
+    DAYS_L.forEach(function(d, i){
+      doc.text(d, mg + labelW + i*colW + colW/2, y+3.5, {align:'center'});
+    });
+    y += 5;
+    // Lignes
+    items.forEach(function(item, idx){
+      doc.setDrawColor(220,230,240);doc.setLineWidth(0.15);
+      doc.rect(mg, y, W, 6, 'S');
+      doc.setTextColor(cDark[0],cDark[1],cDark[2]);doc.setFont('helvetica','normal');doc.setFontSize(8.5);
+      var labelLines = doc.splitTextToSize(item, labelW - 4);
+      doc.text(labelLines[0], mg+2, y+4);
+      // Cases jour
+      DAYS_K.forEach(function(day, i){
+        var checked = !!(s.checks && s.checks[catKey+'_'+idx+'_'+day]);
+        var bx = mg + labelW + i*colW + colW/2 - 1.5;
+        checkbox(bx, y+3, checked);
+      });
+      y += 6;
+    });
+  }
+  function notesBlock(label, text){
+    if(!text) return;
+    var lines = doc.splitTextToSize(text, W-4);
+    var h = Math.max(10, lines.length*4 + 6);
+    doc.setDrawColor(220,230,240);doc.setLineWidth(0.2);
+    doc.rect(mg, y, W, h, 'S');
+    doc.setTextColor(cBlue[0],cBlue[1],cBlue[2]);doc.setFont('helvetica','bold');doc.setFontSize(7);
+    doc.text(label.toUpperCase(),mg+2,y+3);
+    doc.setTextColor(cDark[0],cDark[1],cDark[2]);doc.setFont('helvetica','normal');doc.setFontSize(9);
+    doc.text(lines,mg+2,y+7);
+    y += h;
+  }
+  function ensureSpace(needed){
+    if(y + needed > ph - 18){
+      doc.addPage();
+      y = 18;
+    }
+  }
+
+  // Infos
+  sectionTitle('① INFOS CHANTIER');
+  rowField('Chantier', s.chantier);
+  rowField('Client', s.client);
+  rowField('Date', s.date ? s.date.split('-').reverse().join('/') : '');
+  rowField('Semaine N°', s.semaine);
+  rowField('Chef d\u2019équipe / Ouvriers présents', s.equipe);
+  y += 2;
+
+  // Catégories
+  var sections = [
+    {key:'avan', title:'② AVANCEMENT & PLANNING'},
+    {key:'qual', title:'③ QUALITÉ & FINITIONS'},
+    {key:'secu', title:'④ SÉCURITÉ'},
+    {key:'suiv', title:'⑤ SUIVI & COMMERCIAL'}
+  ];
+  sections.forEach(function(sec){
+    ensureSpace(15 + SUIVI_CHECKS[sec.key].length*6 + 12);
+    sectionTitle(sec.title);
+    checkLines(sec.key, SUIVI_CHECKS[sec.key]);
+    notesBlock('Notes / Observations', s['notes_'+sec.key]);
+    y += 2;
+  });
+
+  // Défauts à corriger
+  var defauts = s.defauts || [];
+  if(defauts.length){
+    ensureSpace(10 + defauts.length*6);
+    sectionTitle('⑥ DÉFAUTS REMARQUÉS À CORRIGER');
+    defauts.forEach(function(d){
+      doc.setDrawColor(220,230,240);doc.setLineWidth(0.15);
+      doc.rect(mg, y, W, 6, 'S');
+      checkbox(mg+3, y+3, !!d.done);
+      doc.setTextColor(d.done?cMuted[0]:cDark[0], d.done?cMuted[1]:cDark[1], d.done?cMuted[2]:cDark[2]);
+      doc.setFont('helvetica', d.done?'normal':'bold');doc.setFontSize(9);
+      var txt = d.text || '(non décrit)';
+      if(d.done) txt = txt + '   — corrigé';
+      var lines = doc.splitTextToSize(txt, W-12);
+      doc.text(lines[0], mg+9, y+4);
+      y += 6;
+    });
+    y += 2;
+  }
+
+  // Notes globales
+  if(s.notes_global){
+    ensureSpace(20);
+    sectionTitle('⑦ NOTES GÉNÉRALES');
+    notesBlock('Commentaires', s.notes_global);
+    y += 2;
+  }
+
+  // Statut global (en bas, comme conclusion)
+  ensureSpace(15);
+  sectionTitle('⑧ STATUT GLOBAL DE LA SEMAINE');
+  var st = SUIVI_STATUS.find(function(o){return o.k===s.status;});
+  doc.setDrawColor(220,230,240);doc.setLineWidth(0.2);
+  doc.rect(mg, y, W, 8, 'S');
+  doc.setTextColor(cDark[0],cDark[1],cDark[2]);doc.setFont('helvetica','bold');doc.setFontSize(10);
+  doc.text(st ? st.label : '— Non évalué', mg+3, y+5.3);
+  y += 10;
+
+  // Footer
+  doc.setDrawColor(cBlue[0],cBlue[1],cBlue[2]);doc.setLineWidth(0.4);
+  doc.line(mg,ph-12,pw-mg,ph-12);
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(cMuted[0],cMuted[1],cMuted[2]);
+  doc.text('AG Peinture · Case postale 1290, 1260 Nyon · 079 489 16 39 · info@agpeinture.ch',pw/2,ph-8,{align:'center'});
+
+  var fname = 'Suivi_'+(s.chantier||'chantier').replace(/\s+/g,'_').replace(/[^A-Za-z0-9_-]/g,'')+'_'+(s.date||'').replace(/-/g,'')+'.pdf';
+  doc.save(fname);
+}
 
 // FICHE RDV
 // ========================
@@ -3500,7 +4196,320 @@ function generatePDFCmd(){
   doc.save('BonCommande_'+(c.chantier||'chantier').replace(/\s+/g,'_')+'_'+(c.date||new Date().toISOString().split('T')[0])+'.pdf');
 }
 
-setTimeout(function(){try{renderMetreHist();renderCmdHist();renderRDVHist();}catch(e){console.error('hist error:',e);}},350);
+// ========================
+// ====== PLUS-VALUE ======
+// ========================
+var pvHistorique = JSON.parse(localStorage.getItem('ag4_pv_hist')||'[]');
+var pvCurrentId = null;
+
+function getPvCurrent(){
+  if(!pvCurrentId)return null;
+  return pvHistorique.find(function(p){return p.id===pvCurrentId;})||null;
+}
+
+function savePvHist(){localStorage.setItem('ag4_pv_hist',JSON.stringify(pvHistorique));}
+
+function newPvLigne(){return {id:Date.now()+Math.random(),qte:'',unite:'pce',desc:'',pu:'',fait:false,accepte:false};}
+
+function nouvellePlusValue(){
+  var p={id:Date.now(),createdAt:new Date().toISOString(),chantier:'',client:'',date:new Date().toISOString().split('T')[0],dempar:'',desc:'',notes:'',lignes:[newPvLigne()]};
+  pvHistorique.unshift(p);
+  savePvHist();
+  ouvrirPlusValue(p.id);
+}
+
+function ouvrirPlusValue(id){
+  pvCurrentId=id;
+  document.getElementById('pv-historique-view').style.display='none';
+  document.getElementById('pv-edit-view').style.display='block';
+  loadPvInfo();renderPvLignes();
+}
+
+function retourPvHist(){
+  pvCurrentId=null;
+  document.getElementById('pv-edit-view').style.display='none';
+  document.getElementById('pv-historique-view').style.display='block';
+  renderPvHist();
+}
+
+function supprimerPv(id,e){
+  e.stopPropagation();
+  if(!confirm('Supprimer cette plus-value ?'))return;
+  pvHistorique=pvHistorique.filter(function(p){return p.id!==id;});
+  savePvHist();renderPvHist();
+}
+
+function pvLineTotal(l){return (parseFloat(l.qte)||0)*(parseFloat(l.pu)||0);}
+
+function pvGlobalStatus(p){
+  var lignes=(p.lignes||[]).filter(function(l){return l.desc||l.qte||l.pu;});
+  if(!lignes.length)return {key:'afaire',label:'à faire',color:'var(--orange)'};
+  var done=lignes.filter(function(l){return l.fait;}).length;
+  if(done===0)return {key:'afaire',label:'à faire',color:'var(--orange)'};
+  if(done===lignes.length)return {key:'fait',label:'fait',color:'var(--green)'};
+  return {key:'encours',label:'en cours',color:'var(--blue)'};
+}
+
+function renderPvHist(){
+  var el=document.getElementById('pv-hist-list');
+  var sub=document.getElementById('pv-hist-sub');
+  if(sub)sub.textContent=pvHistorique.length+' plus-value'+(pvHistorique.length>1?'s':'');
+  if(!el)return;
+  if(!pvHistorique.length){
+    el.innerHTML='<div class="empty"><div class="ei">🔨</div><p>Aucune plus-value</p><span>Appuie sur ＋ Nouvelle pour commencer</span></div>';
+    return;
+  }
+  el.innerHTML=pvHistorique.map(function(p){
+    var total=0;
+    (p.lignes||[]).forEach(function(l){total+=pvLineTotal(l);});
+    var st=pvGlobalStatus(p);
+    var date=p.date?p.date.split('-').reverse().join('/'):(new Date(p.createdAt)).toLocaleDateString('fr-CH');
+    return '<div onclick="ouvrirPlusValue('+p.id+')" style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px;border-left:4px solid '+st.color+';cursor:pointer;display:flex;justify-content:space-between;align-items:center">'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:15px;font-weight:900;color:var(--text)">'+(p.chantier||'Plus-value sans nom')+'</div>'
+        +'<div style="font-size:12px;color:var(--muted);margin-top:3px">'+(p.client||'—')+' · '+date+'</div>'
+        +'<div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap">'
+          +'<span style="font-size:11px;font-weight:800;color:white;background:'+st.color+';padding:2px 8px;border-radius:6px;text-transform:uppercase;letter-spacing:0.4px">'+st.label+'</span>'
+          +'<span style="font-size:12px;font-weight:800;color:var(--blue)">'+(p.lignes||[]).length+' ligne'+(((p.lignes||[]).length)>1?'s':'')+'</span>'
+          +(total>0?'<span style="font-size:12px;font-weight:800;color:var(--green)">'+total.toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF</span>':'')
+        +'</div>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:10px">'
+        +'<div style="font-size:22px;color:#ddd">›</div>'
+        +'<button onclick="supprimerPv('+p.id+',event)" style="background:var(--red-bg);border:none;border-radius:8px;padding:6px 10px;color:var(--red);font-size:13px;cursor:pointer">🗑️</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+function savePvInfo(){
+  var p=getPvCurrent();if(!p)return;
+  ['chantier','client','date','dempar','desc','notes'].forEach(function(f){
+    var el=document.getElementById('pv-'+f);if(el)p[f]=el.value;
+  });
+  savePvHist();updatePvStats();
+  var sub=document.getElementById('pv-edit-sub');
+  if(sub)sub.textContent=p.chantier||'Nouvelle plus-value';
+}
+
+function loadPvInfo(){
+  var p=getPvCurrent();if(!p)return;
+  ['chantier','client','date','dempar','desc','notes'].forEach(function(f){
+    var el=document.getElementById('pv-'+f);if(el)el.value=p[f]||'';
+  });
+  var sub=document.getElementById('pv-edit-sub');
+  if(sub)sub.textContent=p.chantier||'Nouvelle plus-value';
+}
+
+function savePvFull(){savePvHist();updatePvStats();}
+
+function updatePvStats(){
+  var p=getPvCurrent();if(!p)return;
+  var total=0,done=0,nbActifs=0;
+  (p.lignes||[]).forEach(function(l){
+    total+=pvLineTotal(l);
+    var actif=l.desc||l.qte||l.pu;
+    if(actif){nbActifs++;if(l.fait)done++;}
+  });
+  var ec=document.getElementById('pv-count');if(ec)ec.textContent=(p.lignes||[]).length;
+  var ed=document.getElementById('pv-done-count');if(ed)ed.textContent=done+'/'+nbActifs;
+  var et=document.getElementById('pv-total-stat');if(et)et.textContent=total>0?total.toLocaleString('fr-CH',{minimumFractionDigits:2}):'—';
+  var et2=document.getElementById('pv-total');if(et2)et2.textContent=total>0?total.toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF':'— CHF';
+}
+
+function addPvLigne(){
+  var p=getPvCurrent();if(!p)return;
+  p.lignes.push(newPvLigne());savePvFull();renderPvLignes();
+}
+
+function delPvLigne(id){
+  var p=getPvCurrent();if(!p)return;
+  if(p.lignes.length<=1){alert('Il faut au moins une ligne !');return;}
+  p.lignes=p.lignes.filter(function(l){return l.id!==id;});
+  savePvFull();renderPvLignes();
+}
+
+function savePvLigne(id,field,val){
+  var p=getPvCurrent();if(!p)return;
+  var l=p.lignes.find(function(x){return x.id===id;});if(l)l[field]=val;
+  savePvFull();
+}
+
+function togglePvCheck(id,field){
+  var p=getPvCurrent();if(!p)return;
+  var l=p.lignes.find(function(x){return x.id===id;});if(l)l[field]=!l[field];
+  savePvFull();renderPvLignes();
+}
+
+function renderPvLignes(){
+  var p=getPvCurrent();
+  var el=document.getElementById('pv-lignes-list');
+  if(!el||!p)return;
+  if(!(p.lignes||[]).length){
+    el.innerHTML='<div class="empty"><div class="ei">🔨</div><p>Aucun travail</p></div>';return;
+  }
+  var unites=['pce','m²','ml','m³','h','j','forfait','kg','L','sac'];
+  el.innerHTML=(p.lignes||[]).map(function(l){
+    var tot=pvLineTotal(l);
+    var borderCol=l.fait?'var(--green)':l.accepte?'var(--blue)':'var(--border)';
+    return '<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden;border-left:4px solid '+borderCol+'">'
+      +'<div style="padding:12px 14px 8px;display:grid;grid-template-columns:130px 1fr 32px;gap:8px;align-items:start">'
+      +'<div>'
+        +'<div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Qté · Unité</div>'
+        +'<table style="width:100%;border-collapse:collapse"><tr>'
+        +'<td style="width:52px;padding-right:4px"><input type="number" step="0.5" value="'+(l.qte||'')+'" placeholder="0" style="border:1.5px solid var(--blue);border-radius:8px;padding:10px 2px;font-family:Nunito,sans-serif;font-size:18px;font-weight:900;color:var(--blue);background:var(--blue-bg);outline:none;width:52px;text-align:center" oninput="savePvLigne('+l.id+',\'qte\',this.value)"></td>'
+        +'<td><select onchange="savePvLigne('+l.id+',\'unite\',this.value)" style="border:1.5px solid var(--blue);border-radius:8px;padding:10px 4px;font-family:Nunito,sans-serif;font-size:13px;font-weight:900;color:var(--blue);background:var(--blue-bg);outline:none;width:100%;cursor:pointer">'
+        +unites.map(function(o){return '<option value="'+o+'"'+(( l.unite||'pce')===o?' selected':'')+'>'+o+'</option>';}).join('')
+        +'</select></td></tr></table>'
+      +'</div>'
+      +'<div>'
+        +'<div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Désignation</div>'
+        +'<input type="text" value="'+(l.desc||'').replace(/"/g,'&quot;')+'" placeholder="Ex: Peinture chambre couleur..." style="border:1.5px solid var(--border);border-radius:8px;padding:10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:700;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="savePvLigne('+l.id+',\'desc\',this.value)">'
+      +'</div>'
+      +'<button onclick="delPvLigne('+l.id+')" style="background:none;border:none;color:#ddd;font-size:18px;cursor:pointer;padding:0;margin-top:20px">✕</button>'
+      +'</div>'
+      +'<div style="padding:0 14px 8px;display:grid;grid-template-columns:1fr 1fr;gap:8px">'
+        +'<div>'
+          +'<div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Prix unitaire CHF</div>'
+          +'<input type="number" step="0.01" value="'+(l.pu||'')+'" placeholder="0.00" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:700;color:var(--text);background:var(--bg);outline:none;width:100%;text-align:right" oninput="savePvLigne('+l.id+',\'pu\',this.value);renderPvLignes()">'
+        +'</div>'
+        +'<div>'
+          +'<div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Total CHF</div>'
+          +'<div style="border:1.5px solid '+(tot>0?'var(--green)':'var(--border)')+';border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:14px;font-weight:900;color:'+(tot>0?'var(--green)':'var(--muted)')+';background:'+(tot>0?'#ecfdf5':'var(--bg)')+';text-align:right">'+(tot>0?tot.toLocaleString('fr-CH',{minimumFractionDigits:2}):'—')+'</div>'
+        +'</div>'
+      +'</div>'
+      +'<div style="border-top:1px solid var(--border);padding:8px 14px;display:flex;gap:10px">'
+      +'<button onclick="togglePvCheck('+l.id+',\'accepte\')" style="flex:1;padding:8px;border-radius:10px;border:2px solid '+(l.accepte?'var(--blue)':'var(--border)')+';background:'+(l.accepte?'var(--blue)':'white')+';font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;color:'+(l.accepte?'white':'var(--muted)')+'">✅ ACCEPTÉ</button>'
+      +'<button onclick="togglePvCheck('+l.id+',\'fait\')" style="flex:1;padding:8px;border-radius:10px;border:2px solid '+(l.fait?'var(--green)':'var(--border)')+';background:'+(l.fait?'var(--green)':'white')+';font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;color:'+(l.fait?'white':'var(--muted)')+'">✅ FAIT</button>'
+      +'</div></div>';
+  }).join('') + '<button onclick="addPvLigne()" style="width:100%;padding:12px;border:1.5px dashed var(--orange);border-radius:10px;background:#fff7ed;color:var(--orange);font-family:Nunito,sans-serif;font-size:14px;font-weight:800;cursor:pointer;margin-top:6px;margin-bottom:12px">＋ Ajouter une ligne</button>';
+  updatePvStats();
+}
+
+function generatePDFPv(){
+  var p=getPvCurrent();if(!p)return;
+  var doc=new window.jspdf.jsPDF({format:'a4',unit:'mm'});
+  var pw=210, ph=297, mg=14, W=pw-mg*2, y=14;
+  var cBlue=[61,184,212],cDark=[26,35,50],cMuted=[127,140,141],cGreen=[39,174,96],cRed=[231,76,60],cOrange=[243,156,18];
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(cBlue[0],cBlue[1],cBlue[2]);
+  doc.text('AG Peinture',mg,y+5);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(cMuted[0],cMuted[1],cMuted[2]);
+  doc.text('Newflash SA',mg+24,y+8);
+  doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(cDark[0],cDark[1],cDark[2]);
+  doc.text('Plus-value',pw-mg,y+8,{align:'right'});
+  var pDateStr=p.date?p.date.split('-').reverse().join('/'):new Date().toLocaleDateString('fr-CH');
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(cBlue[0],cBlue[1],cBlue[2]);
+  doc.text('Nyon · '+pDateStr,pw-mg,y+13,{align:'right'});
+  doc.setDrawColor(cBlue[0],cBlue[1],cBlue[2]);doc.setLineWidth(0.6);
+  doc.line(mg,y+22,pw-mg,y+22);y+=26;
+
+  // (1) INFOS
+  doc.setDrawColor(cBlue[0],cBlue[1],cBlue[2]);doc.setLineWidth(0.5);doc.rect(mg,y,W,7,'S');
+  doc.setFillColor(cBlue[0],cBlue[1],cBlue[2]);doc.rect(mg,y,2,7,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(cDark[0],cDark[1],cDark[2]);
+  doc.text('(1) INFORMATIONS',mg+5,y+5);y+=7;
+  doc.setDrawColor(cBlue[0],cBlue[1],cBlue[2]);doc.setLineWidth(0.3);doc.rect(mg,y,W,16,'S');
+  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(cDark[0],cDark[1],cDark[2]);
+  doc.text('Chantier :',mg+3,y+6);doc.setFont('helvetica','normal');doc.text(p.chantier||'—',mg+22,y+6);
+  doc.setFont('helvetica','bold');doc.text('Client :',pw/2,y+6);doc.setFont('helvetica','normal');doc.text(p.client||'—',pw/2+15,y+6);
+  doc.setFont('helvetica','bold');doc.text('Date :',mg+3,y+12);doc.setFont('helvetica','normal');
+  doc.text(p.date?p.date.split('-').reverse().join('/'):'—',mg+14,y+12);
+  doc.setFont('helvetica','bold');doc.text('Demandé par :',pw/2,y+12);doc.setFont('helvetica','normal');doc.text(p.dempar||'—',pw/2+27,y+12);
+  y+=20;
+
+  // (2) DESCRIPTION (si présente)
+  if(p.desc){
+    doc.setDrawColor(cBlue[0],cBlue[1],cBlue[2]);doc.setLineWidth(0.5);doc.rect(mg,y,W,7,'S');
+    doc.setFillColor(cBlue[0],cBlue[1],cBlue[2]);doc.rect(mg,y,2,7,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(cDark[0],cDark[1],cDark[2]);
+    doc.text('(2) DESCRIPTION',mg+5,y+5);y+=7;
+    var lines=doc.splitTextToSize(p.desc,W-6);
+    var h=Math.max(12,lines.length*4+4);
+    doc.setDrawColor(cBlue[0],cBlue[1],cBlue[2]);doc.setLineWidth(0.3);doc.rect(mg,y,W,h,'S');
+    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(cDark[0],cDark[1],cDark[2]);
+    doc.text(lines,mg+3,y+5);y+=h+4;
+  }
+
+  // (3) TRAVAUX
+  var sNum=p.desc?'(3)':'(2)';
+  doc.setDrawColor(cBlue[0],cBlue[1],cBlue[2]);doc.setLineWidth(0.5);doc.rect(mg,y,W,7,'S');
+  doc.setFillColor(cBlue[0],cBlue[1],cBlue[2]);doc.rect(mg,y,2,7,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(cDark[0],cDark[1],cDark[2]);
+  doc.text(sNum+' TRAVAUX SUPPLÉMENTAIRES',mg+5,y+5);y+=7;
+
+  // Header tableau
+  var cols=[16,18,80,22,28,18];
+  var hdrs=['Qté','Unité','Désignation','PU CHF','Total CHF','Fait'];
+  doc.setDrawColor(cBlue[0],cBlue[1],cBlue[2]);doc.setLineWidth(0.3);
+  doc.line(mg,y,mg+W,y);doc.line(mg,y+6,mg+W,y+6);
+  doc.setFont('helvetica','bold');doc.setFontSize(7.5);doc.setTextColor(cBlue[0],cBlue[1],cBlue[2]);
+  var x=mg;hdrs.forEach(function(h,i){
+    var align=i===2?'left':(i===3||i===4?'right':'center');
+    var tx=align==='left'?x+2:(align==='right'?x+cols[i]-2:x+cols[i]/2);
+    doc.text(h,tx,y+4.2,{align:align});
+    x+=cols[i];
+  });y+=6;
+
+  var totalGen=0;
+  (p.lignes||[]).forEach(function(l){
+    if(!l.desc&&!l.qte&&!l.pu)return;
+    var tot=pvLineTotal(l);totalGen+=tot;
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(cDark[0],cDark[1],cDark[2]);
+    x=mg;
+    doc.text(l.qte?String(l.qte):'',x+cols[0]/2,y+4.2,{align:'center'});x+=cols[0];
+    doc.text(l.unite||'pce',x+cols[1]/2,y+4.2,{align:'center'});x+=cols[1];
+    var dl=doc.splitTextToSize(l.desc||'',cols[2]-3);
+    doc.text(dl[0]||'',x+2,y+4.2);x+=cols[2];
+    doc.text(l.pu?parseFloat(l.pu).toLocaleString('fr-CH',{minimumFractionDigits:2}):'',x+cols[3]-2,y+4.2,{align:'right'});x+=cols[3];
+    doc.setFont('helvetica','bold');
+    doc.text(tot>0?tot.toLocaleString('fr-CH',{minimumFractionDigits:2}):'',x+cols[4]-2,y+4.2,{align:'right'});x+=cols[4];
+    doc.setFont('helvetica','normal');
+    if(l.fait){doc.setDrawColor(cGreen[0],cGreen[1],cGreen[2]);doc.setLineWidth(0.4);doc.rect(x+5,y+1,8,4,'S');doc.setFont('helvetica','bold');doc.setFontSize(6);doc.setTextColor(cGreen[0],cGreen[1],cGreen[2]);doc.text('OUI',x+9,y+4,{align:'center'});}
+    else{doc.setDrawColor(200,200,200);doc.rect(x+5,y+1,8,4,'S');}
+    y+=6;
+    if(y>ph-50){doc.addPage();y=mg;}
+  });
+
+  // Total HT
+  doc.setDrawColor(cBlue[0],cBlue[1],cBlue[2]);doc.setLineWidth(0.5);doc.line(mg,y,mg+W,y);y+=4;
+  doc.setFillColor(cDark[0],cDark[1],cDark[2]);doc.rect(mg,y,W,10,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(255,255,255);
+  doc.text('TOTAL HT',mg+5,y+6.5);
+  doc.setFontSize(13);doc.setTextColor(77,232,122);
+  doc.text(totalGen.toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF',pw-mg-3,y+6.5,{align:'right'});
+  y+=14;
+
+  // Notes
+  if(p.notes){
+    doc.setDrawColor(cBlue[0],cBlue[1],cBlue[2]);doc.setLineWidth(0.5);doc.rect(mg,y,W,7,'S');
+    doc.setFillColor(cBlue[0],cBlue[1],cBlue[2]);doc.rect(mg,y,2,7,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.setTextColor(cDark[0],cDark[1],cDark[2]);
+    doc.text('NOTES / OBSERVATIONS',mg+5,y+5);y+=7;
+    var nl=doc.splitTextToSize(p.notes,W-6);
+    var nh=Math.max(12,nl.length*4+4);
+    doc.setDrawColor(cBlue[0],cBlue[1],cBlue[2]);doc.setLineWidth(0.3);doc.rect(mg,y,W,nh,'S');
+    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(cDark[0],cDark[1],cDark[2]);
+    doc.text(nl,mg+3,y+5);y+=nh+4;
+  }
+
+  // Signatures
+  if(y>ph-35){doc.addPage();y=mg;}
+  doc.setDrawColor(200,200,200);
+  doc.rect(mg,y,W/2-3,22,'S');doc.rect(mg+W/2+3,y,W/2-3,22,'S');
+  doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.setTextColor(cBlue[0],cBlue[1],cBlue[2]);
+  doc.text('Signature client :',mg+4,y+6);doc.text('Visa AG Peinture :',mg+W/2+6,y+6);
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(150,150,150);
+  doc.text('Date : _______________',mg+4,y+18);doc.text('Date : _______________',mg+W/2+6,y+18);
+
+  // Footer
+  doc.setDrawColor(cBlue[0],cBlue[1],cBlue[2]);doc.setLineWidth(0.4);
+  doc.line(mg,ph-12,pw-mg,ph-12);
+  doc.setFont('helvetica','normal');doc.setFontSize(7.5);doc.setTextColor(cMuted[0],cMuted[1],cMuted[2]);
+  doc.text('Newflash SA · Case postale 1290, 1260 Nyon · 079 489 16 39 · info@agpeinture.ch',pw/2,ph-8,{align:'center'});
+  doc.save('PlusValue_'+(p.chantier||'chantier').replace(/\s+/g,'_')+'_'+(p.date||new Date().toISOString().split('T')[0])+'.pdf');
+}
+
+setTimeout(function(){try{renderMetreHist();renderCmdHist();renderRDVHist();renderPvHist();}catch(e){console.error('hist error:',e);}},350);
 
 
 // FACTURES
@@ -3584,7 +4593,7 @@ function renderFactures(){
 }
 
 window.initApp = function() {
-  try{renderHome();renderAfaire();renderDevis();renderChantiers();renderPatrols();renderNuanciers();renderPlanning();renderNotes();renderRoutine();renderFactures();}catch(e){console.error('render error:',e);}
+  try{renderHome();renderAfaire();renderDevis();renderChantiers();renderNuanciers();renderNotes();renderFactures();}catch(e){console.error('render error:',e);}
 };
 
 // Recharge toutes les variables depuis localStorage puis re-render — utilisé après une synchro cloud
@@ -3604,7 +4613,26 @@ window.refreshAllViews = function() {
     if(typeof rdvHistorique !== 'undefined') rdvHistorique = JSON.parse(localStorage.getItem('ag4_rdv_hist')||'[]');
     if(typeof metreHistorique !== 'undefined') metreHistorique = JSON.parse(localStorage.getItem('ag4_metre_hist')||'[]');
     if(typeof cmdHistorique !== 'undefined') cmdHistorique = JSON.parse(localStorage.getItem('ag4_cmd_hist')||'[]');
+    if(typeof pvHistorique !== 'undefined') pvHistorique = JSON.parse(localStorage.getItem('ag4_pv_hist')||'[]');
     if(typeof factures !== 'undefined') factures = JSON.parse(localStorage.getItem('ag4_factures')||'[]');
+    if(typeof suiviHistorique !== 'undefined') suiviHistorique = JSON.parse(localStorage.getItem('ag4_suivi_hist')||'[]');
+    // Re-migration auto au cas où on aurait restauré un ancien format
+    if(planningData && !planningData.weeks){
+      var _tw=getISOWeek(new Date());
+      var _ok=Object.keys(planningData).filter(function(k){return k!=='currentWeek'&&k!=='weeks';});
+      var _wks={};
+      if(_ok.length>0){var _l={};_ok.forEach(function(k){_l[k]=planningData[k];});_wks[_tw]=_l;}
+      planningData={currentWeek:_tw,weeks:_wks};
+      localStorage.setItem('ag4_plan',JSON.stringify(planningData));
+    }
+    if(typeof routineData!=='undefined' && routineData && !routineData.weeks){
+      var _tw2=getISOWeek(new Date());
+      var _ok2=Object.keys(routineData).filter(function(k){return k!=='currentWeek'&&k!=='weeks';});
+      var _wks2={};
+      if(_ok2.length>0){var _l2={};_ok2.forEach(function(k){_l2[k]=routineData[k];});_wks2[_tw2]=_l2;}
+      routineData={currentWeek:_tw2,weeks:_wks2};
+      localStorage.setItem('ag4_routine',JSON.stringify(routineData));
+    }
     window.initApp();
   }catch(e){console.error('refresh error:',e);}
 };
