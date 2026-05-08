@@ -395,13 +395,28 @@ header img{height:42px}
     }
     window.showSyncToast = showSyncToast;
 
+    // Indicateur permanent : "✓ Sauvé il y a Xs" mis à jour auto
+    window.fbLastSave = null;
+    function updateSyncStatus(){
+      if(!window.fbLastSave) return;
+      var ago = Math.round((Date.now() - window.fbLastSave) / 1000);
+      var txt;
+      if(ago < 5) txt = '✓ À jour';
+      else if(ago < 60) txt = '✓ Sauvé il y a '+ago+'s';
+      else if(ago < 3600) txt = '✓ Sauvé il y a '+Math.round(ago/60)+'min';
+      else txt = '✓ Sauvé il y a '+Math.round(ago/3600)+'h';
+      fbSetStatus(txt, '#27ae60');
+    }
+    setInterval(updateSyncStatus, 10000); // refresh toutes les 10s
+
     window.fbSave = function() {
       fbSetStatus('☁️ Sauvegarde...', '#f39c12');
       var data = {};
       KEYS.forEach(function(k) { var v = localStorage.getItem(k); if(v) data[k] = v; });
       DOC_REF.set(data)
         .then(function() {
-          fbSetStatus('☁️ Synchronisé', '#27ae60');
+          window.fbLastSave = Date.now();
+          fbSetStatus('✓ À jour', '#27ae60');
           showSyncToast('✅ Sauvegardé', '#27ae60');
         })
         .catch(function(e) {
@@ -576,9 +591,9 @@ function checkPwd(){
 <header>
   <img id="logo" src="" alt="AG Peinture">
   <div class="hright">
-    <div id="fb-status" style="font-size:11px;font-weight:700;color:#27ae60;margin-right:8px">☁️...</div>
+    <div id="fb-status" style="font-size:12px;font-weight:800;color:#27ae60;margin-right:8px;padding:4px 10px;border-radius:12px;background:#e8f8f0">☁️...</div>
 <div class="hdate" id="hdate"></div>
-    <div class="hname">AG Peinture</div>
+    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-c</span></div>
   </div>
 </header>
 
@@ -589,8 +604,9 @@ function checkPwd(){
 
 <!-- SECTIONS -->
 <div class="sec active" id="s-home">
-  <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px;padding:0 4px">
-    <button onclick="if(window.fbForceReload){window.fbForceReload();}else{alert('Firebase non disponible');}" style="background:var(--blue);color:white;border:none;border-radius:20px;padding:8px 16px;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(61,184,212,0.3)">☁️⬇️ Charger</button>
+  <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:10px;padding:0 4px;flex-wrap:wrap">
+    <button onclick="syncDiagnostic()" style="background:#9b59b6;color:white;border:none;border-radius:20px;padding:8px 14px;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(155,89,182,0.3)">🔍 Diagnostic</button>
+    <button onclick="if(window.fbForceReload){window.fbForceReload(true);}else{alert('Firebase non disponible');}" style="background:var(--blue);color:white;border:none;border-radius:20px;padding:8px 16px;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(61,184,212,0.3)">☁️⬇️ Charger</button>
     <button onclick="if(window.fbSave){window.fbSave();}else{alert('Firebase non disponible');}" style="background:var(--green);color:white;border:none;border-radius:20px;padding:8px 16px;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(39,174,96,0.3)">☁️⬆️ Sauvegarder</button>
   </div>
   <div class="motiv"><div style="font-size:30px" id="mico"></div><div style="margin-left:2px"><div class="mt" id="mtxt"></div><div class="ms" id="msub"></div></div></div>
@@ -4878,6 +4894,86 @@ if(!window.fbLoad) window.initApp();
 const _origSetItem = localStorage.setItem.bind(localStorage);
 let fbSaveTimer = null;
 let fbHasChanges = false;
+
+// Diagnostic complet de la sync
+window.syncDiagnostic = function(){
+  var lines = [];
+  lines.push('🔍 DIAGNOSTIC SYNC\n');
+  lines.push('Version : v8mai-c');
+  lines.push('');
+  // 1. Firebase initialisé ?
+  if(typeof firebase === 'undefined'){
+    lines.push('❌ Firebase SDK non chargé');
+    lines.push('   → Pas de connexion internet ?');
+    lines.push('   → Bloqueur de pub actif ?');
+    alert(lines.join('\n')); return;
+  }
+  lines.push('✅ Firebase SDK chargé');
+  // 2. fbSave dispo ?
+  if(!window.fbSave){
+    lines.push('❌ fbSave non disponible');
+    lines.push('   → Mode local actif');
+    alert(lines.join('\n')); return;
+  }
+  lines.push('✅ fbSave disponible (auto-save actif)');
+  // 3. Hook localStorage installé ?
+  var origStr = localStorage.setItem.toString();
+  if(origStr.indexOf('ag4_') === -1){
+    lines.push('❌ Hook localStorage NON installé');
+    lines.push('   → Auto-save inactif');
+  } else {
+    lines.push('✅ Hook localStorage installé');
+  }
+  // 4. Compter données locales
+  var localCount = 0;
+  ['ag4_af','ag4_ch','ag4_dv','ag4_rdv','ag4_factures','ag4_no','ag4_metre_hist','ag4_cmd_hist','ag4_pv_hist'].forEach(function(k){
+    var v = localStorage.getItem(k);
+    if(v){
+      try{ var p = JSON.parse(v); localCount += (Array.isArray(p)?p.length:1); }catch(e){}
+    }
+  });
+  lines.push('📊 Données locales : ' + localCount + ' items');
+  // 5. Test save+load
+  lines.push('');
+  lines.push('⏳ Test envoi vers cloud...');
+  alert(lines.join('\n'));
+  
+  // Test réel : faire un save puis un get
+  window.fbSave();
+  setTimeout(function(){
+    if(typeof firebase === 'undefined') return;
+    var db = firebase.firestore();
+    db.collection('appdata').doc('agpeinture-data').get().then(function(doc){
+      var msg = '🔍 RÉSULTAT TEST\n\n';
+      if(!doc.exists){
+        msg += '⚠️ Doc Firebase n\'existe pas\n';
+        msg += '   → Première sauvegarde nécessaire\n';
+      } else {
+        var data = doc.data();
+        var cloudCount = 0;
+        ['ag4_af','ag4_ch','ag4_dv','ag4_rdv','ag4_factures','ag4_no','ag4_metre_hist','ag4_cmd_hist','ag4_pv_hist'].forEach(function(k){
+          if(data[k]){
+            try{ var p = JSON.parse(data[k]); cloudCount += (Array.isArray(p)?p.length:1); }catch(e){}
+          }
+        });
+        msg += '✅ Connexion Firebase OK\n';
+        msg += '☁️ Items dans cloud : ' + cloudCount + '\n';
+        msg += '💾 Items en local : ' + localCount + '\n\n';
+        if(cloudCount === localCount){
+          msg += '✅ SYNCHRO PARFAITE';
+        } else if(cloudCount > localCount){
+          msg += '⚠️ Cloud a + de données que local\n→ Clique Charger pour synchroniser';
+        } else {
+          msg += '⚠️ Local a + de données que cloud\n→ Clique Sauvegarder pour synchroniser';
+        }
+      }
+      alert(msg);
+    }).catch(function(e){
+      alert('❌ Erreur test cloud :\n' + (e.code||'') + '\n' + (e.message||e));
+    });
+  }, 1500);
+};
+
 localStorage.setItem = function(key, value) {
   _origSetItem(key, value);
   if(key.startsWith('ag4_') && window.fbSave && !window._fbLoading) {
