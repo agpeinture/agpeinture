@@ -4886,6 +4886,105 @@ function generatePDFPv(){
 var controleHistorique = JSON.parse(localStorage.getItem('ag4_controle_hist')||'[]');
 var controleCurrentId = null;
 var controleVue = 'piece';
+var controleExpandedPieces = new Set();
+var controleExpandedTasks = new Set();
+
+function toggleControleTask(taskId,e){
+  if(e) e.stopPropagation();
+  if(controleExpandedTasks.has(taskId)) controleExpandedTasks.delete(taskId);
+  else controleExpandedTasks.add(taskId);
+  setControleVue(controleVue);
+}
+
+function cycleTaskStatus(pieceId,taskId,e){
+  if(e) e.stopPropagation();
+  var c=getControleCurrent(); if(!c) return;
+  var p=c.pieces.find(function(x){return x.id===pieceId;}); if(!p) return;
+  var t=p.tasks.find(function(x){return x.id===taskId;}); if(!t) return;
+  if(t.status==='todo') t.status='encours';
+  else if(t.status==='encours') t.status='fini';
+  else t.status='todo';
+  saveControleHist();
+  setControleVue(controleVue);
+}
+
+function quickAddTask(pieceId,inputEl){
+  var desc=(inputEl.value||'').trim();
+  if(!desc) return;
+  var c=getControleCurrent(); if(!c) return;
+  var p=c.pieces.find(function(x){return x.id===pieceId;}); if(!p) return;
+  if(!p.tasks) p.tasks=[];
+  p.tasks.push({
+    id:Date.now()+Math.floor(Math.random()*1000),
+    desc:desc,
+    ouvrier:'',delai:'',status:'todo',manque:'',photos:[]
+  });
+  controleExpandedPieces.add(pieceId);
+  saveControleHist();
+  setControleVue(controleVue);
+  setTimeout(function(){
+    var newInput=document.getElementById('ctrl-quick-'+pieceId);
+    if(newInput){ newInput.value=''; newInput.focus(); }
+  },40);
+}
+var controleExpandedTasks = new Set();
+
+// Modal de saisie (remplace prompt() qui est bloqué sur iOS PWA)
+function askControleText(opts, callback){
+  var backdrop = document.createElement('div');
+  backdrop.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;-webkit-tap-highlight-color:transparent';
+  var modal = document.createElement('div');
+  modal.style.cssText = 'background:white;border-radius:16px;padding:20px;width:100%;max-width:360px;box-shadow:0 10px 40px rgba(0,0,0,0.3);font-family:Nunito,sans-serif';
+  var safeTitle = String(opts.title||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  var safeSub = String(opts.subtitle||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  var safePh = String(opts.placeholder||'').replace(/"/g,'&quot;');
+  var html = '<div style="font-size:16px;font-weight:900;color:#222;margin-bottom:6px">'+safeTitle+'</div>';
+  if(opts.subtitle) html += '<div style="font-size:12px;color:#888;margin-bottom:12px">'+safeSub+'</div>';
+  html += '<input type="text" id="askctrl-input" placeholder="'+safePh+'" autocomplete="off" autocapitalize="sentences" style="width:100%;border:1.5px solid #ddd;border-radius:10px;padding:11px 13px;font-family:Nunito,sans-serif;font-size:15px;font-weight:700;color:#222;outline:none;margin-bottom:14px;box-sizing:border-box;-webkit-appearance:none">';
+  html += '<div style="display:flex;gap:8px">';
+  html += '<button id="askctrl-cancel" style="flex:1;padding:11px;border:none;border-radius:10px;background:#eee;color:#666;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer">Annuler</button>';
+  html += '<button id="askctrl-ok" style="flex:2;padding:11px;border:none;border-radius:10px;background:#3DB8D4;color:white;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer">Valider</button>';
+  html += '</div>';
+  modal.innerHTML = html;
+  backdrop.appendChild(modal);
+  document.body.appendChild(backdrop);
+  var input = modal.querySelector('#askctrl-input');
+  var btnOk = modal.querySelector('#askctrl-ok');
+  var btnCancel = modal.querySelector('#askctrl-cancel');
+  if(opts.value) input.value = opts.value;
+  setTimeout(function(){ try{input.focus();}catch(e){} }, 80);
+  function close(val){
+    if(backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+    callback(val);
+  }
+  btnOk.onclick = function(){ var v=input.value.trim(); close(v||null); };
+  btnCancel.onclick = function(){ close(null); };
+  backdrop.onclick = function(e){ if(e.target === backdrop) close(null); };
+  input.onkeydown = function(e){
+    if(e.key === 'Enter'){ var v=input.value.trim(); close(v||null); }
+    if(e.key === 'Escape') close(null);
+  };
+}
+
+// Modal de confirmation (remplace confirm() bloqué sur PWA)
+function askControleConfirm(message, callback){
+  var backdrop = document.createElement('div');
+  backdrop.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px';
+  var modal = document.createElement('div');
+  modal.style.cssText = 'background:white;border-radius:16px;padding:20px;width:100%;max-width:340px;box-shadow:0 10px 40px rgba(0,0,0,0.3);font-family:Nunito,sans-serif';
+  var safeMsg = String(message||'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  modal.innerHTML = '<div style="font-size:14px;font-weight:700;color:#222;margin-bottom:16px;line-height:1.4">'+safeMsg+'</div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<button id="askctrl-no" style="flex:1;padding:11px;border:none;border-radius:10px;background:#eee;color:#666;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer">Annuler</button>'
+    +'<button id="askctrl-yes" style="flex:1;padding:11px;border:none;border-radius:10px;background:#e74c3c;color:white;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;cursor:pointer">Confirmer</button>'
+    +'</div>';
+  backdrop.appendChild(modal);
+  document.body.appendChild(backdrop);
+  function close(v){ if(backdrop.parentNode) backdrop.parentNode.removeChild(backdrop); callback(v); }
+  modal.querySelector('#askctrl-yes').onclick = function(){ close(true); };
+  modal.querySelector('#askctrl-no').onclick = function(){ close(false); };
+  backdrop.onclick = function(e){ if(e.target === backdrop) close(false); };
+}
 
 function getControleCurrent(){
   if(!controleCurrentId) return null;
@@ -4930,10 +5029,12 @@ function retourControleHist(){
 
 function supprimerControle(id,e){
   if(e) e.stopPropagation();
-  if(!confirm('Supprimer cette fiche contrôle ?')) return;
-  controleHistorique=controleHistorique.filter(function(c){return c.id!==id;});
-  saveControleHist();
-  renderControleHist();
+  askControleConfirm('Supprimer cette fiche contrôle ?', function(ok){
+    if(!ok) return;
+    controleHistorique=controleHistorique.filter(function(c){return c.id!==id;});
+    saveControleHist();
+    renderControleHist();
+  });
 }
 
 function saveControleInfo(){
@@ -5016,20 +5117,86 @@ function renderControleHist(){
 
 function addPiece(){
   var c=getControleCurrent(); if(!c) return;
-  var nom=prompt('Nom de la pièce ?\n(Ex: Salon, Cuisine, Chambre 1...)');
-  if(!nom||!nom.trim()) return;
-  if(!c.pieces) c.pieces=[];
-  c.pieces.push({id:Date.now(),nom:nom.trim(),tasks:[]});
+  askControleText({
+    title:'📐 Nouvelle pièce',
+    subtitle:'Ex: Salon, Cuisine, Chambre 1...',
+    placeholder:'Nom de la pièce'
+  }, function(nom){
+    if(!nom) return;
+    var c2=getControleCurrent(); if(!c2) return;
+    if(!c2.pieces) c2.pieces=[];
+    var newId=Date.now();
+    c2.pieces.push({id:newId,nom:nom,tasks:[]});
+    controleExpandedPieces.add(newId);
+    saveControleHist();
+    setControleVue(controleVue);
+  });
+}
+
+function toggleControlePiece(pieceId){
+  if(controleExpandedPieces.has(pieceId)){
+    controleExpandedPieces.delete(pieceId);
+  } else {
+    controleExpandedPieces.add(pieceId);
+  }
+  setControleVue(controleVue);
+}
+
+function toggleControleTask(taskId){
+  if(controleExpandedTasks.has(taskId)){
+    controleExpandedTasks.delete(taskId);
+  } else {
+    controleExpandedTasks.add(taskId);
+  }
+  setControleVue(controleVue);
+}
+
+function cycleTaskStatus(pieceId,taskId){
+  var c=getControleCurrent(); if(!c) return;
+  var p=c.pieces.find(function(x){return x.id===pieceId;});
+  if(!p) return;
+  var t=p.tasks.find(function(x){return x.id===taskId;});
+  if(!t) return;
+  var next={'todo':'encours','encours':'fini','fini':'todo'};
+  t.status=next[t.status||'todo']||'todo';
   saveControleHist();
   setControleVue(controleVue);
 }
 
-function delPiece(pieceId){
+function addTaskQuick(pieceId,desc){
+  if(!desc||!desc.trim()) return;
   var c=getControleCurrent(); if(!c) return;
-  if(!confirm('Supprimer cette pièce et toutes ses tâches ?')) return;
-  c.pieces=c.pieces.filter(function(p){return p.id!==pieceId;});
+  var p=c.pieces.find(function(x){return x.id===pieceId;});
+  if(!p) return;
+  if(!p.tasks) p.tasks=[];
+  p.tasks.push({
+    id:Date.now()+Math.floor(Math.random()*1000),
+    desc:desc.trim(),
+    ouvrier:'',
+    delai:'',
+    status:'todo',
+    manque:'',
+    photos:[]
+  });
+  controleExpandedPieces.add(pieceId);
   saveControleHist();
   setControleVue(controleVue);
+  setTimeout(function(){
+    var inp=document.getElementById('ctrl-quick-'+pieceId);
+    if(inp){inp.focus();}
+  },80);
+}
+
+function delPiece(pieceId){
+  var c=getControleCurrent(); if(!c) return;
+  askControleConfirm('Supprimer cette pièce et toutes ses tâches ?', function(ok){
+    if(!ok) return;
+    var c2=getControleCurrent(); if(!c2) return;
+    c2.pieces=c2.pieces.filter(function(p){return p.id!==pieceId;});
+    controleExpandedPieces.delete(pieceId);
+    saveControleHist();
+    setControleVue(controleVue);
+  });
 }
 
 function addTask(pieceId){
@@ -5046,6 +5213,7 @@ function addTask(pieceId){
     manque:'',
     photos:[]
   });
+  controleExpandedPieces.add(pieceId);
   saveControleHist();
   setControleVue(controleVue);
 }
@@ -5088,15 +5256,30 @@ function toggleTaskManque(pieceId,taskId){
   var t=p.tasks.find(function(x){return x.id===taskId;});
   if(!t) return;
   if(t.manque && t.manque.trim()){
-    if(!confirm('Retirer le manque sur cette tâche ?')) return;
-    t.manque='';
+    askControleConfirm('Retirer le manque sur cette tâche ?', function(ok){
+      if(!ok) return;
+      var c2=getControleCurrent(); if(!c2) return;
+      var p2=c2.pieces.find(function(x){return x.id===pieceId;}); if(!p2) return;
+      var t2=p2.tasks.find(function(x){return x.id===taskId;}); if(!t2) return;
+      t2.manque='';
+      saveControleHist();
+      setControleVue(controleVue);
+    });
   } else {
-    var txt=prompt('Décris ce qui manque :\n(Ex: peinture à commander, validation client, etc.)');
-    if(!txt||!txt.trim()) return;
-    t.manque=txt.trim();
+    askControleText({
+      title:'🚨 Manque',
+      subtitle:'Décris ce qui manque',
+      placeholder:'Ex: peinture à commander, validation client...'
+    }, function(txt){
+      if(!txt) return;
+      var c2=getControleCurrent(); if(!c2) return;
+      var p2=c2.pieces.find(function(x){return x.id===pieceId;}); if(!p2) return;
+      var t2=p2.tasks.find(function(x){return x.id===taskId;}); if(!t2) return;
+      t2.manque=txt;
+      saveControleHist();
+      setControleVue(controleVue);
+    });
   }
-  saveControleHist();
-  setControleVue(controleVue);
 }
 
 function addTaskPhoto(pieceId,taskId){
@@ -5178,21 +5361,42 @@ function renderTaskCard(pieceId,t,opts){
   var hasManque=t.manque && t.manque.trim();
   var borderColor=hasManque?'var(--red)':(t.status==='fini'?'var(--green)':(t.status==='encours'?'var(--blue)':'var(--orange)'));
   var bg=hasManque?'var(--red-bg)':'var(--bg)';
-  var photos=(t.photos||[]).map(function(src,i){
-    return '<div style="position:relative;display:inline-block"><img src="'+src+'" style="width:50px;height:50px;object-fit:cover;border-radius:8px;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.1)"><button onclick="event.stopPropagation();delTaskPhoto('+pieceId+','+t.id+','+i+')" style="position:absolute;top:-5px;right:-5px;background:var(--red);color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:1">✕</button></div>';
-  }).join('');
+  var statusEmoji=t.status==='fini'?'✅':(t.status==='encours'?'🔵':'⏳');
+  var expanded=controleExpandedTasks.has(t.id);
   var pieceLabel='';
   if(opts.showPiece){
     var c=getControleCurrent();
     var p=c?c.pieces.find(function(x){return x.id===pieceId;}):null;
     if(p) pieceLabel='<div style="font-size:10px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">📐 '+escControle(p.nom)+'</div>';
   }
+  // ===== Mode COMPACT (1 ligne par défaut) =====
+  if(!expanded){
+    var descTxt=t.desc?escControle(t.desc):'<i style="color:#aaa;font-weight:600">(sans description)</i>';
+    var ouvrierBadge=t.ouvrier?'<span style="background:rgba(142,68,173,0.12);color:var(--purple);border-radius:8px;padding:2px 7px;font-size:10px;font-weight:800;flex-shrink:0;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">👷 '+escControle(t.ouvrier)+'</span>':'';
+    var manqueBadge=hasManque?'<span style="background:var(--red);color:white;border-radius:8px;padding:1px 6px;font-size:9px;font-weight:800;flex-shrink:0">⚠</span>':'';
+    return '<div style="background:'+bg+';border-radius:9px;margin-bottom:5px;border-left:3px solid '+borderColor+';overflow:hidden">'
+      +(pieceLabel?'<div style="padding:6px 10px 0 10px">'+pieceLabel+'</div>':'')
+      +'<div style="padding:8px 10px;display:flex;align-items:center;gap:8px">'
+        +'<button onclick="event.stopPropagation();cycleTaskStatus('+pieceId+','+t.id+')" style="background:none;border:none;font-size:16px;cursor:pointer;flex-shrink:0;padding:0;line-height:1">'+statusEmoji+'</button>'
+        +'<div onclick="toggleControleTask('+t.id+')" style="flex:1;min-width:0;cursor:pointer;font-size:13px;font-weight:700;color:'+(t.status==='fini'?'var(--muted)':'var(--text)')+';'+(t.status==='fini'?'text-decoration:line-through;':'')+'overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+descTxt+'</div>'
+        +ouvrierBadge
+        +manqueBadge
+        +'<button onclick="event.stopPropagation();toggleControleTask('+t.id+')" style="background:none;border:none;color:#bbb;font-size:13px;cursor:pointer;flex-shrink:0;padding:2px 4px;font-weight:900">▸</button>'
+      +'</div>'
+      +(hasManque?'<div style="padding:4px 10px 7px 38px;font-size:11px;color:var(--red);font-weight:700;background:rgba(231,76,60,0.04)"><span style="font-weight:900">⚠</span> '+escControle(t.manque)+'</div>':'')
+    +'</div>';
+  }
+  // ===== Mode DÉPLIÉ (détail complet) =====
+  var photos=(t.photos||[]).map(function(src,i){
+    return '<div style="position:relative;display:inline-block"><img src="'+src+'" style="width:50px;height:50px;object-fit:cover;border-radius:8px;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.1)"><button onclick="event.stopPropagation();delTaskPhoto('+pieceId+','+t.id+','+i+')" style="position:absolute;top:-5px;right:-5px;background:var(--red);color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:1">✕</button></div>';
+  }).join('');
   return '<div style="background:'+bg+';border-radius:12px;padding:11px 12px;margin-bottom:8px;border-left:3px solid '+borderColor+'">'
     +pieceLabel
     +'<div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:8px">'
       +'<div style="flex:1;min-width:0">'
         +'<input type="text" value="'+escControle(t.desc)+'" placeholder="Décris la tâche..." oninput="saveTaskField('+pieceId+','+t.id+',\'desc\',this.value)" style="width:100%;border:none;background:transparent;font-family:Nunito,sans-serif;font-size:13.5px;font-weight:700;color:var(--text);outline:none;border-bottom:1.5px dashed var(--border);padding:2px 0">'
       +'</div>'
+      +'<button onclick="toggleControleTask('+t.id+')" title="Replier" style="background:none;border:none;color:#bbb;font-size:13px;cursor:pointer;padding:2px 4px;flex-shrink:0;font-weight:900">▾</button>'
       +'<button onclick="delTask('+pieceId+','+t.id+')" style="background:none;border:none;color:#ddd;font-size:15px;cursor:pointer;padding:2px 4px;flex-shrink:0">✕</button>'
     +'</div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">'
@@ -5212,6 +5416,7 @@ function renderTaskCard(pieceId,t,opts){
     +(hasManque?'<div style="margin-top:8px;background:white;border:1.5px solid var(--red);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text);font-weight:600;display:flex;align-items:flex-start;gap:7px"><span style="color:var(--red);font-size:14px;flex-shrink:0">⚠️</span><span>'+escControle(t.manque)+'</span></div>':'')
   +'</div>';
 }
+
 
 function renderControleContent(){
   var c=getControleCurrent();
@@ -5234,21 +5439,33 @@ function renderControleContent(){
         var col=COLORS[idx%COLORS.length];
         var tasks=p.tasks||[];
         var fini=tasks.filter(function(t){return t.status==='fini';}).length;
-        html+='<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden;border-left:6px solid '+col.main+'">'
-          +'<div style="background:'+col.main+';color:white;padding:9px 14px;display:flex;justify-content:space-between;align-items:center">'
-            +'<span style="font-size:13px;font-weight:900;letter-spacing:0.5px">📐 '+escControle(p.nom).toUpperCase()+'</span>'
-            +'<div style="display:flex;align-items:center;gap:10px">'
-              +'<span style="font-size:11px;font-weight:700;opacity:0.95">'+fini+'/'+tasks.length+' fini</span>'
-              +'<button onclick="delPiece('+p.id+')" style="background:rgba(255,255,255,0.22);border:none;color:white;font-size:13px;font-weight:800;cursor:pointer;border-radius:6px;padding:3px 8px">✕</button>'
-            +'</div>'
-          +'</div>'
-          +'<div style="padding:12px 14px">';
-        tasks.forEach(function(t){
-          html+=renderTaskCard(p.id,t,{showPiece:false});
-        });
-        html+='<button onclick="addTask('+p.id+')" style="width:100%;padding:9px;border:1.5px dashed '+col.main+';border-radius:8px;background:transparent;color:'+col.main+';font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;margin-top:4px">＋ Ajouter une tâche</button>';
-        html+='</div></div>';
+        var manqueCnt=tasks.filter(function(t){return t.manque && t.manque.trim();}).length;
+        var expanded=controleExpandedPieces.has(p.id);
+        // Carte compacte : header sur 1 ligne, tâches dépliables au tap
+        html+='<div style="background:white;border-radius:12px;box-shadow:var(--shadow);margin-bottom:7px;overflow:hidden;border-left:4px solid '+col.main+'">'
+          +'<div onclick="toggleControlePiece('+p.id+')" style="padding:11px 12px 11px 14px;display:flex;align-items:center;gap:9px;cursor:pointer">'
+            +'<span style="font-size:11px;color:'+col.main+';width:11px;flex-shrink:0;font-weight:900">'+(expanded?'▾':'▸')+'</span>'
+            +'<span style="font-size:13.5px;font-weight:900;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escControle(p.nom)+'</span>'
+            +(tasks.length?'<span style="font-size:11px;color:var(--muted);font-weight:700;flex-shrink:0">'+fini+'/'+tasks.length+'</span>':'<span style="font-size:11px;color:#bbb;font-weight:700;flex-shrink:0;font-style:italic">vide</span>')
+            +(manqueCnt>0?'<span style="background:var(--red);color:white;border-radius:10px;padding:2px 7px;font-size:10px;font-weight:800;flex-shrink:0">⚠ '+manqueCnt+'</span>':'')
+            +'<button onclick="event.stopPropagation();delPiece('+p.id+')" style="background:none;border:none;color:#ccc;font-size:14px;cursor:pointer;flex-shrink:0;padding:2px 4px">✕</button>'
+          +'</div>';
+        if(expanded){
+          html+='<div style="padding:10px 14px 12px 14px;border-top:1px solid #f0f0f0">';
+          // Champ de saisie rapide pour balancer plusieurs tâches d'affilée
+          html+='<div style="display:flex;gap:6px;margin-bottom:'+(tasks.length?'8px':'4px')+'">'
+            +'<input type="text" id="ctrl-quick-'+p.id+'" placeholder="Ajouter une retouche... (Entrée)" autocomplete="off" autocapitalize="sentences" onkeydown="if(event.key===\'Enter\'){event.preventDefault();addTaskQuick('+p.id+',this.value);this.value=\'\';}" style="flex:1;border:1.5px solid '+col.main+';border-radius:9px;padding:9px 12px;font-family:Nunito,sans-serif;font-size:13px;font-weight:700;color:var(--text);outline:none;background:white;-webkit-appearance:none">'
+            +'<button onclick="var inp=document.getElementById(\'ctrl-quick-'+p.id+'\');addTaskQuick('+p.id+',inp.value);inp.value=\'\';" style="background:'+col.main+';color:white;border:none;border-radius:9px;padding:0 16px;font-family:Nunito,sans-serif;font-size:18px;font-weight:900;cursor:pointer;line-height:1">＋</button>'
+          +'</div>';
+          tasks.forEach(function(t){
+            html+=renderTaskCard(p.id,t,{showPiece:false});
+          });
+          html+='</div>';
+        }
+        html+='</div>';
       });
+      // Gros bouton "+ Ajouter une pièce" en bas pour éviter de remonter
+      html+='<button onclick="addPiece()" style="width:100%;padding:16px;border:2px dashed var(--blue);border-radius:14px;background:var(--blue-bg);color:var(--blue);font-family:Nunito,sans-serif;font-size:15px;font-weight:900;cursor:pointer;margin-top:6px;margin-bottom:8px;letter-spacing:0.3px">＋ Ajouter une pièce</button>';
     }
     el.innerHTML=html;
   } else if(controleVue==='ouvrier'){
