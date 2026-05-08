@@ -378,13 +378,36 @@ header img{height:42px}
 
     fbSetStatus('☁️ Connexion...', '#f39c12');
 
+    // Toast visuel rassurant après chaque sync réussie
+    function showSyncToast(msg, color){
+      var t = document.getElementById('sync-toast');
+      if(!t){
+        t = document.createElement('div');
+        t.id = 'sync-toast';
+        t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#27ae60;color:white;padding:10px 18px;border-radius:24px;font-family:Nunito,sans-serif;font-size:13px;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,0.2);z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;';
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.background = color || '#27ae60';
+      t.style.opacity = '1';
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(function(){ t.style.opacity = '0'; }, 1800);
+    }
+    window.showSyncToast = showSyncToast;
+
     window.fbSave = function() {
       fbSetStatus('☁️ Sauvegarde...', '#f39c12');
       var data = {};
       KEYS.forEach(function(k) { var v = localStorage.getItem(k); if(v) data[k] = v; });
       DOC_REF.set(data)
-        .then(function() { fbSetStatus('☁️ Synchronisé', '#27ae60'); })
-        .catch(function(e) { fbSetStatus('⚠️ ' + e.code, '#e74c3c'); });
+        .then(function() {
+          fbSetStatus('☁️ Synchronisé', '#27ae60');
+          showSyncToast('✅ Sauvegardé', '#27ae60');
+        })
+        .catch(function(e) {
+          fbSetStatus('⚠️ ' + e.code, '#e74c3c');
+          showSyncToast('⚠️ Erreur sync', '#e74c3c');
+        });
     };
 
     var fbStarted = false;
