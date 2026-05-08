@@ -378,6 +378,20 @@ header img{height:42px}
 
     fbSetStatus('☁️ Connexion...', '#f39c12');
 
+    // FONCTION GLOBALE pour déclencher une sauvegarde cloud (avec débounce 600ms)
+    // Appelable depuis n'importe quelle fonction de save → robuste face au hook qui pourrait être écrasé
+    window.triggerCloudSave = function(){
+      if(!window.fbSave || window._fbLoading) return;
+      window.fbHasChanges = true;
+      clearTimeout(window.fbSaveTimer);
+      window.fbSaveTimer = setTimeout(function(){
+        window.fbSave();
+        window.fbHasChanges = false;
+      }, 600);
+      var el = document.getElementById('fb-status');
+      if(el) { el.textContent = '☁️ Sauvegarde...'; el.style.color = '#f39c12'; }
+    };
+
     // Toast visuel rassurant après chaque sync réussie
     function showSyncToast(msg, color){
       var t = document.getElementById('sync-toast');
@@ -593,7 +607,7 @@ function checkPwd(){
   <div class="hright">
     <div id="fb-status" style="font-size:12px;font-weight:800;color:#27ae60;margin-right:8px;padding:4px 10px;border-radius:12px;background:#e8f8f0">☁️...</div>
 <div class="hdate" id="hdate"></div>
-    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-c</span></div>
+    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-e</span></div>
   </div>
 </header>
 
@@ -1486,6 +1500,7 @@ function save(){
   localStorage.setItem('ag4_no',JSON.stringify(notes));
   localStorage.setItem('ag4_pa',JSON.stringify(patrols));
   localStorage.setItem('ag4_plan',JSON.stringify(planningData));
+  if(window.triggerCloudSave) window.triggerCloudSave();
 }
 
 // CATS & PRIOS
@@ -2653,6 +2668,7 @@ var SUIVI_STATUS = [
 
 function saveSuiviHist(){
   localStorage.setItem('ag4_suivi_hist',JSON.stringify(suiviHistorique));
+  if(window.triggerCloudSave) window.triggerCloudSave();
 }
 
 function getSuiviCurrent(){
@@ -3314,6 +3330,7 @@ function getRDVCurrent(){
 
 function saveRDVHist(){
   localStorage.setItem('ag4_rdv_hist',JSON.stringify(rdvHistorique));
+  if(window.triggerCloudSave) window.triggerCloudSave();
 }
 
 function nouvelleFicheRDV(){
@@ -3648,6 +3665,7 @@ function getMetreCurrent(){
 
 function saveMetreHist(){
   localStorage.setItem('ag4_metre_hist',JSON.stringify(metreHistorique));
+  if(window.triggerCloudSave) window.triggerCloudSave();
 }
 
 function nouveauMetre(){
@@ -4170,7 +4188,7 @@ function getCmdCurrent(){
   return cmdHistorique.find(function(c){return c.id===cmdCurrentId;})||null;
 }
 
-function saveCmdHist(){localStorage.setItem('ag4_cmd_hist',JSON.stringify(cmdHistorique));}
+function saveCmdHist(){localStorage.setItem('ag4_cmd_hist',JSON.stringify(cmdHistorique));if(window.triggerCloudSave)window.triggerCloudSave();}
 
 function nouvelleCommande(){
   var c={id:Date.now(),createdAt:new Date().toISOString(),chantier:'',chef:'',date:'',fourn:'',notes:'',lignes:[newCmdLigne()]};
@@ -4451,7 +4469,7 @@ function getPvCurrent(){
   return pvHistorique.find(function(p){return p.id===pvCurrentId;})||null;
 }
 
-function savePvHist(){localStorage.setItem('ag4_pv_hist',JSON.stringify(pvHistorique));}
+function savePvHist(){localStorage.setItem('ag4_pv_hist',JSON.stringify(pvHistorique));if(window.triggerCloudSave)window.triggerCloudSave();}
 
 function newPvLigne(){return {id:Date.now()+Math.random(),qte:'',unite:'pce',desc:'',pu:'',fait:false,accepte:false};}
 
@@ -4899,7 +4917,7 @@ let fbHasChanges = false;
 window.syncDiagnostic = function(){
   var lines = [];
   lines.push('🔍 DIAGNOSTIC SYNC\n');
-  lines.push('Version : v8mai-c');
+  lines.push('Version : v8mai-e');
   lines.push('');
   // 1. Firebase initialisé ?
   if(typeof firebase === 'undefined'){
@@ -4920,7 +4938,14 @@ window.syncDiagnostic = function(){
   var origStr = localStorage.setItem.toString();
   if(origStr.indexOf('ag4_') === -1){
     lines.push('❌ Hook localStorage NON installé');
-    lines.push('   → Auto-save inactif');
+    lines.push('   → Tentative de réinstallation...');
+    installSetItemHook();
+    var origStr2 = localStorage.setItem.toString();
+    if(origStr2.indexOf('ag4_') !== -1){
+      lines.push('   ✅ Réinstallé avec succès');
+    } else {
+      lines.push('   ❌ Échec réinstallation');
+    }
   } else {
     lines.push('✅ Hook localStorage installé');
   }
@@ -4974,19 +4999,38 @@ window.syncDiagnostic = function(){
   }, 1500);
 };
 
-localStorage.setItem = function(key, value) {
-  _origSetItem(key, value);
-  if(key.startsWith('ag4_') && window.fbSave && !window._fbLoading) {
-    fbHasChanges = true;
-    clearTimeout(fbSaveTimer);
-    fbSaveTimer = setTimeout(function(){ 
-      window.fbSave();
-      fbHasChanges = false;
-    }, 600);
-    const el = document.getElementById('fb-status');
-    if(el) { el.textContent = '☁️ Sauvegarde...'; el.style.color = '#f39c12'; }
-  }
-};
+// Hook robuste : extrait dans une fonction et réinstallé périodiquement
+// (parfois Firebase SDK remplace localStorage.setItem après l'init initiale)
+function installSetItemHook() {
+  // Skip si déjà notre hook
+  if(localStorage.setItem.toString().indexOf('ag4_') !== -1) return false;
+  var currentSet = localStorage.setItem.bind(localStorage);
+  localStorage.setItem = function(key, value) {
+    currentSet(key, value);
+    if(key.startsWith('ag4_') && window.fbSave && !window._fbLoading) {
+      fbHasChanges = true;
+      clearTimeout(fbSaveTimer);
+      fbSaveTimer = setTimeout(function(){ 
+        window.fbSave();
+        fbHasChanges = false;
+      }, 600);
+      const el = document.getElementById('fb-status');
+      if(el) { el.textContent = '☁️ Sauvegarde...'; el.style.color = '#f39c12'; }
+    }
+  };
+  return true;
+}
+window.installSetItemHook = installSetItemHook;
+
+// Installation initiale
+installSetItemHook();
+// Ré-installations différées (si Firebase ou autre script écrase notre hook après init)
+setTimeout(installSetItemHook, 500);
+setTimeout(installSetItemHook, 1500);
+setTimeout(installSetItemHook, 3000);
+setTimeout(installSetItemHook, 6000);
+// Surveillance permanente : vérifier toutes les 4 sec si le hook est encore là
+setInterval(installSetItemHook, 4000);
 
 // Force save quand l'app passe en background + reload protégé quand elle revient
 let lastVisibleReload = 0;
