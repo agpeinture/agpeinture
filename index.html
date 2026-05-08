@@ -1445,7 +1445,7 @@ const NCOLORS=[{id:'blue',label:'🔵 Bleu',color:'ab'},{id:'yellow',label:'🟡
 const NUCOLORS=['#FFFFFF','#F5F5DC','#E8D5B7','#D4A574','#C8A882','#B8860B','#8FBC8F','#87CEEB','#4682B4','#708090','#A0A0A0','#5D5D5D','#E8C4C4','#DDA0DD','#F4A460','#CD853F'];
 
 // SELECTIONS
-let sel={afCat:'tel',afPrio:'urgent',dStatus:'afaire',cStatus:'encours',aType:'visite',nColor:'blue',nuColor:'#FFFFFF'};
+let sel={afCat:'tel',afPrio:'normal',dStatus:'afaire',cStatus:'encours',aType:'visite',nColor:'blue',nuColor:'#FFFFFF'};
 
 function buildChips(cid,items,selKey,defId){
   sel[selKey]=defId;
@@ -1702,7 +1702,7 @@ function openModal(t){
     editingAfaireId=null;
     ['af-title','af-note','af-tel','af-email','af-adresse'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
     buildChips('af-cat-chips',CATS,'afCat','tel');
-    buildChips('af-prio-chips',PRIOS,'afPrio','urgent');
+    buildChips('af-prio-chips',PRIOS,'afPrio','normal');
     document.getElementById('af-date').value=todayStr;
     document.getElementById('af-tel-fields').style.display='block';
   }
@@ -2139,8 +2139,12 @@ function afCard(a){
     rightZone = '<div style="font-size:12px;color:#9ca3af;flex-shrink:0;font-weight:500;letter-spacing:0.2px">'+dStr+'</div>';
   }
 
-  // Cercle checkbox : rouge si urgent, vert plein si fait, gris sinon
-  var cbBorder = a.done ? '#16a34a' : (a.prio==='urgent' ? '#ef4444' : '#d1d5db');
+  // Cercle checkbox : rouge si urgent, jaune si attente, vert plein si fait, gris sinon
+  var cbBorder;
+  if(a.done) cbBorder = '#16a34a';
+  else if(a.prio==='urgent') cbBorder = '#ef4444';
+  else if(a.prio==='attente') cbBorder = '#eab308';
+  else cbBorder = '#d1d5db';
   var cbBg = a.done ? '#16a34a' : 'transparent';
   var cbCheck = a.done
     ? '<svg width="11" height="11" viewBox="0 0 13 13"><polyline points="2,7 5.5,10.5 11,3" stroke="white" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
@@ -2230,17 +2234,18 @@ function renderAfaire(){
     else groups.normal.push(a);
   });
   var sections = [
-    {key:'urgent', label:'🔴 Urgent', items:groups.urgent},
-    {key:'normal', label:'📋 À faire', items:groups.normal},
-    {key:'attente', label:'⏸ Plus tard', items:groups.attente},
-    {key:'done', label:'✓ Faites', items:groups.done}
+    {key:'urgent', label:'Urgent', color:'#ef4444', items:groups.urgent},
+    {key:'normal', label:'À faire', color:'#3b82f6', items:groups.normal},
+    {key:'attente', label:'Plus tard', color:'#eab308', items:groups.attente},
+    {key:'done', label:'Faites', color:'#22c55e', items:groups.done}
   ];
   var html = '';
   sections.forEach(function(s){
     if(!s.items.length) return;
     html += '<div style="margin:14px 0 6px 0;display:flex;align-items:center;gap:8px;padding:0 4px">'
-         +    '<span style="font-size:13px;font-weight:800;color:var(--text)">'+s.label+'</span>'
-         +    '<span style="font-size:11px;font-weight:700;color:var(--muted);background:#f3f4f6;padding:2px 8px;border-radius:10px">'+s.items.length+'</span>'
+         +    '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:'+s.color+'"></span>'
+         +    '<span style="font-size:13px;font-weight:800;color:#111">'+s.label+'</span>'
+         +    '<span style="font-size:11px;font-weight:700;color:#6b7280;background:#f3f4f6;padding:2px 8px;border-radius:10px">'+s.items.length+'</span>'
          +  '</div>';
     html += s.items.map(a=>afCard(a)).join('');
   });
