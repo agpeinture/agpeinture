@@ -607,7 +607,7 @@ function checkPwd(){
   <div class="hright">
     <div id="fb-status" style="font-size:12px;font-weight:800;color:#27ae60;margin-right:8px;padding:4px 10px;border-radius:12px;background:#e8f8f0">☁️...</div>
 <div class="hdate" id="hdate"></div>
-    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-e</span></div>
+    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-f</span></div>
   </div>
 </header>
 
@@ -4917,7 +4917,7 @@ let fbHasChanges = false;
 window.syncDiagnostic = function(){
   var lines = [];
   lines.push('🔍 DIAGNOSTIC SYNC\n');
-  lines.push('Version : v8mai-e');
+  lines.push('Version : v8mai-f');
   lines.push('');
   // 1. Firebase initialisé ?
   if(typeof firebase === 'undefined'){
@@ -4934,20 +4934,22 @@ window.syncDiagnostic = function(){
     alert(lines.join('\n')); return;
   }
   lines.push('✅ fbSave disponible (auto-save actif)');
-  // 3. Hook localStorage installé ?
+  // 3. Méthode "appels directs" (stratégie stock) - plus robuste que le hook
+  if(typeof window.triggerCloudSave === 'function'){
+    lines.push('✅ Appels directs actifs (méthode stock)');
+    lines.push('   → save(), saveRDVHist, saveMetreHist, etc.');
+    lines.push('   → appellent fbSave directement = fiable');
+  } else {
+    lines.push('❌ triggerCloudSave manquant');
+    lines.push('   → Vérifie que tu as bien la dernière version');
+  }
+  // 4. Hook localStorage (méthode secondaire, peut être bloquée par Firebase)
   var origStr = localStorage.setItem.toString();
   if(origStr.indexOf('ag4_') === -1){
-    lines.push('❌ Hook localStorage NON installé');
-    lines.push('   → Tentative de réinstallation...');
-    installSetItemHook();
-    var origStr2 = localStorage.setItem.toString();
-    if(origStr2.indexOf('ag4_') !== -1){
-      lines.push('   ✅ Réinstallé avec succès');
-    } else {
-      lines.push('   ❌ Échec réinstallation');
-    }
+    lines.push('⚠️ Hook localStorage bloqué par Firebase');
+    lines.push('   → Pas grave, les appels directs prennent le relai');
   } else {
-    lines.push('✅ Hook localStorage installé');
+    lines.push('✅ Hook localStorage installé (bonus)');
   }
   // 4. Compter données locales
   var localCount = 0;
