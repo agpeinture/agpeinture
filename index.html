@@ -2110,14 +2110,20 @@ function quickAction(type){
 }
 
 function afCard(a){
-  const cat=catMap[a.cat]||{label:'📌',tc:'tgr'};
+  const cat=catMap[a.cat]||{label:'📌 Autre',tc:'tgr'};
 
-  // Sous-titre : note OU adresse (sans surcharger)
+  // Sous-titre : action (catégorie) en premier, puis note/adresse/tel si dispo
   var subParts = [];
+  // Action principale (sauf si done : pas la peine d'afficher)
+  if(!a.done) subParts.push('<span style="color:#6b7280;font-weight:500">'+cat.label+'</span>');
+  // Numéro pour tâches tel
+  if(a.cat==='tel' && a.tel) subParts.push(a.tel);
+  // Note libre
   if(a.note) subParts.push(a.note);
+  // Adresse (pour les tâches non-tel)
   if(a.adresse && a.cat!=='tel') subParts.push('📍 '+a.adresse);
   var subLine = subParts.length
-    ? '<div style="font-size:11px;color:#9ca3af;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+subParts.join(' · ')+'</div>'
+    ? '<div style="font-size:11.5px;color:#9ca3af;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+subParts.join(' · ')+'</div>'
     : '';
 
   // Action à droite : si tâche tel → bouton appel direct ; sinon → date courte en gris
