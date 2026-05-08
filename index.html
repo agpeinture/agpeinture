@@ -374,7 +374,7 @@ header img{height:42px}
     var db = firebase.firestore();
     var DOC_REF = db.collection("appdata").doc("agpeinture-data");
     var KEYS = ['ag4_af','ag4_ch','ag4_dv','ag4_nu','ag4_pa','ag4_plan','ag4_ag','ag4_no','ag4_routine',
-                'ag4_rdv','ag4_rdvc','ag4_rdvt','ag4_rdv_hist','ag4_metre_hist','ag4_cmd_hist','ag4_pv_hist','ag4_factures','ag4_suivi_hist'];
+                'ag4_rdv','ag4_rdvc','ag4_rdvt','ag4_rdv_hist','ag4_metre_hist','ag4_cmd_hist','ag4_pv_hist','ag4_factures','ag4_suivi_hist','ag4_controle_hist'];
 
     fbSetStatus('☁️ Connexion...', '#f39c12');
 
@@ -722,6 +722,7 @@ function checkPwd(){
   <!-- TABS internes -->
   <div style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none">
     <button class="chip ab" id="pt-suivi" onclick="showPatronTab('suivi')">🛠 Suivi chantier</button>
+    <button class="chip" id="pt-controle" onclick="showPatronTab('controle')">🔧 Contrôle</button>
     <button class="chip" id="pt-nuanciers" onclick="showPatronTab('nuanciers')">🎨 Nuanciers</button>
     <button class="chip" id="pt-rdv" onclick="showPatronTab('rdv')">📋 Fiche RDV</button>
     <button class="chip" id="pt-metre" onclick="showPatronTab('metre')">📐 Métré</button>
@@ -1075,6 +1076,79 @@ function checkPwd(){
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ====== CONTRÔLE CHANTIER ====== -->
+  <div id="pt-controle-sec" style="display:none">
+
+    <!-- Vue liste historique -->
+    <div id="controle-historique-view">
+      <div class="sh print-no">
+        <div><div class="st">🔧 Contrôle Chantier</div><div class="ss" id="controle-hist-sub">Tâches à faire par pièce et par ouvrier</div></div>
+        <button class="fab" onclick="nouveauControle()">＋ Nouveau</button>
+      </div>
+      <div id="controle-hist-list"></div>
+    </div>
+
+    <!-- Vue édition fiche Contrôle -->
+    <div id="controle-edit-view" style="display:none">
+      <div class="sh print-no">
+        <div><div class="st">🔧 Contrôle Chantier</div><div class="ss" id="controle-edit-sub">En cours</div></div>
+        <div style="display:flex;gap:8px">
+          <button class="fab" style="background:var(--muted)" onclick="retourControleHist()">← Retour</button>
+          <button class="fab" style="background:var(--green)" onclick="generatePDFControle()">📄 PDF</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px">
+        <div style="background:white;border-radius:10px;padding:8px 4px;box-shadow:var(--shadow);border-top:3px solid var(--blue);text-align:center">
+          <div style="font-size:18px;font-weight:900;color:var(--blue);line-height:1" id="ctrl-stat-total">0</div>
+          <div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">Tâches</div>
+        </div>
+        <div style="background:white;border-radius:10px;padding:8px 4px;box-shadow:var(--shadow);border-top:3px solid var(--green);text-align:center">
+          <div style="font-size:18px;font-weight:900;color:var(--green);line-height:1" id="ctrl-stat-fini">0</div>
+          <div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">Faites</div>
+        </div>
+        <div style="background:white;border-radius:10px;padding:8px 4px;box-shadow:var(--shadow);border-top:3px solid var(--orange);text-align:center">
+          <div style="font-size:18px;font-weight:900;color:var(--orange);line-height:1" id="ctrl-stat-encours">0</div>
+          <div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">En cours</div>
+        </div>
+        <div style="background:white;border-radius:10px;padding:8px 4px;box-shadow:var(--shadow);border-top:3px solid var(--red);text-align:center">
+          <div style="font-size:18px;font-weight:900;color:var(--red);line-height:1" id="ctrl-stat-manque">0</div>
+          <div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.3px;margin-top:2px">⚠️ Manques</div>
+        </div>
+      </div>
+
+      <!-- Filtres / Vues -->
+      <div style="display:flex;gap:5px;margin-bottom:18px;background:#eef3f7;padding:4px;border-radius:12px">
+        <button class="ctrl-vue-btn" id="ctrl-vue-piece" onclick="setControleVue('piece')" style="flex:1;padding:8px 4px;border:none;border-radius:9px;background:var(--blue);color:white;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px">
+          <span style="font-size:14px;line-height:1">📐</span><span>Pièce</span>
+        </button>
+        <button class="ctrl-vue-btn" id="ctrl-vue-ouvrier" onclick="setControleVue('ouvrier')" style="flex:1;padding:8px 4px;border:none;border-radius:9px;background:transparent;color:var(--muted);font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px">
+          <span style="font-size:14px;line-height:1">👷</span><span>Ouvrier</span>
+        </button>
+        <button class="ctrl-vue-btn" id="ctrl-vue-manque" onclick="setControleVue('manque')" style="flex:1;padding:8px 4px;border:none;border-radius:9px;background:transparent;color:var(--muted);font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px">
+          <span style="font-size:14px;line-height:1">🚨</span><span>Manques</span>
+        </button>
+      </div>
+
+      <!-- Infos chantier -->
+      <div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px">
+        <div style="background:linear-gradient(135deg,var(--blue),var(--blue2));padding:11px 16px;color:white;font-size:13px;font-weight:900">📋 Informations chantier</div>
+        <div style="padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="pi-field"><label>Chantier</label><input id="ctrl-chantier" class="rdv-input" placeholder="Nom du chantier..." oninput="saveControleInfo()"></div>
+          <div class="pi-field"><label>Client</label><input id="ctrl-client" class="rdv-input" placeholder="Nom du client..." oninput="saveControleInfo()"></div>
+          <div class="pi-field" style="grid-column:1/-1"><label>Adresse</label><input id="ctrl-adresse" class="rdv-input" placeholder="Adresse..." oninput="saveControleInfo()"></div>
+          <div class="pi-field"><label>Date début</label><input id="ctrl-date" type="date" class="rdv-input" oninput="saveControleInfo()"></div>
+          <div class="pi-field"><label>Équipe (séparer par virgule)</label><input id="ctrl-equipe" class="rdv-input" placeholder="Pierre, Paul, Marc..." oninput="saveControleInfo()"></div>
+        </div>
+      </div>
+
+      <!-- Liste des tâches selon vue active -->
+      <div id="ctrl-content"></div>
+
     </div>
   </div>
 
@@ -1569,7 +1643,7 @@ function showTab(t,btn){
 
 // PATRON TABS
 function showPatronTab(t){
-  ['nuanciers','suivi','notes','rdv','metre','commande','plusvalue'].forEach(x=>{
+  ['nuanciers','suivi','controle','notes','rdv','metre','commande','plusvalue'].forEach(x=>{
     const sec=document.getElementById('pt-'+x+'-sec');
     if(sec) sec.style.display=x===t?'block':'none';
     const btn=document.getElementById('pt-'+x);
@@ -1591,6 +1665,14 @@ function showPatronTab(t){
     if(shv) shv.style.display='block';
     if(sev) sev.style.display='none';
     if(typeof renderSuiviHist==='function') renderSuiviHist();
+  }
+  if(t==='controle'){
+    controleCurrentId=null;
+    var chv=document.getElementById('controle-historique-view');
+    var cev=document.getElementById('controle-edit-view');
+    if(chv) chv.style.display='block';
+    if(cev) cev.style.display='none';
+    if(typeof renderControleHist==='function') renderControleHist();
   }
   if(t==='metre'){
     if(typeof renderMetreHist==='function') renderMetreHist();
@@ -1714,6 +1796,32 @@ function doGlobalSearch(query){
     });
   }catch(e){}
   
+  // 4b. Contrôle Chantier
+  try{
+    (typeof controleHistorique !== 'undefined' ? controleHistorique : []).forEach(function(c){
+      var matchTask = false;
+      var matchPiece = false;
+      (c.pieces||[]).forEach(function(p){
+        if(match(p.nom)) matchPiece = true;
+        (p.tasks||[]).forEach(function(t){
+          if(match(t.desc)||match(t.ouvrier)||match(t.manque)) matchTask = true;
+        });
+      });
+      if(match(c.chantier)||match(c.client)||match(c.adresse)||match(c.equipe)||matchTask||matchPiece){
+        var date=c.date?c.date.split('-').reverse().join('/'):(new Date(c.createdAt)).toLocaleDateString('fr-CH');
+        var nbTasks=0, nbManque=0;
+        (c.pieces||[]).forEach(function(p){(p.tasks||[]).forEach(function(t){nbTasks++; if(t.manque && t.manque.trim()) nbManque++;});});
+        results.push({
+          icon:'🔧', type:'Contrôle Chantier',
+          title:c.chantier||c.client||'Sans nom',
+          subtitle:(c.client||'')+' · '+nbTasks+' tâche'+(nbTasks>1?'s':'')+(nbManque>0?' · ⚠️ '+nbManque+' manque'+(nbManque>1?'s':''):'')+' · '+date,
+          color:nbManque>0?'var(--red)':'var(--blue)',
+          onclick:"showTab('patron',document.getElementById('nb-patron'));setTimeout(function(){showPatronTab('controle');setTimeout(function(){ouvrirControle("+c.id+");},100);},100)"
+        });
+      }
+    });
+  }catch(e){}
+
   // 5. Nuanciers
   try{
     (nuanciers||[]).forEach(function(n){
@@ -4772,7 +4880,536 @@ function generatePDFPv(){
   doc.save('PlusValue_'+(p.chantier||'chantier').replace(/\s+/g,'_')+'_'+(p.date||new Date().toISOString().split('T')[0])+'.pdf');
 }
 
-setTimeout(function(){try{renderMetreHist();renderCmdHist();renderRDVHist();renderPvHist();}catch(e){console.error('hist error:',e);}},350);
+// ========================
+// CONTRÔLE CHANTIER - Avec historique
+// ========================
+var controleHistorique = JSON.parse(localStorage.getItem('ag4_controle_hist')||'[]');
+var controleCurrentId = null;
+var controleVue = 'piece';
+
+function getControleCurrent(){
+  if(!controleCurrentId) return null;
+  return controleHistorique.find(function(c){return c.id===controleCurrentId;})||null;
+}
+
+function saveControleHist(){
+  localStorage.setItem('ag4_controle_hist',JSON.stringify(controleHistorique));
+  if(window.triggerCloudSave) window.triggerCloudSave();
+}
+
+function nouveauControle(){
+  var c={
+    id:Date.now(),
+    createdAt:new Date().toISOString(),
+    chantier:'',client:'',adresse:'',
+    date:new Date().toISOString().split('T')[0],
+    equipe:'',
+    pieces:[]
+  };
+  controleHistorique.unshift(c);
+  saveControleHist();
+  ouvrirControle(c.id);
+}
+
+function ouvrirControle(id){
+  controleCurrentId=id;
+  controleVue='piece';
+  document.getElementById('controle-historique-view').style.display='none';
+  document.getElementById('controle-edit-view').style.display='block';
+  loadControleInfo();
+  setControleVue('piece');
+}
+
+function retourControleHist(){
+  saveControleInfo();
+  controleCurrentId=null;
+  document.getElementById('controle-edit-view').style.display='none';
+  document.getElementById('controle-historique-view').style.display='block';
+  renderControleHist();
+}
+
+function supprimerControle(id,e){
+  if(e) e.stopPropagation();
+  if(!confirm('Supprimer cette fiche contrôle ?')) return;
+  controleHistorique=controleHistorique.filter(function(c){return c.id!==id;});
+  saveControleHist();
+  renderControleHist();
+}
+
+function saveControleInfo(){
+  var c=getControleCurrent(); if(!c) return;
+  ['chantier','client','adresse','date','equipe'].forEach(function(f){
+    var el=document.getElementById('ctrl-'+f);
+    if(el) c[f]=el.value;
+  });
+  saveControleHist();
+  updateControleStats();
+  var sub=document.getElementById('controle-edit-sub');
+  if(sub) sub.textContent=c.chantier||'Nouveau contrôle';
+}
+
+function loadControleInfo(){
+  var c=getControleCurrent(); if(!c) return;
+  ['chantier','client','adresse','date','equipe'].forEach(function(f){
+    var el=document.getElementById('ctrl-'+f);
+    if(el) el.value=c[f]||'';
+  });
+  var sub=document.getElementById('controle-edit-sub');
+  if(sub) sub.textContent=c.chantier||'Nouveau contrôle';
+}
+
+function updateControleStats(){
+  var c=getControleCurrent(); if(!c) return;
+  var total=0, fini=0, encours=0, manque=0;
+  (c.pieces||[]).forEach(function(p){
+    (p.tasks||[]).forEach(function(t){
+      total++;
+      if(t.status==='fini') fini++;
+      else if(t.status==='encours') encours++;
+      if(t.manque && t.manque.trim()) manque++;
+    });
+  });
+  var setTxt=function(id,v){var e=document.getElementById(id); if(e) e.textContent=v;};
+  setTxt('ctrl-stat-total',total);
+  setTxt('ctrl-stat-fini',fini);
+  setTxt('ctrl-stat-encours',encours);
+  setTxt('ctrl-stat-manque',manque);
+}
+
+function renderControleHist(){
+  var el=document.getElementById('controle-hist-list');
+  var sub=document.getElementById('controle-hist-sub');
+  if(sub) sub.textContent=controleHistorique.length+' fiche'+(controleHistorique.length>1?'s':'');
+  if(!el) return;
+  if(!controleHistorique.length){
+    el.innerHTML='<div class="empty"><div class="ei">🔧</div><p>Aucun contrôle chantier</p><span>Appuie sur ＋ Nouveau pour commencer</span></div>';
+    return;
+  }
+  el.innerHTML=controleHistorique.map(function(c){
+    var total=0, fini=0, manque=0;
+    (c.pieces||[]).forEach(function(p){
+      (p.tasks||[]).forEach(function(t){
+        total++;
+        if(t.status==='fini') fini++;
+        if(t.manque && t.manque.trim()) manque++;
+      });
+    });
+    var date=c.date?c.date.split('-').reverse().join('/'):(new Date(c.createdAt)).toLocaleDateString('fr-CH');
+    var borderColor=manque>0?'var(--red)':(fini===total && total>0?'var(--green)':'var(--blue)');
+    return '<div onclick="ouvrirControle('+c.id+')" style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px;border-left:4px solid '+borderColor+';cursor:pointer;display:flex;justify-content:space-between;align-items:center">'
+      +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:15px;font-weight:900;color:var(--text)">'+(c.chantier||'Sans nom')+'</div>'
+        +'<div style="font-size:12px;color:var(--muted);margin-top:3px">'+(c.client||'—')+(c.adresse?' · '+c.adresse:'')+' · '+date+'</div>'
+        +'<div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap">'
+          +'<span style="font-size:12px;font-weight:800;color:var(--blue)">'+(c.pieces||[]).length+' pièce'+(((c.pieces||[]).length)>1?'s':'')+'</span>'
+          +(total>0?'<span style="font-size:12px;font-weight:800;color:var(--green)">'+fini+'/'+total+' fini</span>':'')
+          +(manque>0?'<span style="font-size:12px;font-weight:800;color:var(--red)">⚠️ '+manque+' manque'+(manque>1?'s':'')+'</span>':'')
+        +'</div>'
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
+        +'<div style="font-size:22px;color:#ddd">›</div>'
+        +'<button onclick="supprimerControle('+c.id+',event)" style="background:var(--red-bg);border:none;border-radius:8px;padding:6px 10px;color:var(--red);font-size:13px;cursor:pointer">🗑️</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+function addPiece(){
+  var c=getControleCurrent(); if(!c) return;
+  var nom=prompt('Nom de la pièce ?\n(Ex: Salon, Cuisine, Chambre 1...)');
+  if(!nom||!nom.trim()) return;
+  if(!c.pieces) c.pieces=[];
+  c.pieces.push({id:Date.now(),nom:nom.trim(),tasks:[]});
+  saveControleHist();
+  setControleVue(controleVue);
+}
+
+function delPiece(pieceId){
+  var c=getControleCurrent(); if(!c) return;
+  if(!confirm('Supprimer cette pièce et toutes ses tâches ?')) return;
+  c.pieces=c.pieces.filter(function(p){return p.id!==pieceId;});
+  saveControleHist();
+  setControleVue(controleVue);
+}
+
+function addTask(pieceId){
+  var c=getControleCurrent(); if(!c) return;
+  var p=c.pieces.find(function(x){return x.id===pieceId;});
+  if(!p) return;
+  if(!p.tasks) p.tasks=[];
+  p.tasks.push({
+    id:Date.now()+Math.floor(Math.random()*1000),
+    desc:'',
+    ouvrier:'',
+    delai:'',
+    status:'todo',
+    manque:'',
+    photos:[]
+  });
+  saveControleHist();
+  setControleVue(controleVue);
+}
+
+function delTask(pieceId,taskId){
+  var c=getControleCurrent(); if(!c) return;
+  var p=c.pieces.find(function(x){return x.id===pieceId;});
+  if(!p) return;
+  p.tasks=p.tasks.filter(function(t){return t.id!==taskId;});
+  saveControleHist();
+  setControleVue(controleVue);
+}
+
+function saveTaskField(pieceId,taskId,field,val){
+  var c=getControleCurrent(); if(!c) return;
+  var p=c.pieces.find(function(x){return x.id===pieceId;});
+  if(!p) return;
+  var t=p.tasks.find(function(x){return x.id===taskId;});
+  if(!t) return;
+  t[field]=val;
+  saveControleHist();
+  updateControleStats();
+}
+
+function setTaskStatus(pieceId,taskId,status){
+  var c=getControleCurrent(); if(!c) return;
+  var p=c.pieces.find(function(x){return x.id===pieceId;});
+  if(!p) return;
+  var t=p.tasks.find(function(x){return x.id===taskId;});
+  if(!t) return;
+  t.status=status;
+  saveControleHist();
+  setControleVue(controleVue);
+}
+
+function toggleTaskManque(pieceId,taskId){
+  var c=getControleCurrent(); if(!c) return;
+  var p=c.pieces.find(function(x){return x.id===pieceId;});
+  if(!p) return;
+  var t=p.tasks.find(function(x){return x.id===taskId;});
+  if(!t) return;
+  if(t.manque && t.manque.trim()){
+    if(!confirm('Retirer le manque sur cette tâche ?')) return;
+    t.manque='';
+  } else {
+    var txt=prompt('Décris ce qui manque :\n(Ex: peinture à commander, validation client, etc.)');
+    if(!txt||!txt.trim()) return;
+    t.manque=txt.trim();
+  }
+  saveControleHist();
+  setControleVue(controleVue);
+}
+
+function addTaskPhoto(pieceId,taskId){
+  var input=document.createElement('input');
+  input.type='file';input.accept='image/*';input.capture='environment';
+  input.onchange=function(e){
+    var file=e.target.files[0]; if(!file) return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      var img=new Image();
+      img.onload=function(){
+        var maxDim=1280;
+        var w=img.width, h=img.height;
+        if(w>maxDim||h>maxDim){
+          if(w>h){h=Math.round(h*maxDim/w);w=maxDim;}
+          else{w=Math.round(w*maxDim/h);h=maxDim;}
+        }
+        var canvas=document.createElement('canvas');
+        canvas.width=w;canvas.height=h;
+        var ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,w,h);
+        var compressed=canvas.toDataURL('image/jpeg',0.75);
+        var c=getControleCurrent(); if(!c) return;
+        var p=c.pieces.find(function(x){return x.id===pieceId;}); if(!p) return;
+        var t=p.tasks.find(function(x){return x.id===taskId;}); if(!t) return;
+        if(!t.photos) t.photos=[];
+        t.photos.push(compressed);
+        saveControleHist();
+        setControleVue(controleVue);
+      };
+      img.onerror=function(){
+        var c=getControleCurrent(); if(!c) return;
+        var p=c.pieces.find(function(x){return x.id===pieceId;}); if(!p) return;
+        var t=p.tasks.find(function(x){return x.id===taskId;}); if(!t) return;
+        if(!t.photos) t.photos=[];
+        t.photos.push(ev.target.result);
+        saveControleHist();
+        setControleVue(controleVue);
+      };
+      img.src=ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+function delTaskPhoto(pieceId,taskId,idx){
+  var c=getControleCurrent(); if(!c) return;
+  var p=c.pieces.find(function(x){return x.id===pieceId;}); if(!p) return;
+  var t=p.tasks.find(function(x){return x.id===taskId;}); if(!t) return;
+  if(t.photos) t.photos.splice(idx,1);
+  saveControleHist();
+  setControleVue(controleVue);
+}
+
+function setControleVue(v){
+  controleVue=v;
+  ['piece','ouvrier','manque'].forEach(function(x){
+    var btn=document.getElementById('ctrl-vue-'+x);
+    if(!btn) return;
+    if(x===v){
+      btn.style.background='var(--blue)';
+      btn.style.color='white';
+    } else {
+      btn.style.background='transparent';
+      btn.style.color='var(--muted)';
+    }
+  });
+  updateControleStats();
+  renderControleContent();
+}
+
+function escControle(s){
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderTaskCard(pieceId,t,opts){
+  opts=opts||{};
+  var hasManque=t.manque && t.manque.trim();
+  var borderColor=hasManque?'var(--red)':(t.status==='fini'?'var(--green)':(t.status==='encours'?'var(--blue)':'var(--orange)'));
+  var bg=hasManque?'var(--red-bg)':'var(--bg)';
+  var photos=(t.photos||[]).map(function(src,i){
+    return '<div style="position:relative;display:inline-block"><img src="'+src+'" style="width:50px;height:50px;object-fit:cover;border-radius:8px;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.1)"><button onclick="event.stopPropagation();delTaskPhoto('+pieceId+','+t.id+','+i+')" style="position:absolute;top:-5px;right:-5px;background:var(--red);color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;line-height:1">✕</button></div>';
+  }).join('');
+  var pieceLabel='';
+  if(opts.showPiece){
+    var c=getControleCurrent();
+    var p=c?c.pieces.find(function(x){return x.id===pieceId;}):null;
+    if(p) pieceLabel='<div style="font-size:10px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px">📐 '+escControle(p.nom)+'</div>';
+  }
+  return '<div style="background:'+bg+';border-radius:12px;padding:11px 12px;margin-bottom:8px;border-left:3px solid '+borderColor+'">'
+    +pieceLabel
+    +'<div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:8px">'
+      +'<div style="flex:1;min-width:0">'
+        +'<input type="text" value="'+escControle(t.desc)+'" placeholder="Décris la tâche..." oninput="saveTaskField('+pieceId+','+t.id+',\'desc\',this.value)" style="width:100%;border:none;background:transparent;font-family:Nunito,sans-serif;font-size:13.5px;font-weight:700;color:var(--text);outline:none;border-bottom:1.5px dashed var(--border);padding:2px 0">'
+      +'</div>'
+      +'<button onclick="delTask('+pieceId+','+t.id+')" style="background:none;border:none;color:#ddd;font-size:15px;cursor:pointer;padding:2px 4px;flex-shrink:0">✕</button>'
+    +'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">'
+      +'<input type="text" value="'+escControle(t.ouvrier)+'" placeholder="👷 Ouvrier..." oninput="saveTaskField('+pieceId+','+t.id+',\'ouvrier\',this.value)" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 10px;font-family:Nunito,sans-serif;font-size:12px;font-weight:700;color:var(--text);background:white;outline:none">'
+      +'<input type="date" value="'+escControle(t.delai)+'" oninput="saveTaskField('+pieceId+','+t.id+',\'delai\',this.value)" style="border:1.5px solid var(--border);border-radius:8px;padding:7px 10px;font-family:Nunito,sans-serif;font-size:12px;font-weight:700;color:var(--text);background:white;outline:none">'
+    +'</div>'
+    +'<div style="display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap">'
+      +'<button onclick="setTaskStatus('+pieceId+','+t.id+',\'todo\')" style="flex:1;padding:6px 8px;border-radius:6px;border:1.5px solid '+(t.status==='todo'?'var(--orange)':'var(--border)')+';background:'+(t.status==='todo'?'var(--orange-bg)':'white')+';color:'+(t.status==='todo'?'var(--orange)':'var(--muted)')+';font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer">⏳ À faire</button>'
+      +'<button onclick="setTaskStatus('+pieceId+','+t.id+',\'encours\')" style="flex:1;padding:6px 8px;border-radius:6px;border:1.5px solid '+(t.status==='encours'?'var(--blue)':'var(--border)')+';background:'+(t.status==='encours'?'var(--blue-bg)':'white')+';color:'+(t.status==='encours'?'var(--blue)':'var(--muted)')+';font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer">🔵 En cours</button>'
+      +'<button onclick="setTaskStatus('+pieceId+','+t.id+',\'fini\')" style="flex:1;padding:6px 8px;border-radius:6px;border:1.5px solid '+(t.status==='fini'?'var(--green)':'var(--border)')+';background:'+(t.status==='fini'?'var(--green-bg)':'white')+';color:'+(t.status==='fini'?'var(--green)':'var(--muted)')+';font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer">✅ Fini</button>'
+    +'</div>'
+    +'<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px">'
+      +photos
+      +'<button onclick="addTaskPhoto('+pieceId+','+t.id+')" style="width:50px;height:50px;border-radius:8px;border:2px dashed var(--blue);background:var(--blue-bg);color:var(--blue);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">📷</button>'
+      +'<button onclick="toggleTaskManque('+pieceId+','+t.id+')" style="margin-left:auto;padding:6px 12px;border-radius:8px;border:1.5px solid '+(hasManque?'var(--red)':'var(--border)')+';background:'+(hasManque?'var(--red)':'white')+';color:'+(hasManque?'white':'var(--muted)')+';font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer">'+(hasManque?'✕ Retirer manque':'🚨 Manque')+'</button>'
+    +'</div>'
+    +(hasManque?'<div style="margin-top:8px;background:white;border:1.5px solid var(--red);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--text);font-weight:600;display:flex;align-items:flex-start;gap:7px"><span style="color:var(--red);font-size:14px;flex-shrink:0">⚠️</span><span>'+escControle(t.manque)+'</span></div>':'')
+  +'</div>';
+}
+
+function renderControleContent(){
+  var c=getControleCurrent();
+  var el=document.getElementById('ctrl-content');
+  if(!el||!c) return;
+  if(controleVue==='piece'){
+    var pieces=c.pieces||[];
+    var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-size:14px;font-weight:900;color:var(--text)">📐 Pièces ('+pieces.length+')</div><button onclick="addPiece()" style="background:transparent;border:1.5px dashed var(--blue);color:var(--blue);border-radius:8px;padding:5px 11px;font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer">＋ Pièce</button></div>';
+    if(!pieces.length){
+      html+='<div class="empty"><div class="ei">📐</div><p>Aucune pièce</p><span>Appuie sur ＋ Pièce pour ajouter Salon, Cuisine, etc.</span></div>';
+    } else {
+      var COLORS=[
+        {main:'var(--blue)',bg:'var(--blue-bg)'},
+        {main:'var(--teal)',bg:'var(--teal-bg)'},
+        {main:'var(--purple)',bg:'var(--purple-bg)'},
+        {main:'var(--orange)',bg:'var(--orange-bg)'},
+        {main:'var(--green)',bg:'var(--green-bg)'}
+      ];
+      pieces.forEach(function(p,idx){
+        var col=COLORS[idx%COLORS.length];
+        var tasks=p.tasks||[];
+        var fini=tasks.filter(function(t){return t.status==='fini';}).length;
+        html+='<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:14px;overflow:hidden;border-left:6px solid '+col.main+'">'
+          +'<div style="background:'+col.main+';color:white;padding:9px 14px;display:flex;justify-content:space-between;align-items:center">'
+            +'<span style="font-size:13px;font-weight:900;letter-spacing:0.5px">📐 '+escControle(p.nom).toUpperCase()+'</span>'
+            +'<div style="display:flex;align-items:center;gap:10px">'
+              +'<span style="font-size:11px;font-weight:700;opacity:0.95">'+fini+'/'+tasks.length+' fini</span>'
+              +'<button onclick="delPiece('+p.id+')" style="background:rgba(255,255,255,0.22);border:none;color:white;font-size:13px;font-weight:800;cursor:pointer;border-radius:6px;padding:3px 8px">✕</button>'
+            +'</div>'
+          +'</div>'
+          +'<div style="padding:12px 14px">';
+        tasks.forEach(function(t){
+          html+=renderTaskCard(p.id,t,{showPiece:false});
+        });
+        html+='<button onclick="addTask('+p.id+')" style="width:100%;padding:9px;border:1.5px dashed '+col.main+';border-radius:8px;background:transparent;color:'+col.main+';font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;margin-top:4px">＋ Ajouter une tâche</button>';
+        html+='</div></div>';
+      });
+    }
+    el.innerHTML=html;
+  } else if(controleVue==='ouvrier'){
+    var byOuvrier={};
+    (c.pieces||[]).forEach(function(p){
+      (p.tasks||[]).forEach(function(t){
+        var ouv=(t.ouvrier||'').trim()||'(non assigné)';
+        if(!byOuvrier[ouv]) byOuvrier[ouv]={tasks:[]};
+        byOuvrier[ouv].tasks.push({task:t,pieceId:p.id});
+      });
+    });
+    var ouvriers=Object.keys(byOuvrier).sort();
+    var html='<div style="font-size:14px;font-weight:900;color:var(--text);margin-bottom:10px">👷 Tâches par ouvrier</div>';
+    if(!ouvriers.length){
+      html+='<div class="empty"><div class="ei">👷</div><p>Aucune tâche assignée</p><span>Ajoute des tâches dans la vue par pièce</span></div>';
+    } else {
+      ouvriers.forEach(function(ouv){
+        var grp=byOuvrier[ouv];
+        html+='<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:12px;overflow:hidden">'
+          +'<div style="background:var(--purple);color:white;padding:11px 14px;display:flex;justify-content:space-between;align-items:center">'
+            +'<span style="font-size:14px;font-weight:900">👷 '+escControle(ouv)+'</span>'
+            +'<span style="background:rgba(255,255,255,0.25);padding:3px 9px;border-radius:20px;font-size:11px;font-weight:800">'+grp.tasks.length+' tâche'+(grp.tasks.length>1?'s':'')+'</span>'
+          +'</div>'
+          +'<div style="padding:10px 12px">';
+        grp.tasks.forEach(function(item){
+          html+=renderTaskCard(item.pieceId,item.task,{showPiece:true});
+        });
+        html+='</div></div>';
+      });
+    }
+    el.innerHTML=html;
+  } else if(controleVue==='manque'){
+    var manques=[];
+    (c.pieces||[]).forEach(function(p){
+      (p.tasks||[]).forEach(function(t){
+        if(t.manque && t.manque.trim()) manques.push({task:t,pieceId:p.id,piece:p});
+      });
+    });
+    var html='<div style="font-size:14px;font-weight:900;color:var(--red);margin-bottom:10px">🚨 Manques ('+manques.length+')</div>';
+    if(!manques.length){
+      html+='<div class="empty"><div class="ei">✅</div><p>Aucun manque</p><span>Tout est en ordre, rien ne bloque !</span></div>';
+    } else {
+      manques.forEach(function(item){
+        html+=renderTaskCard(item.pieceId,item.task,{showPiece:true});
+      });
+    }
+    el.innerHTML=html;
+  }
+}
+
+function generatePDFControle(){
+  saveControleInfo();
+  var c=getControleCurrent(); if(!c) return;
+  if(!window.jspdf){alert('Module PDF non chargé.');return;}
+  var doc=pdfNew('portrait');
+  var pw=210, ph=297, mg=12, W=pw-2*mg;
+  var dateStr=c.date?pdfFmtDate(c.date):pdfFmtDate(new Date());
+  var y=pdfHeader(doc,{title:'Contrôle Chantier',subtitle:'Suivi des tâches - AG Peinture',dateStr:dateStr});
+
+  function ensureSpace(needed){
+    if(y+needed > ph-18){pdfFooter(doc); doc.addPage(); y=mg+8;}
+  }
+
+  y=pdfSection(doc,'Informations chantier',y);
+  y=pdfRow(doc,'Chantier',c.chantier||'—',y);
+  y=pdfRow(doc,'Client',c.client||'—',y);
+  y=pdfRow(doc,'Adresse',c.adresse||'—',y);
+  y=pdfRow(doc,'Date début',c.date?pdfFmtDate(c.date):'—',y);
+  y=pdfRow(doc,'Équipe',c.equipe||'—',y);
+  y+=3;
+
+  var total=0,fini=0,encours=0,manque=0;
+  (c.pieces||[]).forEach(function(p){
+    (p.tasks||[]).forEach(function(t){
+      total++;
+      if(t.status==='fini') fini++;
+      else if(t.status==='encours') encours++;
+      if(t.manque && t.manque.trim()) manque++;
+    });
+  });
+  ensureSpace(15);
+  y=pdfSection(doc,'Synthese',y);
+  y=pdfRow(doc,'Total taches',String(total),y);
+  y=pdfRow(doc,'Faites',String(fini),y);
+  y=pdfRow(doc,'En cours',String(encours),y);
+  y=pdfRow(doc,'Manques',String(manque),y);
+  y+=3;
+
+  (c.pieces||[]).forEach(function(p){
+    ensureSpace(20);
+    var tasks=p.tasks||[];
+    var pf=tasks.filter(function(t){return t.status==='fini';}).length;
+    doc.setFont('times','bold');
+    doc.setFontSize(10.5);
+    doc.setTextColor(20,20,20);
+    doc.text((p.nom||'Piece').toUpperCase(),mg,y+3);
+    doc.setFont('times','normal');
+    doc.setFontSize(9);
+    doc.setTextColor(120,120,120);
+    doc.text(pf+'/'+tasks.length+' fini',pw-mg,y+3,{align:'right'});
+    doc.setDrawColor(61,184,212);
+    doc.setLineWidth(0.25);
+    doc.line(mg,y+5,pw-mg,y+5);
+    y+=8;
+    if(!tasks.length){
+      doc.setFont('times','italic');
+      doc.setFontSize(9);
+      doc.setTextColor(160,160,160);
+      doc.text('(aucune tache)',mg,y+1);
+      y+=6;
+      return;
+    }
+    tasks.forEach(function(t){
+      ensureSpace(14);
+      pdfCheckbox(doc,mg,y+1,t.status==='fini');
+      doc.setFont('times',t.status==='fini'?'normal':'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(t.status==='fini'?140:30,t.status==='fini'?140:30,t.status==='fini'?140:30);
+      var desc=t.desc||'(sans description)';
+      var lines=doc.splitTextToSize(desc,W-30);
+      doc.text(lines[0],mg+5,y+1);
+      var stTxt=t.status==='fini'?'Fini':(t.status==='encours'?'En cours':'A faire');
+      doc.setFont('times','normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(120,120,120);
+      doc.text(stTxt,pw-mg,y+1,{align:'right'});
+      y+=4.5;
+      var meta=[];
+      if(t.ouvrier) meta.push('Ouvrier : '+t.ouvrier);
+      if(t.delai) meta.push('Delai : '+pdfFmtDate(t.delai));
+      if(meta.length){
+        doc.setFont('times','italic');
+        doc.setFontSize(8.5);
+        doc.setTextColor(120,120,120);
+        doc.text(meta.join(' - '),mg+5,y+1);
+        y+=4;
+      }
+      if(t.manque && t.manque.trim()){
+        ensureSpace(8);
+        doc.setFont('times','bold');
+        doc.setFontSize(8.5);
+        doc.setTextColor(231,76,60);
+        var mL=doc.splitTextToSize('Manque : '+t.manque,W-10);
+        doc.text(mL,mg+5,y+1);
+        y+=4*mL.length;
+      }
+      doc.setDrawColor(240,240,240);
+      doc.setLineWidth(0.1);
+      doc.line(mg,y+1,pw-mg,y+1);
+      y+=3;
+    });
+    y+=4;
+  });
+
+  pdfFooter(doc);
+  var fname='ControleChantier_'+(c.chantier||'chantier').replace(/\s+/g,'_').replace(/[^A-Za-z0-9_-]/g,'')+'_'+(c.date||'').replace(/-/g,'')+'.pdf';
+  doc.save(fname);
+}
+
+
+setTimeout(function(){try{renderMetreHist();renderCmdHist();renderRDVHist();renderPvHist();renderControleHist();}catch(e){console.error('hist error:',e);}},350);
 
 
 // FACTURES
@@ -4879,6 +5516,7 @@ window.refreshAllViews = function() {
     if(typeof pvHistorique !== 'undefined') pvHistorique = JSON.parse(localStorage.getItem('ag4_pv_hist')||'[]');
     if(typeof factures !== 'undefined') factures = JSON.parse(localStorage.getItem('ag4_factures')||'[]');
     if(typeof suiviHistorique !== 'undefined') suiviHistorique = JSON.parse(localStorage.getItem('ag4_suivi_hist')||'[]');
+    if(typeof controleHistorique !== 'undefined') controleHistorique = JSON.parse(localStorage.getItem('ag4_controle_hist')||'[]');
     // Re-migration auto au cas où on aurait restauré un ancien format
     if(planningData && !planningData.weeks){
       var _tw=getISOWeek(new Date());
