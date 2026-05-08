@@ -4889,25 +4889,6 @@ var controleVue = 'piece';
 var controleExpandedPieces = new Set();
 var controleExpandedTasks = new Set();
 
-function toggleControleTask(taskId,e){
-  if(e) e.stopPropagation();
-  if(controleExpandedTasks.has(taskId)) controleExpandedTasks.delete(taskId);
-  else controleExpandedTasks.add(taskId);
-  setControleVue(controleVue);
-}
-
-function cycleTaskStatus(pieceId,taskId,e){
-  if(e) e.stopPropagation();
-  var c=getControleCurrent(); if(!c) return;
-  var p=c.pieces.find(function(x){return x.id===pieceId;}); if(!p) return;
-  var t=p.tasks.find(function(x){return x.id===taskId;}); if(!t) return;
-  if(t.status==='todo') t.status='encours';
-  else if(t.status==='encours') t.status='fini';
-  else t.status='todo';
-  saveControleHist();
-  setControleVue(controleVue);
-}
-
 function quickAddTask(pieceId,inputEl){
   var desc=(inputEl.value||'').trim();
   if(!desc) return;
@@ -5611,6 +5592,34 @@ function generatePDFControle(){
         var mL=doc.splitTextToSize('Manque : '+t.manque,W-10);
         doc.text(mL,mg+5,y+1);
         y+=4*mL.length;
+      }
+      // Photos de la tâche
+      if(t.photos && t.photos.length){
+        var photoSize=32; // mm
+        var photoGap=2;
+        var photosPerRow=Math.floor((W-5)/(photoSize+photoGap));
+        if(photosPerRow<1) photosPerRow=1;
+        var px=mg+5;
+        var startX=px;
+        var rowH=photoSize+photoGap;
+        // Saut de page si la 1ère ligne ne tient pas
+        ensureSpace(rowH+2);
+        for(var pi=0; pi<t.photos.length; pi++){
+          if(pi>0 && pi%photosPerRow===0){
+            // Nouvelle ligne de photos
+            y+=rowH;
+            px=startX;
+            ensureSpace(rowH+2);
+          }
+          try{
+            doc.addImage(t.photos[pi],'JPEG',px,y+1,photoSize,photoSize,undefined,'FAST');
+          }catch(err){
+            // Si une photo plante, on continue avec les autres
+            console.error('Photo PDF erreur:',err);
+          }
+          px+=photoSize+photoGap;
+        }
+        y+=rowH+1;
       }
       doc.setDrawColor(240,240,240);
       doc.setLineWidth(0.1);
