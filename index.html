@@ -4838,7 +4838,6 @@ localStorage.setItem = function(key, value) {
 };
 
 // Force save quand l'app passe en background (verrouillage iPhone, switch app)
-// + Force reload quand l'app redevient visible (pour récupérer modifs des autres appareils)
 document.addEventListener('visibilitychange', function(){
   if(document.visibilityState === 'hidden'){
     // App quitte le devant : force save immédiat sans attendre le débounce
@@ -4847,12 +4846,11 @@ document.addEventListener('visibilitychange', function(){
       window.fbSave();
       fbHasChanges = false;
     }
-  } else if(document.visibilityState === 'visible'){
-    // App revient au devant : force reload pour voir les modifs récentes des autres appareils
-    if(window.fbForceReload){
-      setTimeout(function(){ window.fbForceReload(); }, 200);
-    }
   }
+  // Note : on ne fait PAS de fbForceReload sur 'visible' car iOS déclenche
+  // visibilitychange trop souvent (notifications, control center, swipe...) et ça
+  // écrase les modifs locales en cours. onSnapshot s'occupe de pousser les modifs
+  // des autres appareils en arrière-plan.
 });
 
 // Filet de sécurité supplémentaire avant fermeture/rechargement
@@ -4879,12 +4877,7 @@ window.addEventListener('beforeunload', function(){
   }
 });
 
-// Sauvegarde aussi quand Safari passe en arrière-plan (iOS)
-document.addEventListener('visibilitychange', function(){
-  if(document.visibilityState === 'hidden' && fbHasChanges && window.fbSave){
-    try{ window.fbSave(); fbHasChanges = false; }catch(e){}
-  }
-});
+// (le listener visibilitychange est défini plus haut, ligne ~4841)
 
 </script>
 
