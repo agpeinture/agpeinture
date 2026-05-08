@@ -2265,7 +2265,7 @@ function renderDevis(){
 
 function toggleFacture(id){
   const c=chantiers.find(x=>x.id===id);
-  if(c){c.facture=!c.facture;saveAll();renderChantiers();renderHome();}
+  if(c){c.facture=!c.facture;save();renderChantiers();renderHome();}
 }
 function renderChantiers(){
   const enc=chantiers.filter(c=>c.status==='encours').length;
