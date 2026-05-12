@@ -125,16 +125,12 @@ header img{height:42px}
 .pbtn{flex:1;padding:7px;border:1.5px solid var(--border);border-radius:10px;background:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;color:var(--muted)}
 .pbtn:active{background:var(--blue-bg);color:var(--blue);border-color:var(--blue)}
 
-/* CHECKLIST PATRON : retirée (remplacée par Suivi Chantier).
-   Classes conservées car réutilisées ailleurs : .pi-field (formulaires),
-   .ps-title (métré), .patrol-reset (routine). */
+/* Formulaires (Métré, Suivi, Commande) */
 .pi-field{display:flex;flex-direction:column;gap:4px}
 .pi-field label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px}
 .pi-field input{border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none}
 .pi-field input:focus{border-color:var(--blue);background:white}
 .ps-title{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.8px;color:var(--blue);margin-bottom:8px;padding-bottom:4px;border-bottom:1.5px solid var(--blue-bg)}
-.patrol-reset{background:none;border:1.5px solid var(--border);border-radius:10px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;color:var(--muted);margin-top:12px;width:100%}
-.patrol-reset:active{background:var(--red-bg);color:var(--red);border-color:var(--red)}
 
 /* NUANCIERS */
 .nuan-card{background:white;border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);display:flex;align-items:flex-start;gap:12px;margin-bottom:9px}
@@ -150,28 +146,6 @@ header img{height:42px}
 .color-dot{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:transform 0.15s}
 .color-dot:active{transform:scale(1.2)}
 .color-dot.selected{border-color:var(--text)}
-
-/* PLANNING */
-/* PLANNING SEMAINE : retiré (jamais utilisé). */
-
-/* AGENDA */
-.rdvg{margin-bottom:14px}
-.rdvlbl{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:7px}
-.rdvc{background:white;border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;margin-bottom:8px;border-left:4px solid var(--blue)}
-.rdvc.rt{border-color:var(--green)} .rdvc.rv{border-color:var(--blue)} .rdvc.rc{border-color:var(--orange)} .rdvc.ra{border-color:var(--purple)}
-.rdvtime{font-size:15px;font-weight:900;min-width:42px}
-.rdvbody{flex:1}
-.rdvtitle{font-size:14px;font-weight:800}
-.rdvdetail{font-size:11px;color:var(--muted);margin-top:2px}
-.rdvdel{background:none;border:none;color:#ddd;font-size:17px;cursor:pointer}
-
-/* NOTES */
-.notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ncard{background:white;border-radius:var(--radius);padding:13px;box-shadow:var(--shadow);border-top:4px solid var(--blue);min-height:85px;position:relative}
-.ncard.cy{border-color:var(--orange)} .ncard.cg2{border-color:var(--green)} .ncard.cp2{border-color:var(--purple)}
-.ntitle{font-size:13px;font-weight:800;margin-bottom:5px;padding-right:18px}
-.nbody{font-size:12px;color:var(--muted);line-height:1.5;word-break:break-word}
-.ndel{position:absolute;top:8px;right:10px;background:none;border:none;color:#ddd;font-size:15px;cursor:pointer}
 
 /* MODAL */
 .overlay{display:none;position:fixed;inset:0;background:rgba(26,37,51,0.45);z-index:200;backdrop-filter:blur(3px);align-items:flex-end;justify-content:center}
@@ -373,7 +347,7 @@ header img{height:42px}
     firebase.initializeApp(firebaseConfig);
     var db = firebase.firestore();
     var DOC_REF = db.collection("appdata").doc("agpeinture-data");
-    var KEYS = ['ag4_af','ag4_ch','ag4_dv','ag4_nu','ag4_pa','ag4_plan','ag4_ag','ag4_no','ag4_routine',
+    var KEYS = ['ag4_af','ag4_ch','ag4_nu',
                 'ag4_rdv','ag4_rdvc','ag4_rdvt','ag4_rdv_hist','ag4_metre_hist','ag4_cmd_hist','ag4_pv_hist','ag4_factures','ag4_suivi_hist','ag4_controle_hist'];
 
     fbSetStatus('☁️ Connexion...', '#f39c12');
@@ -520,12 +494,13 @@ header img{height:42px}
             lines.push('');
             if(counts.ag4_af) lines.push('📋 Ma tête : '+counts.ag4_af+' tâches');
             if(counts.ag4_ch) lines.push('🏗️ Chantiers : '+counts.ag4_ch);
-            if(counts.ag4_rdv) lines.push('📅 RDV : '+counts.ag4_rdv);
-            if(counts.ag4_factures) lines.push('💶 Factures : '+counts.ag4_factures);
-            if(counts.ag4_dv) lines.push('📋 Devis : '+counts.ag4_dv);
+            if(counts.ag4_rdv_hist) lines.push('📅 Fiches RDV : '+counts.ag4_rdv_hist);
             if(counts.ag4_metre_hist) lines.push('📐 Métrés : '+counts.ag4_metre_hist);
             if(counts.ag4_cmd_hist) lines.push('📦 Commandes : '+counts.ag4_cmd_hist);
             if(counts.ag4_pv_hist) lines.push('➕ Plus-values : '+counts.ag4_pv_hist);
+            if(counts.ag4_suivi_hist) lines.push('🛠 Suivis : '+counts.ag4_suivi_hist);
+            if(counts.ag4_controle_hist) lines.push('🔧 Contrôles : '+counts.ag4_controle_hist);
+            if(counts.ag4_nu) lines.push('🎨 Nuanciers : '+counts.ag4_nu);
             var totalItems = Object.values(counts).reduce(function(a,b){return a+(typeof b==='number'?b:0);},0);
             if(totalItems===0) lines.push('⚠️ Le cloud est vide (rien à charger)');
             alert(lines.join('\n'));
@@ -607,7 +582,7 @@ function checkPwd(){
   <div class="hright">
     <div id="fb-status" style="font-size:12px;font-weight:800;color:#27ae60;margin-right:8px;padding:4px 10px;border-radius:12px;background:#e8f8f0">☁️...</div>
 <div class="hdate" id="hdate"></div>
-    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-f</span></div>
+    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-g</span></div>
   </div>
 </header>
 
@@ -730,18 +705,12 @@ function checkPwd(){
     <button class="chip" id="pt-plusvalue" onclick="showPatronTab('plusvalue')">🔨 Plus-value</button>
   </div>
 
-  <!-- CHECKLIST : retirée (remplacée par Suivi Chantier) -->
-
-  <!-- PLANNING : retiré (jamais utilisé) -->
-
   <!-- NUANCIERS -->
   <div id="pt-nuanciers-sec" style="display:none">
     <div class="sh"><div><div class="st">🎨 Nuanciers posés</div><div class="ss" id="nuan-sub"></div></div><button class="fab" onclick="openModal('nuancier')">＋ Ajouter</button></div>
     <div id="nuan-list"></div>
   </div>
 
-
-  <!-- ROUTINE HEBDO : retirée de la nav, code JS conservé pour récupération éventuelle -->
 
   <!-- SUIVI CHANTIER (tournée) -->
   <div id="pt-suivi-sec">
@@ -1246,14 +1215,8 @@ function checkPwd(){
     </div>
   </div>
 
-  <!-- NOTES -->
-  <div id="pt-notes-sec" style="display:none">
-    <div class="sh"><div><div class="st">📝 Notes</div><div class="ss" id="notes-sub"></div></div><button class="fab" onclick="openModal('notes')">＋ Note</button></div>
-    <div class="notes-grid" id="notes-list"></div>
-  </div>
 </div>
 
-<!-- NAV -->
 <!-- RECHERCHE GLOBALE -->
 <div class="sec" id="s-search">
   <div class="sh">
@@ -1264,7 +1227,7 @@ function checkPwd(){
       oninput="doGlobalSearch(this.value)" 
       style="width:100%;border:2px solid var(--blue);border-radius:12px;padding:13px 16px;font-size:15px;font-family:Nunito,sans-serif;font-weight:600;outline:none;box-sizing:border-box"
       autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-    <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">Cherche dans : Ma tête · Fiches RDV · Métrés · Commandes · Nuanciers · Notes · Factures</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">Cherche dans : Ma tête · Fiches RDV · Métrés · Commandes · Nuanciers</div>
   </div>
   <div id="search-results"></div>
 </div>
@@ -1277,42 +1240,7 @@ function checkPwd(){
 </nav>
 
 
-<!-- FACTURES (déplacé dans Ma tête — section cachée mais conservée pour compatibilité) -->
-<div class="sec" id="s-factures" style="display:none !important">
-  <div class="sh">
-    <div><div class="st">💶 Factures à faire</div><div class="ss" id="fact-sub">À faire</div></div>
-    <button class="fab" onclick="openModal('facture')">＋ Ajouter</button>
-  </div>
 
-  <!-- Totaux -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-    <div style="background:var(--orange);color:white;border-radius:var(--radius);padding:14px 16px;box-shadow:0 4px 15px rgba(243,156,18,0.3)">
-      <div style="font-size:10px;font-weight:800;opacity:0.85;text-transform:uppercase;letter-spacing:0.5px">À faire</div>
-      <div style="font-size:24px;font-weight:900;margin-top:3px" id="fact-count-att">0</div>
-    </div>
-    <div style="background:var(--green);color:white;border-radius:var(--radius);padding:14px 16px;box-shadow:0 4px 15px rgba(39,174,96,0.3)">
-      <div style="font-size:10px;font-weight:800;opacity:0.85;text-transform:uppercase;letter-spacing:0.5px">Total CHF</div>
-      <div style="font-size:20px;font-weight:900;margin-top:3px" id="fact-total-att">— CHF</div>
-    </div>
-  </div>
-
-  <div id="fact-list"></div>
-</div>
-
-<!-- MODAL FACTURE -->
-<div class="overlay" id="ov-facture">
-  <div class="modal" style="max-height:70vh">
-    <div class="mh"></div>
-    <h3>💶 Nouvelle facture</h3>
-    <div class="frow"><label>Client / Chantier</label><input id="f-client" type="text" placeholder="Nom du client..."></div>
-    <div class="frow"><label>Travaux</label><input id="f-desc" type="text" placeholder="Ex: Peinture salon..."></div>
-    <div class="frow"><label>Montant CHF</label><input id="f-montant" type="number" step="0.01" placeholder="0.00"></div>
-    <input id="f-date" type="date" style="display:none">
-    <input id="f-notes" type="hidden">
-    <button onclick="closeModal('facture')" style="width:100%;padding:14px;margin-top:8px;margin-bottom:6px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);font-family:Nunito,sans-serif;font-size:14px;font-weight:800;color:var(--muted);cursor:pointer">Annuler</button>
-    <button onclick="saveFacture()" style="width:100%;padding:16px;border-radius:12px;border:none;background:var(--blue);font-family:Nunito,sans-serif;font-size:16px;font-weight:900;color:white;cursor:pointer;box-shadow:0 4px 12px rgba(61,184,212,0.4)">💶 Ajouter la facture</button>
-  </div>
-</div>
 
 <!-- MODALS -->
 <div class="overlay" id="ov-afaire">
@@ -1331,8 +1259,6 @@ function checkPwd(){
     <div class="mbtns"><button class="bcancel" onclick="closeModal('afaire')">Annuler</button><button class="bsave" onclick="saveAfaire()">Enregistrer</button></div>
   </div>
 </div>
-
-<!-- Modal Devis retiré -->
 
 <div class="overlay" id="ov-chantiers">
   <div class="modal">
@@ -1361,18 +1287,6 @@ function checkPwd(){
       <div class="color-picker-row" id="color-picker"></div>
     </div>
     <div class="mbtns"><button class="bcancel" onclick="closeModal('nuancier')">Annuler</button><button class="bsave" onclick="saveNuancier()">Enregistrer</button></div>
-  </div>
-</div>
-
-<!-- Modal Agenda retiré -->
-
-<div class="overlay" id="ov-notes">
-  <div class="modal">
-    <div class="mh"></div><h3>Nouvelle note</h3>
-    <div class="frow"><label>Titre</label><input id="n-title" type="text" placeholder="Titre..."></div>
-    <div class="frow"><label>Contenu</label><textarea id="n-body" placeholder="Ta note..." style="height:110px"></textarea></div>
-    <div class="frow"><label>Couleur</label><div class="chips" id="n-color-chips"></div></div>
-    <div class="mbtns"><button class="bcancel" onclick="closeModal('notes')">Annuler</button><button class="bsave" onclick="saveNote()">Enregistrer</button></div>
   </div>
 </div>
 
@@ -1471,14 +1385,9 @@ document.getElementById('msub').textContent=mv.s;
 
 // STATE
 let afaire=JSON.parse(localStorage.getItem('ag4_af')||'[]');
-let devis=JSON.parse(localStorage.getItem('ag4_dv')||'[]');
 let chantiers=JSON.parse(localStorage.getItem('ag4_ch')||'[]');
 let nuanciers=JSON.parse(localStorage.getItem('ag4_nu')||'[]');
-let agenda=JSON.parse(localStorage.getItem('ag4_ag')||'[]');
-let notes=JSON.parse(localStorage.getItem('ag4_no')||'[]');
-let editingNoteId=null,editingAfaireId=null,editingChantierId=null,editingNuancierId=null; // ID de la note en cours de modification (null = création)
-let patrols=JSON.parse(localStorage.getItem('ag4_pa')||'[]');
-let planningData=JSON.parse(localStorage.getItem('ag4_plan')||'{}');
+let editingAfaireId=null,editingChantierId=null,editingNuancierId=null;
 
 // ====== UTILITAIRES SEMAINE ISO ======
 function getISOWeek(date){
@@ -1518,26 +1427,9 @@ function fmtWeekRange(isoWeek){
   return 'Sem. '+w+' · '+d.monday.getDate()+' '+mois[d.monday.getMonth()]+' → '+d.sunday.getDate()+' '+mois[d.sunday.getMonth()]+' '+d.sunday.getFullYear();
 }
 
-// ====== MIGRATION planningData : ancien (objet plat) -> multi-semaines ======
-(function migratePlanning(){
-  if(!planningData)planningData={};
-  if(!planningData.weeks){
-    var thisWeek=getISOWeek(new Date());
-    var oldKeys=Object.keys(planningData).filter(function(k){return k!=='currentWeek'&&k!=='weeks';});
-    var weeks={};
-    if(oldKeys.length>0){
-      var legacy={};
-      oldKeys.forEach(function(k){legacy[k]=planningData[k];});
-      weeks[thisWeek]=legacy;
-    }
-    planningData={currentWeek:thisWeek,weeks:weeks};
-    localStorage.setItem('ag4_plan',JSON.stringify(planningData));
-  }
-})();
-
 // Réparation auto des IDs en doublon (corrige le bug des cases à cocher)
 (function fixDuplicateIds(){
-  var lists=[afaire,devis,chantiers,nuanciers,agenda,notes,patrols];
+  var lists=[afaire,chantiers,nuanciers];
   var changed=false;
   lists.forEach(function(list){
     if(!Array.isArray(list))return;
@@ -1555,25 +1447,16 @@ function fmtWeekRange(isoWeek){
   if(changed){
     try{
       localStorage.setItem('ag4_af',JSON.stringify(afaire));
-      localStorage.setItem('ag4_dv',JSON.stringify(devis));
       localStorage.setItem('ag4_ch',JSON.stringify(chantiers));
       localStorage.setItem('ag4_nu',JSON.stringify(nuanciers));
-      localStorage.setItem('ag4_ag',JSON.stringify(agenda));
-      localStorage.setItem('ag4_no',JSON.stringify(notes));
-      localStorage.setItem('ag4_pa',JSON.stringify(patrols));
     }catch(e){console.error('fixDuplicateIds save error:',e);}
   }
 })();
 
 function save(){
   localStorage.setItem('ag4_af',JSON.stringify(afaire));
-  localStorage.setItem('ag4_dv',JSON.stringify(devis));
   localStorage.setItem('ag4_ch',JSON.stringify(chantiers));
   localStorage.setItem('ag4_nu',JSON.stringify(nuanciers));
-  localStorage.setItem('ag4_ag',JSON.stringify(agenda));
-  localStorage.setItem('ag4_no',JSON.stringify(notes));
-  localStorage.setItem('ag4_pa',JSON.stringify(patrols));
-  localStorage.setItem('ag4_plan',JSON.stringify(planningData));
   if(window.triggerCloudSave) window.triggerCloudSave();
 }
 
@@ -1700,7 +1583,7 @@ function doGlobalSearch(query){
   query=(query||'').trim().toLowerCase();
   
   if(!query){
-    el.innerHTML='<div class="empty"><div class="ei">🔍</div><p>Tape pour chercher</p><span>Tâches, fiches RDV, métrés, commandes, nuanciers, notes...</span></div>';
+    el.innerHTML='<div class="empty"><div class="ei">🔍</div><p>Tape pour chercher</p><span>Tâches, fiches RDV, métrés, commandes, nuanciers...</span></div>';
     if(sub) sub.textContent='Cherche dans toute l\'app';
     return;
   }
@@ -1837,38 +1720,6 @@ function doGlobalSearch(query){
     });
   }catch(e){}
   
-  // 6. Notes
-  try{
-    (notes||[]).forEach(function(n){
-      if(match(n.body)||match(n.title)){
-        results.push({
-          icon:'📝', type:'Note',
-          title:n.title||(n.body||'').substring(0,40)||'Sans titre',
-          subtitle:(n.body||'').substring(0,80),
-          color:'#d4a017',
-          onclick:"showTab('patron',document.getElementById('nb-patron'));setTimeout(function(){showPatronTab('notes');},100)"
-        });
-      }
-    });
-  }catch(e){}
-  
-  // 7. Factures
-  try{
-    (factures||[]).forEach(function(f){
-      if(match(f.client)||match(f.desc)){
-        var date=f.date?f.date.split('-').reverse().join('/'):'';
-        var montant=f.montant?parseFloat(f.montant).toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF':'';
-        results.push({
-          icon:'💶', type:'Facture'+(f.faite?' ✅':''),
-          title:f.client||'Sans nom',
-          subtitle:(f.desc||'')+(montant?' · '+montant:'')+(date?' · '+date:''),
-          color:f.faite?'var(--green)':'var(--orange)',
-          onclick:"showTab('afaire',document.getElementById('nb-afaire'))"
-        });
-      }
-    });
-  }catch(e){}
-  
   // Affichage
   if(sub) sub.textContent=results.length+' résultat'+(results.length>1?'s':'');
   
@@ -1900,23 +1751,12 @@ function openModal(t){
     document.getElementById('af-date').value=todayStr;
     document.getElementById('af-tel-fields').style.display='block';
   }
-  if(t==='devis'){buildChips('d-status-chips',DSTATUTS,'dStatus','afaire');}
   if(t==='chantiers'){
     editingChantierId=null;
     ['c-title','c-client','c-adresse','c-notes','c-date'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
     buildChips('c-status-chips',CSTATUTS,'cStatus','encours');
     document.getElementById('c-prog').value=0;
     document.getElementById('cpv').textContent='0%';
-  }
-  if(t==='agenda'){buildChips('a-type-chips',ATYPES,'aType','visite');document.getElementById('a-date').value=todayStr;}
-  if(t==='notes'){
-    // Mode création : on s'assure que editingNoteId est null et que les champs sont vides
-    editingNoteId=null;
-    document.getElementById('n-title').value='';
-    document.getElementById('n-body').value='';
-    var h3n=document.querySelector('#ov-notes h3');
-    if(h3n) h3n.textContent='Nouvelle note';
-    buildChips('n-color-chips',NCOLORS,'nColor','blue');
   }
   if(t==='nuancier'){
     editingNuancierId=null;
@@ -1925,18 +1765,10 @@ function openModal(t){
     sel.nuColor='#FFFFFF';
     buildColorPicker();
   }
-  if(t==='facture'){
-    document.getElementById('f-date').value=todayStr;
-  }
   document.getElementById('ov-'+t).classList.add('open');
 }
 function closeModal(t){
   document.getElementById('ov-'+t).classList.remove('open');
-  if(t==='facture'){
-    ['f-client','f-desc','f-montant','f-date','f-notes'].forEach(function(id){
-      var el=document.getElementById(id);if(el)el.value='';
-    });
-  }
 }
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
 
@@ -2025,15 +1857,6 @@ function openEditAfaire(id){
   // Afficher
   document.getElementById('ov-afaire').classList.add('open');
 }
-function saveDevis(){
-  const client=document.getElementById('d-client').value.trim();
-  const desc=document.getElementById('d-desc').value.trim();
-  if(!client&&!desc){alert('Remplis le client ou les travaux.');return;}
-  const sm={afaire:'À faire',envoye:'Envoyé',accepte:'Accepté',refuse:'Refusé'};
-  devis.unshift({id:Date.now(),client,desc,montant:document.getElementById('d-montant').value,date:document.getElementById('d-date').value,status:sm[sel.dStatus],done:false});
-  save();renderDevis();renderHome();closeModal('devis');
-  ['d-client','d-desc','d-montant','d-date'].forEach(id=>document.getElementById(id).value='');
-}
 function saveChantier(){
   const title=document.getElementById('c-title').value.trim();
   if(!title){alert('Donne un nom au chantier !');return;}
@@ -2108,34 +1931,6 @@ function openEditNuancier(id){
   buildColorPicker();
   document.getElementById('ov-nuancier').classList.add('open');
 }
-function saveAgenda(){
-  const title=document.getElementById('a-title').value.trim();
-  if(!title){alert('Titre requis !');return;}
-  agenda.push({id:Date.now(),title,lieu:document.getElementById('a-lieu').value.trim(),date:document.getElementById('a-date').value,heure:document.getElementById('a-heure').value,type:sel.aType});
-  agenda.sort((a,b)=>(a.date+a.heure).localeCompare(b.date+b.heure));
-  save();renderAgenda();renderHome();closeModal('agenda');
-  ['a-title','a-lieu','a-heure'].forEach(id=>document.getElementById(id).value='');
-}
-function saveNote(){
-  const title=document.getElementById('n-title').value.trim();
-  const body=document.getElementById('n-body').value.trim();
-  if(!title&&!body){alert('Écris quelque chose !');return;}
-  if(editingNoteId !== null){
-    // ÉDITION : modifier la note existante en place
-    var n = notes.find(function(x){return x.id===editingNoteId;});
-    if(n){
-      n.title = title;
-      n.body = body;
-      n.color = sel.nColor;
-    }
-    editingNoteId = null;
-  } else {
-    // CRÉATION : nouvelle note
-    notes.unshift({id:Date.now(),title,body,color:sel.nColor});
-  }
-  save();renderNotes();closeModal('notes');
-  ['n-title','n-body'].forEach(id=>document.getElementById(id).value='');
-}
 
 // TOGGLES
 function toggleAf(id){
@@ -2169,19 +1964,9 @@ function delAf(id){
   save();renderAfaire();renderHome();
   if(typeof renderMetreHist==='function') renderMetreHist();
 }
-function toggleDv(id){const i=devis.find(d=>d.id===id);if(i)i.done=!i.done;save();renderDevis();}
-function delDv(id){devis=devis.filter(d=>d.id!==id);save();renderDevis();renderHome();}
 function delCh(id){chantiers=chantiers.filter(c=>c.id!==id);save();renderChantiers();renderHome();}
 function updProg(id,d){const c=chantiers.find(c=>c.id===id);if(c){c.prog=Math.max(0,Math.min(100,c.prog+d));if(c.prog===100)c.status='termine';}save();renderChantiers();renderHome();}
 function delNu(id){nuanciers=nuanciers.filter(n=>n.id!==id);save();renderNuanciers();}
-function delAg(id){agenda=agenda.filter(a=>a.id!==id);save();renderAgenda();renderHome();}
-function delNo(id){notes=notes.filter(n=>n.id!==id);save();renderNotes();}
-
-// PATROL (checklist chantier) : retirée. La variable `patrols` est gardée
-// car référencée par save() et fixDuplicateIds, et ag4_pa reste synchronisé.
-
-// PLANNING SEMAINE : retiré (jamais utilisé). La variable `planningData` est
-// gardée car référencée par save(), et ag4_plan reste synchronisé.
 
 // FORMAT
 function fmtDate(d){if(!d)return'';const p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0];}
@@ -2452,11 +2237,6 @@ function renderAfaire(){
   el.innerHTML = html;
 }
 
-function renderDevis(){
-  // Onglet Devis retiré — fonction conservée pour compatibilité mais ne fait rien
-  return;
-}
-
 function toggleFacture(id){
   const c=chantiers.find(x=>x.id===id);
   if(c){c.facture=!c.facture;save();renderChantiers();renderHome();}
@@ -2517,217 +2297,6 @@ function renderNuanciers(){
       <button class="nuan-edit" onclick="openEditNuancier(${n.id})" title="Modifier">✏️</button>
       <button class="nuan-del" onclick="delNu(${n.id})">✕</button>
     </div>`).join('');
-}
-
-function renderAgenda(){
-  // Onglet Agenda retiré — fonction conservée pour compatibilité mais ne fait rien
-  return;
-}
-
-function renderNotes(){
-  document.getElementById('notes-sub').textContent=notes.length+' notes';
-  const el=document.getElementById('notes-list');
-  if(!notes.length){el.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="ei">📝</div><p>Aucune note</p></div>';return;}
-  const cc={blue:'',yellow:'cy',green:'cg2',purple:'cp2'};
-  el.innerHTML=notes.map(n=>`
-    <div class="ncard ${cc[n.color]||''}" onclick="openEditNote(${n.id})" style="cursor:pointer">
-      <button class="ndel" onclick="event.stopPropagation();delNo(${n.id})">✕</button>
-      ${n.title?`<div class="ntitle">${n.title}</div>`:''}
-      <div class="nbody">${n.body||''}</div>
-    </div>`).join('');
-}
-
-// Ouvre le modal Notes en mode ÉDITION pour une note existante
-function openEditNote(id){
-  var n = notes.find(function(x){return x.id===id;});
-  if(!n) return;
-  editingNoteId = id;
-  // Pré-remplir les champs
-  document.getElementById('n-title').value = n.title || '';
-  document.getElementById('n-body').value = n.body || '';
-  // Construire les chips couleur avec la couleur actuelle pré-sélectionnée
-  buildChips('n-color-chips', NCOLORS, 'nColor', n.color || 'blue');
-  // Changer le titre du modal
-  var h3 = document.querySelector('#ov-notes h3');
-  if(h3) h3.textContent = 'Modifier la note';
-  // Afficher le modal
-  document.getElementById('ov-notes').classList.add('show');
-}
-
-
-// ROUTINE HEBDO
-var routineData = JSON.parse(localStorage.getItem('ag4_routine') || '{}');
-
-// MIGRATION : ancienne structure (objet plat) -> nouvelle (multi-semaines)
-(function migrateRoutine(){
-  if(!routineData)routineData={};
-  if(!routineData.weeks){
-    var thisWeek=getISOWeek(new Date());
-    var oldKeys=Object.keys(routineData).filter(function(k){return k!=='currentWeek'&&k!=='weeks';});
-    var weeks={};
-    if(oldKeys.length>0){
-      var legacy={};
-      oldKeys.forEach(function(k){legacy[k]=routineData[k];});
-      weeks[thisWeek]=legacy;
-    }
-    routineData={currentWeek:thisWeek,weeks:weeks};
-    localStorage.setItem('ag4_routine',JSON.stringify(routineData));
-  }
-})();
-
-function getCurrentWeekRoutine(){
-  if(!routineData.weeks)routineData.weeks={};
-  var w=routineData.currentWeek;
-  if(!w){w=getISOWeek(new Date());routineData.currentWeek=w;}
-  if(!routineData.weeks[w])routineData.weeks[w]={};
-  return routineData.weeks[w];
-}
-function navRoutine(direction){
-  if(!routineData.currentWeek)routineData.currentWeek=getISOWeek(new Date());
-  if(direction==='today')routineData.currentWeek=getISOWeek(new Date());
-  else if(direction==='prev')routineData.currentWeek=shiftWeek(routineData.currentWeek,-7);
-  else if(direction==='next')routineData.currentWeek=shiftWeek(routineData.currentWeek,7);
-  localStorage.setItem('ag4_routine',JSON.stringify(routineData));
-  renderRoutine();
-}
-
-var ROUTINE_BUREAU = [
-  'Allumer ordi + consulter tableau mural (chantiers du jour)',
-  'Choisir 1 priorité du jour',
-  'Vérifier planning — y a-t-il un retard à rattraper ?',
-  'Classer papiers (À traiter / En cours / Fait)',
-  'Cocher si la priorité du jour est faite',
-  'Ranger bureau avant de partir'
-];
-var ROUTINE_CHANTIER = [
-  'Avancement OK — m²/h respecté',
-  'Pas de retard par rapport au planning',
-  'Matériel disponible (aucun blocage)',
-  'Protections en place (sols, fenêtres, meubles)',
-  'Qualité correcte — finitions, couches, retouches anticipées',
-  'Plus-values identifiées et notées sur fiche extras',
-  'Heures bien notées par ouvrier',
-  'Surfaces notées pour suivi rentabilité',
-  'Sécurité respectée (échafaudages, EPI)',
-  "Client informé en cas d'imprévu"
-];
-var RJOURS = ['lundi','mardi','mercredi','jeudi','vendredi'];
-var RJOURS_L = ['L','M','M','J','V'];
-
-function saveRoutine(key,val){
-  var data=getCurrentWeekRoutine();
-  data[key]=val;
-  localStorage.setItem('ag4_routine',JSON.stringify(routineData));
-}
-
-function toggleRoutineCheck(sectionKey,idx,jour){
-  var data=getCurrentWeekRoutine();
-  var key=sectionKey+'_'+idx+'_'+jour;
-  data[key]=!data[key];
-  localStorage.setItem('ag4_routine',JSON.stringify(routineData));
-  renderRoutine();
-}
-
-function setRoutineEval(v){
-  var data=getCurrentWeekRoutine();
-  data['bilan_eval']=v;
-  localStorage.setItem('ag4_routine',JSON.stringify(routineData));
-  renderRoutine();
-}
-
-function resetRoutine(){
-  if(confirm('Effacer la routine de cette semaine ?')){
-    var w=routineData.currentWeek||getISOWeek(new Date());
-    if(routineData.weeks)delete routineData.weeks[w];
-    localStorage.setItem('ag4_routine',JSON.stringify(routineData));
-    renderRoutine();
-  }
-}
-
-function buildCheckGrid(title, items, sectionKey, color){
-  var data=getCurrentWeekRoutine();
-  var header='<div style="background:'+color+';color:white;padding:10px 16px;font-size:13px;font-weight:800">'+title+'</div>';
-  var dayH='<div style="display:grid;grid-template-columns:1fr repeat(5,32px);gap:4px;padding:8px 14px 4px;border-bottom:1px solid var(--border)">'
-    +'<div style="font-size:10px;font-weight:800;color:var(--muted)">TÂCHE</div>'
-    +RJOURS_L.map(function(j){return '<div style="font-size:10px;font-weight:900;color:var(--muted);text-align:center">'+j+'</div>';}).join('')
-    +'</div>';
-  var rows=items.map(function(item,idx){
-    var boxes=RJOURS.map(function(j){
-      var checked=!!data[sectionKey+'_'+idx+'_'+j];
-      return '<div onclick="toggleRoutineCheck(\''+sectionKey+'\','+idx+',\''+j+'\')" style="width:26px;height:26px;border-radius:6px;border:2px solid '+(checked?'var(--green)':'var(--border)')+';background:'+(checked?'var(--green)':'white')+';display:flex;align-items:center;justify-content:center;cursor:pointer;margin:0 auto">'
-        +(checked?'<svg width="11" height="11" viewBox="0 0 12 12"><polyline points="2,6 5,9.5 10,2.5" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')
-        +'</div>';
-    }).join('');
-    return '<div style="display:grid;grid-template-columns:1fr repeat(5,32px);gap:4px;padding:8px 14px;border-bottom:1px dashed #f5f5f5;align-items:center">'
-      +'<div style="font-size:12px;font-weight:600;color:var(--text);line-height:1.3">'+item+'</div>'
-      +boxes+'</div>';
-  }).join('');
-  return '<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px">'+header+dayH+rows+'</div>';
-}
-
-function renderRoutine(){
-  var el=document.getElementById('routine-container');
-  if(!el)return;
-  var w=routineData.currentWeek||getISOWeek(new Date());
-  routineData.currentWeek=w;
-  var data=getCurrentWeekRoutine();
-  var thisWeekISO=getISOWeek(new Date());
-  var isCurrent=(w===thisWeekISO);
-  var nbWeeks=Object.keys(routineData.weeks||{}).length;
-  var sub=document.getElementById('routine-sub');
-  if(sub)sub.textContent=nbWeeks+' semaine'+(nbWeeks>1?'s':'')+' en mémoire'+(isCurrent?' · semaine en cours':'');
-
-  // Header navigation
-  var nav='<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:10px 12px;margin-bottom:12px;display:flex;gap:6px;align-items:center;justify-content:space-between">'
-    +'<button onclick="navRoutine(\'prev\')" style="background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:Nunito,sans-serif;font-size:13px;font-weight:800;padding:6px 12px;cursor:pointer">←</button>'
-    +'<div style="flex:1;text-align:center;color:var(--text);font-family:Nunito,sans-serif;font-size:14px;font-weight:900">'+fmtWeekRange(w)+'</div>'
-    +'<button onclick="navRoutine(\'next\')" style="background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:Nunito,sans-serif;font-size:13px;font-weight:800;padding:6px 12px;cursor:pointer">→</button>'
-    +(isCurrent?'':'<button onclick="navRoutine(\'today\')" style="background:var(--blue);border:none;border-radius:8px;color:white;font-family:Nunito,sans-serif;font-size:11px;font-weight:900;padding:6px 10px;cursor:pointer;margin-left:6px">🏠 Auj.</button>')
-    +'</div>';
-
-  var semInfo='<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:12px">'
-    +'<div class="pi-field"><label>Chantier(s) de la semaine</label><input value="'+(data.sem_chantier||'').replace(/"/g,'&quot;')+'" placeholder="Nom..." style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'sem_chantier\',this.value)"></div>'
-    +'</div>';
-
-  var prioInputs=RJOURS.map(function(j,i){
-    return '<div class="pi-field"><label>'+RJOURS_L[i]+'</label><input value="'+(data['prio_'+j]||'').replace(/"/g,'&quot;')+'" placeholder="..." style="border:1.5px solid var(--border);border-radius:8px;padding:8px 6px;font-family:Nunito,sans-serif;font-size:12px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'prio_'+j+'\',this.value)"></div>';
-  }).join('');
-  var prioCard='<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px">'
-    +'<div style="background:var(--blue);color:white;padding:10px 16px;font-size:13px;font-weight:800">① PRIORITÉ DU JOUR — une action clé chaque matin</div>'
-    +'<div style="padding:14px 16px"><div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">'+prioInputs+'</div></div></div>';
-
-  var evalOpts=[
-    {k:'top',label:'⭐ Top',c:'var(--green)'},
-    {k:'ok',label:'✅ OK',c:'var(--blue)'},
-    {k:'amelio',label:'⚠️ À améliorer',c:'var(--orange)'},
-    {k:'prob',label:'🔴 Problème',c:'var(--red)'}
-  ];
-  var evalBtns=evalOpts.map(function(o){
-    var sel=data['bilan_eval']===o.k;
-    return '<button onclick="setRoutineEval(\''+o.k+'\')" style="flex:1;padding:8px 4px;border-radius:10px;border:2px solid '+(sel?o.c:'var(--border)')+';background:'+(sel?o.c+'22':'white')+';font-family:Nunito,sans-serif;font-size:11px;font-weight:800;cursor:pointer;color:'+(sel?o.c:'var(--muted)')+'">'+o.label+'</button>';
-  }).join('');
-
-  var bilan='<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px">'
-    +'<div style="background:#1a2533;color:white;padding:10px 16px;font-size:13px;font-weight:800">④ BILAN DE SEMAINE</div>'
-    +'<div style="padding:14px 16px;display:flex;flex-direction:column;gap:12px">'
-    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
-    +'<div class="pi-field"><label>Heures facturées</label><input value="'+(data.bilan_heures||'').replace(/"/g,'&quot;')+'" placeholder="Ex: 38h" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'bilan_heures\',this.value)"></div>'
-    +'<div class="pi-field"><label>CA semaine (CHF)</label><input type="number" value="'+(data.bilan_ca||'')+'" placeholder="0" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'bilan_ca\',this.value)"></div>'
-    +'</div>'
-    +'<div class="pi-field"><label>Priorité semaine suivante</label><input value="'+(data.bilan_prio||'').replace(/"/g,'&quot;')+'" placeholder="Quoi faire en priorité la semaine prochaine ?" style="border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;width:100%" oninput="saveRoutine(\'bilan_prio\',this.value)"></div>'
-    +'<div><div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Évaluation</div><div style="display:flex;gap:7px">'+evalBtns+'</div></div>'
-    +'</div></div>';
-
-  var notesSem='<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:12px">'
-    +'<div style="background:var(--blue);color:white;padding:10px 16px;font-size:13px;font-weight:800">⑤ NOTES / POINTS À AMÉLIORER</div>'
-    +'<div style="padding:14px 16px"><textarea style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px;font-family:Nunito,sans-serif;font-size:13px;font-weight:600;color:var(--text);background:var(--bg);outline:none;resize:none;height:90px" placeholder="Points à améliorer, observations de la semaine..." oninput="saveRoutine(\'notes_sem\',this.value)">'+(data.notes_sem||'')+'</textarea></div></div>';
-
-  var resetBtn='<button class="patrol-reset" onclick="resetRoutine()">🗑 Effacer cette semaine</button>';
-
-  el.innerHTML = nav + semInfo + prioCard
-    + buildCheckGrid('② TÂCHES BUREAU', ROUTINE_BUREAU, 'bureau', 'var(--blue)')
-    + buildCheckGrid('③ CONTRÔLE CHANTIER', ROUTINE_CHANTIER, 'chantier', 'var(--teal)')
-    + bilan + notesSem + resetBtn;
 }
 
 // INIT
@@ -3253,6 +2822,21 @@ function pdfFooter(doc){
   doc.setTextColor(150,150,150);
   doc.text('Newflash SA · Case postale 1290, 1260 Nyon · 079 489 16 39 · info@agpeinture.ch', pw/2, ph-8, {align:'center'});
 }
+function pdfFileName(prefix, name, dateStr){
+  // Construit un nom de fichier PDF lisible : "Préfixe - Nom - 11.05.2026.pdf"
+  // Garde les accents, retire seulement les caractères interdits (/, \, :, *, ?, ", <, >, |)
+  var safeName = String(name||'').replace(/[\/\\:*?"<>|]/g,'').trim() || 'Sans nom';
+  var safeDate;
+  if(dateStr && typeof dateStr === 'string'){
+    if(dateStr.indexOf('-')>=0) safeDate = dateStr.split('-').reverse().join('.');
+    else if(dateStr.indexOf('/')>=0) safeDate = dateStr.replace(/\//g,'.');
+    else safeDate = dateStr;
+  } else {
+    var d = new Date();
+    safeDate = String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+  }
+  return prefix + ' - ' + safeName + ' - ' + safeDate + '.pdf';
+}
 function pdfCheckbox(doc, x, y, checked, opts){
   opts = opts || {};
   doc.setDrawColor(80,80,80);
@@ -3389,7 +2973,7 @@ function generatePDFSuivi(){
   y += 8;
 
   pdfFooter(doc);
-  var fname = 'Suivi_'+(s.chantier||'chantier').replace(/\s+/g,'_').replace(/[^A-Za-z0-9_-]/g,'')+'_'+(s.date||'').replace(/-/g,'')+'.pdf';
+  var fname = pdfFileName('Suivi', s.chantier, s.date);
   doc.save(fname);
 }
 
@@ -3710,7 +3294,7 @@ function generatePDFFicheRDV(){
   y += 25;
 
   pdfFooter(doc);
-  var fname = 'FicheRDV_'+(d.chantier||'chantier').replace(/\s+/g,'_').replace(/[^A-Za-z0-9_-]/g,'')+'_'+(d.date||'').replace(/-/g,'')+'.pdf';
+  var fname = pdfFileName('RDV', d.chantier, d.date);
   doc.save(fname);
 }
 
@@ -3754,7 +3338,7 @@ function generatePDFListeChantiers(){
 
   pdfFooter(doc);
   var dStr = pdfFmtDate(new Date()).replace(/\./g,'-');
-  doc.save('Liste_Chantiers_AGPeinture_'+dStr+'.pdf');
+  doc.save(pdfFileName('Liste Chantiers', 'AG Peinture', new Date()));
 }
 
 
@@ -4282,7 +3866,7 @@ function generatePDFMetre(){
   }
 
   pdfFooter(doc);
-  doc.save('Metre_'+(m.client||'client').replace(/\s+/g,'_')+'_'+(m.date||new Date().toISOString().split('T')[0])+'.pdf');
+  doc.save(pdfFileName('Métré', m.client, m.date));
 }
 
 // ========================
@@ -4563,7 +4147,7 @@ function generatePDFCmd(){
   y += 25;
 
   pdfFooter(doc);
-  doc.save('BonCommande_'+(c.chantier||'chantier').replace(/\s+/g,'_')+'_'+(c.date||new Date().toISOString().split('T')[0])+'.pdf');
+  doc.save(pdfFileName('Commande', c.chantier, c.date));
 }
 
 // ========================
@@ -4877,7 +4461,7 @@ function generatePDFPv(){
   y += 25;
 
   pdfFooter(doc);
-  doc.save('PlusValue_'+(p.chantier||'chantier').replace(/\s+/g,'_')+'_'+(p.date||new Date().toISOString().split('T')[0])+'.pdf');
+  doc.save(pdfFileName('Plus-value', p.chantier, p.date));
 }
 
 // ========================
@@ -5630,7 +5214,7 @@ function generatePDFControle(){
   });
 
   pdfFooter(doc);
-  var fname='ControleChantier_'+(c.chantier||'chantier').replace(/\s+/g,'_').replace(/[^A-Za-z0-9_-]/g,'')+'_'+(c.date||'').replace(/-/g,'')+'.pdf';
+  var fname = pdfFileName('Contrôle', c.chantier, c.date);
   doc.save(fname);
 }
 
@@ -5672,68 +5256,16 @@ if(!localStorage.getItem('ag4_facture_migrated_v1') && factures.length > 0){
   }catch(e){console.error('Erreur migration factures:', e);}
 }
 
-function saveFactures(){localStorage.setItem('ag4_factures',JSON.stringify(factures));if(window.fbSave){clearTimeout(window.fbSaveTimer);window.fbSaveTimer=setTimeout(window.fbSave,600);var el=document.getElementById('fb-status');if(el){el.textContent='☁️ Sauvegarde...';el.style.color='#f39c12';}}}
-
-function saveFacture(){
-  var client=document.getElementById('f-client').value.trim();
-  if(!client){alert('Indique le nom du client !');return;}
-  factures.unshift({id:Date.now(),client:client,desc:document.getElementById('f-desc').value,montant:document.getElementById('f-montant').value,date:todayStr,faite:false,createdAt:new Date().toISOString()});
-  saveFactures();
-  closeModal('facture');
-  ['f-client','f-desc','f-montant'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
-  renderFactures();renderHome();
-}
-
-function toggleFactureFaite(id){
-  var f=factures.find(function(x){return x.id===id;});
-  if(f){f.faite=!f.faite;saveFactures();renderFactures();renderHome();}
-}
-
-function delFacture(id){
-  if(!confirm('Supprimer ?'))return;
-  factures=factures.filter(function(f){return f.id!==id;});
-  saveFactures();renderFactures();renderHome();
-}
-
-function renderFactures(){
-  var el=document.getElementById('fact-list');
-  var att=factures.filter(function(f){return !f.faite;});
-  var fait=factures.filter(function(f){return f.faite;});
-  var total=att.reduce(function(s,f){return s+(parseFloat(f.montant)||0);},0);
-  var ec=document.getElementById('fact-count-att');var et=document.getElementById('fact-total-att');var sub=document.getElementById('fact-sub');
-  if(ec)ec.textContent=att.length;
-  if(et)et.textContent=total>0?total.toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF':'— CHF';
-  if(sub)sub.textContent=att.length+' en attente · '+fait.length+' faite'+(fait.length>1?'s':'');
-  if(!el)return;
-  if(!factures.length){el.innerHTML='<div class="empty"><div class="ei">💶</div><p>Aucune facture</p><span>Appuie sur + Ajouter</span></div>';return;}
-  var h='';
-  if(att.length){
-    h+='<div style="font-size:11px;font-weight:800;color:var(--orange);text-transform:uppercase;margin-bottom:8px">⏳ À établir</div>';
-    h+=att.map(function(f){return '<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px;border-left:4px solid var(--orange)"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px"><div><div style="font-size:15px;font-weight:900">'+f.client+'</div>'+(f.desc?'<div style="font-size:12px;color:var(--muted)">'+f.desc+'</div>':'')+'</div><button onclick="delFacture('+f.id+')" style="background:none;border:none;color:#ddd;font-size:16px;cursor:pointer">✕</button></div><div style="display:flex;justify-content:space-between;align-items:center">'+(f.montant?'<span style="font-size:18px;font-weight:900;color:var(--orange)">'+parseFloat(f.montant).toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF</span>':'<span></span>')+'<button onclick="toggleFactureFaite('+f.id+')" style="background:var(--green);color:white;border:none;border-radius:20px;padding:7px 14px;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer">✅ Facturée</button></div></div>';}).join('');
-  }
-  if(fait.length){
-    h+='<div style="font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;margin:14px 0 8px">✅ Faites</div>';
-    h+=fait.map(function(f){return '<div style="background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 16px;margin-bottom:8px;border-left:4px solid var(--green);opacity:0.7"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:14px;font-weight:800;text-decoration:line-through">'+f.client+'</div>'+(f.montant?'<div style="font-size:12px;font-weight:700;color:var(--green)">'+parseFloat(f.montant).toLocaleString('fr-CH',{minimumFractionDigits:2})+' CHF</div>':'')+'</div><div style="display:flex;gap:8px"><button onclick="toggleFactureFaite('+f.id+')" style="background:var(--bg);color:var(--muted);border:1.5px solid var(--border);border-radius:20px;padding:5px 10px;font-family:Nunito,sans-serif;font-size:11px;font-weight:700;cursor:pointer">↩ Remettre</button><button onclick="delFacture('+f.id+')" style="background:none;border:none;color:#ddd;font-size:16px;cursor:pointer">✕</button></div></div></div>';}).join('');
-  }
-  el.innerHTML=h;
-}
-
 window.initApp = function() {
-  try{renderHome();renderAfaire();renderDevis();renderChantiers();renderNuanciers();renderNotes();renderFactures();}catch(e){console.error('render error:',e);}
+  try{renderHome();renderAfaire();renderChantiers();renderNuanciers();}catch(e){console.error('render error:',e);}
 };
 
 // Recharge toutes les variables depuis localStorage puis re-render — utilisé après une synchro cloud
 window.refreshAllViews = function() {
   try{
     afaire = JSON.parse(localStorage.getItem('ag4_af')||'[]');
-    devis = JSON.parse(localStorage.getItem('ag4_dv')||'[]');
     chantiers = JSON.parse(localStorage.getItem('ag4_ch')||'[]');
     nuanciers = JSON.parse(localStorage.getItem('ag4_nu')||'[]');
-    agenda = JSON.parse(localStorage.getItem('ag4_ag')||'[]');
-    notes = JSON.parse(localStorage.getItem('ag4_no')||'[]');
-    patrols = JSON.parse(localStorage.getItem('ag4_pa')||'[]');
-    planningData = JSON.parse(localStorage.getItem('ag4_plan')||'{}');
-    if(typeof routineData !== 'undefined') routineData = JSON.parse(localStorage.getItem('ag4_routine') || '{}');
     if(typeof rdvState !== 'undefined') rdvState = JSON.parse(localStorage.getItem('ag4_rdv')||'{}');
     if(typeof rdvChecks !== 'undefined') rdvChecks = JSON.parse(localStorage.getItem('ag4_rdvc')||'{}');
     if(typeof rdvHistorique !== 'undefined') rdvHistorique = JSON.parse(localStorage.getItem('ag4_rdv_hist')||'[]');
@@ -5743,23 +5275,6 @@ window.refreshAllViews = function() {
     if(typeof factures !== 'undefined') factures = JSON.parse(localStorage.getItem('ag4_factures')||'[]');
     if(typeof suiviHistorique !== 'undefined') suiviHistorique = JSON.parse(localStorage.getItem('ag4_suivi_hist')||'[]');
     if(typeof controleHistorique !== 'undefined') controleHistorique = JSON.parse(localStorage.getItem('ag4_controle_hist')||'[]');
-    // Re-migration auto au cas où on aurait restauré un ancien format
-    if(planningData && !planningData.weeks){
-      var _tw=getISOWeek(new Date());
-      var _ok=Object.keys(planningData).filter(function(k){return k!=='currentWeek'&&k!=='weeks';});
-      var _wks={};
-      if(_ok.length>0){var _l={};_ok.forEach(function(k){_l[k]=planningData[k];});_wks[_tw]=_l;}
-      planningData={currentWeek:_tw,weeks:_wks};
-      localStorage.setItem('ag4_plan',JSON.stringify(planningData));
-    }
-    if(typeof routineData!=='undefined' && routineData && !routineData.weeks){
-      var _tw2=getISOWeek(new Date());
-      var _ok2=Object.keys(routineData).filter(function(k){return k!=='currentWeek'&&k!=='weeks';});
-      var _wks2={};
-      if(_ok2.length>0){var _l2={};_ok2.forEach(function(k){_l2[k]=routineData[k];});_wks2[_tw2]=_l2;}
-      routineData={currentWeek:_tw2,weeks:_wks2};
-      localStorage.setItem('ag4_routine',JSON.stringify(routineData));
-    }
     window.initApp();
   }catch(e){console.error('refresh error:',e);}
 };
@@ -5781,7 +5296,7 @@ let fbHasChanges = false;
 window.syncDiagnostic = function(){
   var lines = [];
   lines.push('🔍 DIAGNOSTIC SYNC\n');
-  lines.push('Version : v8mai-f');
+  lines.push('Version : v8mai-g');
   lines.push('');
   // 1. Firebase initialisé ?
   if(typeof firebase === 'undefined'){
@@ -5817,7 +5332,7 @@ window.syncDiagnostic = function(){
   }
   // 4. Compter données locales
   var localCount = 0;
-  ['ag4_af','ag4_ch','ag4_dv','ag4_rdv','ag4_factures','ag4_no','ag4_metre_hist','ag4_cmd_hist','ag4_pv_hist'].forEach(function(k){
+  ['ag4_af','ag4_ch','ag4_rdv','ag4_factures','ag4_metre_hist','ag4_cmd_hist','ag4_pv_hist','ag4_suivi_hist','ag4_controle_hist'].forEach(function(k){
     var v = localStorage.getItem(k);
     if(v){
       try{ var p = JSON.parse(v); localCount += (Array.isArray(p)?p.length:1); }catch(e){}
@@ -5842,7 +5357,7 @@ window.syncDiagnostic = function(){
       } else {
         var data = doc.data();
         var cloudCount = 0;
-        ['ag4_af','ag4_ch','ag4_dv','ag4_rdv','ag4_factures','ag4_no','ag4_metre_hist','ag4_cmd_hist','ag4_pv_hist'].forEach(function(k){
+        ['ag4_af','ag4_ch','ag4_rdv','ag4_factures','ag4_metre_hist','ag4_cmd_hist','ag4_pv_hist','ag4_suivi_hist','ag4_controle_hist'].forEach(function(k){
           if(data[k]){
             try{ var p = JSON.parse(data[k]); cloudCount += (Array.isArray(p)?p.length:1); }catch(e){}
           }
@@ -5895,8 +5410,8 @@ setTimeout(installSetItemHook, 500);
 setTimeout(installSetItemHook, 1500);
 setTimeout(installSetItemHook, 3000);
 setTimeout(installSetItemHook, 6000);
-// Surveillance permanente : vérifier toutes les 4 sec si le hook est encore là
-setInterval(installSetItemHook, 4000);
+// Surveillance permanente : vérifier toutes les 10 sec si le hook est encore là
+setInterval(installSetItemHook, 10000);
 
 // Force save quand l'app passe en background + reload protégé quand elle revient
 let lastVisibleReload = 0;
