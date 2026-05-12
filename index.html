@@ -48,6 +48,12 @@ header img{height:42px}
 .nb.active{color:var(--blue)}
 .nbadge{position:absolute;top:4px;right:calc(50% - 17px);background:var(--red);color:white;font-size:9px;font-weight:900;padding:1px 5px;border-radius:20px;min-width:16px;text-align:center}
 @keyframes alertPulse{0%,100%{transform:scale(1);box-shadow:0 4px 16px rgba(239,68,68,0.4)}50%{transform:scale(1.02);box-shadow:0 6px 22px rgba(239,68,68,0.55)}}
+@keyframes syncMenuIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes syncPillError{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(239,68,68,0.5)}50%{transform:scale(1.06);box-shadow:0 0 0 8px rgba(239,68,68,0)}}
+@keyframes syncPillLoading{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+#sync-pill:active{transform:scale(0.92)}
+#sync-pill.state-loading #sync-pill-icon{display:inline-block;animation:syncPillLoading 1.2s linear infinite}
+#sync-pill.state-error{animation:syncPillError 1.4s ease-in-out infinite}
 #alert-urgents:active{transform:scale(0.98)}
 
 /* SECTIONS */
@@ -330,9 +336,80 @@ header img{height:42px}
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
   function fbSetStatus(txt, color) {
+    // On garde l'élément texte caché pour compatibilité, mais on met à jour la pastille visuelle
     var el = document.getElementById('fb-status');
     if(el) { el.textContent = txt; el.style.color = color || '#aaa'; }
+    
+    // Mise à jour de la pastille visuelle
+    var pill = document.getElementById('sync-pill');
+    var icon = document.getElementById('sync-pill-icon');
+    var dot = document.getElementById('sync-pill-dot');
+    var menuTxt = document.getElementById('sync-menu-state-txt');
+    var menuSub = document.getElementById('sync-menu-state-sub');
+    var menuIco = document.getElementById('sync-menu-state-ico');
+    if(!pill || !dot) return;
+    
+    // Détection de l'état à partir du texte
+    var t = (txt||'').toLowerCase();
+    var state = 'ok'; // ok / loading / error / offline
+    if(t.indexOf('erreur')>=0 || t.indexOf('échec')>=0 || t.indexOf('error')>=0) state = 'error';
+    else if(t.indexOf('sauveg')>=0 || t.indexOf('charg')>=0 || t.indexOf('init')>=0 || t.indexOf('connex')>=0) state = 'loading';
+    else if(t.indexOf('hors')>=0 || t.indexOf('offline')>=0 || t.indexOf('aucune donnée')>=0) state = 'offline';
+    else state = 'ok';
+    
+    // Reset des classes
+    pill.classList.remove('state-loading','state-error');
+    
+    if(state === 'ok'){
+      pill.style.background = '#e8f8f0';
+      dot.style.background = '#27ae60';
+      icon.textContent = '☁️';
+      if(menuTxt){ menuTxt.textContent = 'Synchronisé'; menuTxt.style.color = '#27ae60'; }
+      if(menuSub) menuSub.textContent = 'Tout est à jour';
+      if(menuIco) menuIco.textContent = '☁️';
+    } else if(state === 'loading'){
+      pill.style.background = '#fef3c7';
+      dot.style.background = '#f59e0b';
+      icon.textContent = '⏳';
+      pill.classList.add('state-loading');
+      if(menuTxt){ menuTxt.textContent = 'En cours...'; menuTxt.style.color = '#f59e0b'; }
+      if(menuSub) menuSub.textContent = txt || 'Synchronisation';
+      if(menuIco) menuIco.textContent = '⏳';
+    } else if(state === 'error'){
+      pill.style.background = '#fee2e2';
+      dot.style.background = '#ef4444';
+      icon.textContent = '⚠️';
+      pill.classList.add('state-error');
+      if(menuTxt){ menuTxt.textContent = 'Erreur de sync'; menuTxt.style.color = '#ef4444'; }
+      if(menuSub) menuSub.textContent = 'Tape pour réessayer';
+      if(menuIco) menuIco.textContent = '⚠️';
+    } else if(state === 'offline'){
+      pill.style.background = '#f3f4f6';
+      dot.style.background = '#9ca3af';
+      icon.textContent = '📵';
+      icon.style.opacity = '0.6';
+      if(menuTxt){ menuTxt.textContent = 'Hors ligne'; menuTxt.style.color = '#6b7280'; }
+      if(menuSub) menuSub.textContent = 'Sera sync à la reconnexion';
+      if(menuIco) menuIco.textContent = '📵';
+    }
+    if(state !== 'offline') icon.style.opacity = '1';
   }
+  
+  // Toggle du menu sync (ouvert/fermé au tap sur la pastille)
+  window.toggleSyncMenu = function(e){
+    if(e){ e.stopPropagation(); e.preventDefault(); }
+    var menu = document.getElementById('sync-menu');
+    if(!menu) return;
+    if(menu.style.display === 'flex'){
+      closeSyncMenu();
+    } else {
+      menu.style.display = 'flex';
+    }
+  };
+  window.closeSyncMenu = function(){
+    var menu = document.getElementById('sync-menu');
+    if(menu) menu.style.display = 'none';
+  };
 
   fbSetStatus('☁️ Init...', '#aaa');
 
@@ -364,8 +441,7 @@ header img{height:42px}
         window.fbSave();
         window.fbHasChanges = false;
       }, 600);
-      var el = document.getElementById('fb-status');
-      if(el) { el.textContent = '☁️ Sauvegarde...'; el.style.color = '#f39c12'; }
+      fbSetStatus('☁️ Sauvegarde...', '#f39c12');
     };
 
     // Toast visuel rassurant après chaque sync réussie
@@ -582,11 +658,40 @@ function checkPwd(){
 <header>
   <img id="logo" src="" alt="AG Peinture">
   <div class="hright">
-    <div id="fb-status" style="font-size:12px;font-weight:800;color:#27ae60;margin-right:8px;padding:4px 10px;border-radius:12px;background:#e8f8f0">☁️...</div>
+    <button id="sync-pill" onclick="toggleSyncMenu(event)" aria-label="Sync" title="Synchronisation" style="position:relative;width:38px;height:38px;background:#e8f8f0;border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-right:6px;padding:0;transition:all 0.2s ease">
+      <span id="sync-pill-icon" style="font-size:17px;line-height:1">☁️</span>
+      <span id="sync-pill-dot" style="position:absolute;top:1px;right:1px;width:11px;height:11px;background:#27ae60;border-radius:50%;border:2.5px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.15)"></span>
+      <span id="fb-status" style="display:none">☁️ Synchronisé</span>
+    </button>
 <div class="hdate" id="hdate"></div>
-    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-h</span></div>
+    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-i</span></div>
   </div>
 </header>
+
+<!-- MENU SYNC (s'ouvre au tap sur la pastille) -->
+<div id="sync-menu" onclick="if(event.target===this)closeSyncMenu()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:9998;align-items:flex-start;justify-content:flex-end;padding:60px 16px 0 16px">
+  <div style="background:white;border-radius:18px;box-shadow:0 12px 40px rgba(0,0,0,0.18);min-width:240px;overflow:hidden;animation:syncMenuIn 0.18s ease-out">
+    <div id="sync-menu-state" style="padding:14px 16px;background:#f9fafb;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:10px">
+      <span id="sync-menu-state-ico" style="font-size:20px">☁️</span>
+      <div style="flex:1">
+        <div id="sync-menu-state-txt" style="font-size:13px;font-weight:900;color:#27ae60">Synchronisé</div>
+        <div id="sync-menu-state-sub" style="font-size:10px;color:#6b7280;margin-top:1px">Tout est à jour</div>
+      </div>
+    </div>
+    <button onclick="closeSyncMenu();if(window.fbSave)window.fbSave();" style="width:100%;padding:12px 16px;background:none;border:none;border-bottom:1px solid #f3f4f6;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;color:var(--green);cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left">
+      <span style="font-size:18px">☁️⬆️</span>
+      <span>Forcer la sauvegarde</span>
+    </button>
+    <button onclick="closeSyncMenu();if(window.fbForceReload)window.fbForceReload(true);" style="width:100%;padding:12px 16px;background:none;border:none;border-bottom:1px solid #f3f4f6;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;color:var(--blue);cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left">
+      <span style="font-size:18px">☁️⬇️</span>
+      <span>Forcer le chargement</span>
+    </button>
+    <button onclick="closeSyncMenu();syncDiagnostic();" style="width:100%;padding:12px 16px;background:none;border:none;font-family:Nunito,sans-serif;font-size:13px;font-weight:800;color:#9b59b6;cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left">
+      <span style="font-size:18px">🔍</span>
+      <span>Diagnostic</span>
+    </button>
+  </div>
+</div>
 
 <div class="qbar" id="qbar">
   <input class="qi" id="qi" type="text" placeholder="Note rapide... (appeler, devis, commande...)">
@@ -604,11 +709,7 @@ function checkPwd(){
     </div>
     <div style="font-size:22px;opacity:0.9;flex-shrink:0">›</div>
   </div>
-  <div style="display:flex;justify-content:flex-end;gap:6px;margin-bottom:10px;padding:0 4px;flex-wrap:wrap">
-    <button onclick="syncDiagnostic()" style="background:#9b59b6;color:white;border:none;border-radius:20px;padding:7px 11px;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(155,89,182,0.3)">🔍 Diagnostic</button>
-    <button onclick="if(window.fbForceReload){window.fbForceReload(true);}else{alert('Firebase non disponible');}" style="background:var(--blue);color:white;border:none;border-radius:20px;padding:7px 11px;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(61,184,212,0.3)">☁️⬇️ Charger</button>
-    <button onclick="if(window.fbSave){window.fbSave();}else{alert('Firebase non disponible');}" style="background:var(--green);color:white;border:none;border-radius:20px;padding:7px 11px;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(39,174,96,0.3)">☁️⬆️ Sauvegarder</button>
-  </div>
+
   <div class="motiv"><div style="font-size:30px" id="mico"></div><div style="margin-left:2px"><div class="mt" id="mtxt"></div><div class="ms" id="msub"></div></div></div>
       <div class="wp-widget wp-loading collapsed" id="weather" onclick="toggleWeather(event)">
     <!-- VUE COMPACTE -->
@@ -5341,7 +5442,7 @@ let fbHasChanges = false;
 window.syncDiagnostic = function(){
   var lines = [];
   lines.push('🔍 DIAGNOSTIC SYNC\n');
-  lines.push('Version : v8mai-h');
+  lines.push('Version : v8mai-i');
   lines.push('');
   // 1. Firebase initialisé ?
   if(typeof firebase === 'undefined'){
@@ -5440,8 +5541,7 @@ function installSetItemHook() {
         window.fbSave();
         fbHasChanges = false;
       }, 600);
-      const el = document.getElementById('fb-status');
-      if(el) { el.textContent = '☁️ Sauvegarde...'; el.style.color = '#f39c12'; }
+      if(typeof fbSetStatus === 'function') fbSetStatus('☁️ Sauvegarde...', '#f39c12');
     }
   };
   return true;
