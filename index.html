@@ -47,7 +47,8 @@ header img{height:42px}
 .nb .ni{font-size:19px;line-height:1}
 .nb.active{color:var(--blue)}
 .nbadge{position:absolute;top:4px;right:calc(50% - 17px);background:var(--red);color:white;font-size:9px;font-weight:900;padding:1px 5px;border-radius:20px;min-width:16px;text-align:center}
-@keyframes alertPulse{0%,100%{transform:scale(1);box-shadow:0 4px 16px rgba(239,68,68,0.4)}50%{transform:scale(1.02);box-shadow:0 6px 22px rgba(239,68,68,0.55)}}
+@keyframes urgDot{0%,100%{opacity:1;transform:scale(1);box-shadow:0 0 0 0 rgba(239,68,68,0.5)}50%{opacity:0.6;transform:scale(0.85);box-shadow:0 0 0 5px rgba(239,68,68,0)}}
+#alert-urgents:active{transform:scale(0.98)}
 @keyframes syncMenuIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes syncPillError{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(239,68,68,0.5)}50%{transform:scale(1.06);box-shadow:0 0 0 8px rgba(239,68,68,0)}}
 @keyframes syncPillLoading{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
@@ -664,7 +665,7 @@ function checkPwd(){
       <span id="fb-status" style="display:none">☁️ Synchronisé</span>
     </button>
 <div class="hdate" id="hdate"></div>
-    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-i</span></div>
+    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-j</span></div>
   </div>
 </header>
 
@@ -700,14 +701,13 @@ function checkPwd(){
 
 <!-- SECTIONS -->
 <div class="sec active" id="s-home">
-  <!-- BANDEAU ALERTE URGENTS (visible seulement s'il y a des urgents non faits) -->
-  <div id="alert-urgents" onclick="goToAfaireWithFilter('all')" style="display:none;background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);color:white;border-radius:14px;padding:14px 18px;margin-bottom:12px;box-shadow:0 4px 16px rgba(239,68,68,0.4);cursor:pointer;display:none;align-items:center;gap:14px;animation:alertPulse 2.5s ease-in-out infinite">
-    <div style="font-size:32px;flex-shrink:0">⚠️</div>
-    <div style="flex:1;min-width:0">
-      <div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;opacity:0.95">⚡ Attention patron</div>
-      <div id="alert-urgents-text" style="font-size:15px;font-weight:900;margin-top:2px">Tâches urgentes à traiter</div>
+  <!-- MINI-BANDEAU ALERTE URGENTS (Option A : discret avec point clignotant) -->
+  <div id="alert-urgents" onclick="goToAfaireWithFilter('all')" style="display:none;align-items:center;justify-content:space-between;background:white;border-radius:12px;padding:10px 14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);border-left:4px solid #ef4444;cursor:pointer">
+    <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1">
+      <div style="width:9px;height:9px;border-radius:50%;background:#ef4444;animation:urgDot 1.6s ease-in-out infinite;flex-shrink:0"></div>
+      <div id="alert-urgents-text" style="font-size:13px;font-weight:800;color:#2c3e50;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span style="color:#ef4444;font-weight:900">7 urgents</span> à traiter</div>
     </div>
-    <div style="font-size:22px;opacity:0.9;flex-shrink:0">›</div>
+    <div style="font-size:16px;color:#9ca3af;flex-shrink:0">›</div>
   </div>
 
   <div class="motiv"><div style="font-size:30px" id="mico"></div><div style="margin-left:2px"><div class="mt" id="mtxt"></div><div class="ms" id="msub"></div></div></div>
@@ -2141,14 +2141,16 @@ function renderHome(){
   const nb=document.getElementById('nb-afaire');
   nb.innerHTML=`<span class="ni">🧠</span>Ma tête${urgentsAll.length>0?'<span class="nbadge">'+urgentsAll.length+'</span>':''}`;
   
-  // BANDEAU ALERTE URGENTS : affiché seulement s'il y a au moins 1 urgent non fait
+  // MINI-BANDEAU ALERTE URGENTS : affiché seulement s'il y a au moins 1 urgent non fait
   const alertBox=document.getElementById('alert-urgents');
   const alertText=document.getElementById('alert-urgents-text');
   if(alertBox){
     if(urgentsAll.length>0){
       alertBox.style.display='flex';
       const nb_u=urgentsAll.length;
-      alertText.textContent=nb_u===1?'1 tâche urgente à traiter →':nb_u+' tâches urgentes à traiter →';
+      const mot=nb_u===1?'urgent':'urgents';
+      const action=nb_u===1?'à traiter':'à traiter';
+      alertText.innerHTML='<span style="color:#ef4444;font-weight:900">'+nb_u+' '+mot+'</span> '+action;
     } else {
       alertBox.style.display='none';
     }
@@ -5442,7 +5444,7 @@ let fbHasChanges = false;
 window.syncDiagnostic = function(){
   var lines = [];
   lines.push('🔍 DIAGNOSTIC SYNC\n');
-  lines.push('Version : v8mai-i');
+  lines.push('Version : v8mai-j');
   lines.push('');
   // 1. Firebase initialisé ?
   if(typeof firebase === 'undefined'){
