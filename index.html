@@ -48,14 +48,13 @@ header img{height:42px}
 .nb.active{color:var(--blue)}
 .nbadge{position:absolute;top:4px;right:calc(50% - 17px);background:var(--red);color:white;font-size:9px;font-weight:900;padding:1px 5px;border-radius:20px;min-width:16px;text-align:center}
 @keyframes urgDot{0%,100%{opacity:1;transform:scale(1);box-shadow:0 0 0 0 rgba(239,68,68,0.5)}50%{opacity:0.6;transform:scale(0.85);box-shadow:0 0 0 5px rgba(239,68,68,0)}}
-#alert-urgents:active{transform:scale(0.98)}
+#dash-grid > div > div:active{transform:scale(0.96)}
 @keyframes syncMenuIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes syncPillError{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(239,68,68,0.5)}50%{transform:scale(1.06);box-shadow:0 0 0 8px rgba(239,68,68,0)}}
 @keyframes syncPillLoading{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
 #sync-pill:active{transform:scale(0.92)}
 #sync-pill.state-loading #sync-pill-icon{display:inline-block;animation:syncPillLoading 1.2s linear infinite}
 #sync-pill.state-error{animation:syncPillError 1.4s ease-in-out infinite}
-#alert-urgents:active{transform:scale(0.98)}
 
 /* SECTIONS */
 .sec{display:none;padding:14px}
@@ -665,7 +664,7 @@ function checkPwd(){
       <span id="fb-status" style="display:none">☁️ Synchronisé</span>
     </button>
 <div class="hdate" id="hdate"></div>
-    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-j</span></div>
+    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-l</span></div>
   </div>
 </header>
 
@@ -701,14 +700,7 @@ function checkPwd(){
 
 <!-- SECTIONS -->
 <div class="sec active" id="s-home">
-  <!-- MINI-BANDEAU ALERTE URGENTS (Option A : discret avec point clignotant) -->
-  <div id="alert-urgents" onclick="goToAfaireWithFilter('all')" style="display:none;align-items:center;justify-content:space-between;background:white;border-radius:12px;padding:10px 14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.04);border-left:4px solid #ef4444;cursor:pointer">
-    <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1">
-      <div style="width:9px;height:9px;border-radius:50%;background:#ef4444;animation:urgDot 1.6s ease-in-out infinite;flex-shrink:0"></div>
-      <div id="alert-urgents-text" style="font-size:13px;font-weight:800;color:#2c3e50;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><span style="color:#ef4444;font-weight:900">7 urgents</span> à traiter</div>
-    </div>
-    <div style="font-size:16px;color:#9ca3af;flex-shrink:0">›</div>
-  </div>
+
 
   <div class="motiv"><div style="font-size:30px" id="mico"></div><div style="margin-left:2px"><div class="mt" id="mtxt"></div><div class="ms" id="msub"></div></div></div>
       <div class="wp-widget wp-loading collapsed" id="weather" onclick="toggleWeather(event)">
@@ -777,8 +769,7 @@ function checkPwd(){
     </div>
   </div>
   <div class="dash-grid" id="dash-grid"></div>
-  <div class="sec-divider" id="urgent-divider">🔴 Urgents</div>
-  <div class="cards" id="home-urgent"></div>
+
 </div>
 
 <div class="sec" id="s-afaire">
@@ -2092,12 +2083,6 @@ function renderHome(){
   const urgentsAll=afaire.filter(a=>a.prio==='urgent'&&!a.done);
   const dvAF=afaire.filter(a=>a.cat==='devis'&&!a.done).length;
   const fcAF=afaire.filter(a=>a.cat==='facture'&&!a.done).length;
-  // Tri : date la plus ancienne en haut (les items qui traînent depuis le plus longtemps)
-  const urgentsSort=urgentsAll.slice().sort((a,b)=>{
-    const da=a.date||'9999-99-99';
-    const db=b.date||'9999-99-99';
-    return da.localeCompare(db);
-  });
   document.getElementById('dash-grid').innerHTML=`
     <!-- Bouton + Nouveau (déplie le menu) + Recherche -->
     <div style="display:flex;gap:10px;margin-bottom:14px">
@@ -2111,62 +2096,27 @@ function renderHome(){
       <button onclick="quickAction('commande');toggleQuickMenu();" style="width:100%;text-align:left;padding:14px;background:transparent;border:none;border-bottom:1px solid var(--border);font-family:Nunito,sans-serif;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:12px;color:var(--text)"><span style="font-size:22px">📦</span><span style="flex:1">Commande</span><span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.4px">Matériel</span></button>
       <button onclick="quickAction('tache');toggleQuickMenu();" style="width:100%;text-align:left;padding:14px;background:transparent;border:none;font-family:Nunito,sans-serif;font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:12px;color:var(--text)"><span style="font-size:22px">＋</span><span style="flex:1">Tâche</span><span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.4px">Ma tête</span></button>
     </div>
-    <!-- Stats compactes : Devis · Factures (cliquables) -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px">
-      <div onclick="goToAfaireWithFilter('devis')" style="background:white;border-radius:var(--radius);padding:10px 12px;box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:space-between;border-left:3px solid var(--blue)">
-        <div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px">📋 Devis à faire</div>
-        <div style="font-size:22px;font-weight:900;color:var(--blue)">${dvAF}</div>
+    <!-- DASHBOARD 3 CARTES : Urgents · Devis · Factures -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:6px">
+      <div onclick="goToAfaireWithFilter('all')" style="background:white;border-radius:var(--radius);padding:12px 8px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-top:3px solid ${urgentsAll.length>0?'#ef4444':'#cbd5e0'};position:relative;transition:transform 0.15s ease">
+        <div style="font-size:24px;font-weight:900;color:${urgentsAll.length>0?'#ef4444':'#94a3b8'};line-height:1">${urgentsAll.length}</div>
+        <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-top:4px">🔴 Urgents</div>
+        ${urgentsAll.length>0?'<span style="position:absolute;top:6px;right:6px;width:6px;height:6px;border-radius:50%;background:#ef4444;animation:urgDot 1.6s ease-in-out infinite"></span>':''}
       </div>
-      <div onclick="goToAfaireWithFilter('facture')" style="background:white;border-radius:var(--radius);padding:10px 12px;box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;justify-content:space-between;border-left:3px solid var(--green)">
-        <div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px">💶 Factures</div>
-        <div style="font-size:22px;font-weight:900;color:var(--green)">${fcAF}</div>
+      <div onclick="goToAfaireWithFilter('devis')" style="background:white;border-radius:var(--radius);padding:12px 8px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-top:3px solid var(--blue);transition:transform 0.15s ease">
+        <div style="font-size:24px;font-weight:900;color:var(--blue);line-height:1">${dvAF}</div>
+        <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-top:4px">📋 Devis</div>
+      </div>
+      <div onclick="goToAfaireWithFilter('facture')" style="background:white;border-radius:var(--radius);padding:12px 8px;box-shadow:var(--shadow);cursor:pointer;text-align:center;border-top:3px solid var(--green);transition:transform 0.15s ease">
+        <div style="font-size:24px;font-weight:900;color:var(--green);line-height:1">${fcAF}</div>
+        <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-top:4px">💶 Factures</div>
       </div>
     </div>
   `;
-  // Mise à jour du titre de la section urgents avec le compteur
-  const divider=document.getElementById('urgent-divider');
-  if(divider) divider.innerHTML=urgentsAll.length>0?`🔴 Urgents (${urgentsAll.length})`:'🔴 Urgents';
-  // Affichage compact : 3 max + bouton "voir plus"
-  const visibleCount=3;
-  const urgents=urgentsSort.slice(0,visibleCount);
-  const hidden=urgentsSort.length-urgents.length;
-  const el=document.getElementById('home-urgent');
-  if(!urgentsSort.length){
-    el.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px;font-weight:700;background:white;border-radius:var(--radius)">✅ Rien d\'urgent — tu es à jour !</div>';
-  } else {
-    el.innerHTML=urgents.map(a=>compactUrgentCard(a)).join('')
-      +(hidden>0?`<button onclick="goToAfaireWithFilter('all')" style="width:100%;background:white;border:1.5px dashed var(--blue);color:var(--blue);border-radius:var(--radius);padding:12px;font-family:Nunito,sans-serif;font-weight:800;font-size:13px;cursor:pointer;margin-top:6px">voir les ${hidden} autres urgent${hidden>1?'s':''} →</button>`:'');
-  }
   // badge
   const nb=document.getElementById('nb-afaire');
   nb.innerHTML=`<span class="ni">🧠</span>Ma tête${urgentsAll.length>0?'<span class="nbadge">'+urgentsAll.length+'</span>':''}`;
   
-  // MINI-BANDEAU ALERTE URGENTS : affiché seulement s'il y a au moins 1 urgent non fait
-  const alertBox=document.getElementById('alert-urgents');
-  const alertText=document.getElementById('alert-urgents-text');
-  if(alertBox){
-    if(urgentsAll.length>0){
-      alertBox.style.display='flex';
-      const nb_u=urgentsAll.length;
-      const mot=nb_u===1?'urgent':'urgents';
-      const action=nb_u===1?'à traiter':'à traiter';
-      alertText.innerHTML='<span style="color:#ef4444;font-weight:900">'+nb_u+' '+mot+'</span> '+action;
-    } else {
-      alertBox.style.display='none';
-    }
-  }
-}
-
-// Carte compacte pour l'accueil : 1 ligne titre + 1 ligne tags discret
-function compactUrgentCard(a){
-  const cat=catMap[a.cat]||{label:'📌'};
-  return `<div style="background:white;border-radius:var(--radius);padding:11px 12px;box-shadow:var(--shadow);margin-bottom:6px;border-left:3px solid #ef4444;cursor:pointer;display:flex;align-items:center;gap:10px" onclick="goToAfaireWithFilter('all')">
-    <div style="flex:1;min-width:0">
-      <div style="font-weight:800;font-size:14px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.title}</div>
-      <div style="font-size:11px;color:var(--muted);font-weight:600;margin-top:3px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span>${cat.label}</span>${a.date?'<span>📅 '+fmtDate(a.date)+'</span>':''}</div>
-    </div>
-    <div style="font-size:20px;color:var(--muted);flex-shrink:0">›</div>
-  </div>`;
 }
 
 function toggleQuickMenu(){
@@ -5444,7 +5394,7 @@ let fbHasChanges = false;
 window.syncDiagnostic = function(){
   var lines = [];
   lines.push('🔍 DIAGNOSTIC SYNC\n');
-  lines.push('Version : v8mai-j');
+  lines.push('Version : v8mai-l');
   lines.push('');
   // 1. Firebase initialisé ?
   if(typeof firebase === 'undefined'){
