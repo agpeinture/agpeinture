@@ -47,6 +47,8 @@ header img{height:42px}
 .nb .ni{font-size:19px;line-height:1}
 .nb.active{color:var(--blue)}
 .nbadge{position:absolute;top:4px;right:calc(50% - 17px);background:var(--red);color:white;font-size:9px;font-weight:900;padding:1px 5px;border-radius:20px;min-width:16px;text-align:center}
+@keyframes alertPulse{0%,100%{transform:scale(1);box-shadow:0 4px 16px rgba(239,68,68,0.4)}50%{transform:scale(1.02);box-shadow:0 6px 22px rgba(239,68,68,0.55)}}
+#alert-urgents:active{transform:scale(0.98)}
 
 /* SECTIONS */
 .sec{display:none;padding:14px}
@@ -582,7 +584,7 @@ function checkPwd(){
   <div class="hright">
     <div id="fb-status" style="font-size:12px;font-weight:800;color:#27ae60;margin-right:8px;padding:4px 10px;border-radius:12px;background:#e8f8f0">☁️...</div>
 <div class="hdate" id="hdate"></div>
-    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-g</span></div>
+    <div class="hname">AG Peinture <span style="font-size:9px;color:#aaa;font-weight:400">v8mai-h</span></div>
   </div>
 </header>
 
@@ -593,6 +595,15 @@ function checkPwd(){
 
 <!-- SECTIONS -->
 <div class="sec active" id="s-home">
+  <!-- BANDEAU ALERTE URGENTS (visible seulement s'il y a des urgents non faits) -->
+  <div id="alert-urgents" onclick="goToAfaireWithFilter('all')" style="display:none;background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);color:white;border-radius:14px;padding:14px 18px;margin-bottom:12px;box-shadow:0 4px 16px rgba(239,68,68,0.4);cursor:pointer;display:none;align-items:center;gap:14px;animation:alertPulse 2.5s ease-in-out infinite">
+    <div style="font-size:32px;flex-shrink:0">⚠️</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;opacity:0.95">⚡ Attention patron</div>
+      <div id="alert-urgents-text" style="font-size:15px;font-weight:900;margin-top:2px">Tâches urgentes à traiter</div>
+    </div>
+    <div style="font-size:22px;opacity:0.9;flex-shrink:0">›</div>
+  </div>
   <div style="display:flex;justify-content:flex-end;gap:6px;margin-bottom:10px;padding:0 4px;flex-wrap:wrap">
     <button onclick="syncDiagnostic()" style="background:#9b59b6;color:white;border:none;border-radius:20px;padding:7px 11px;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(155,89,182,0.3)">🔍 Diagnostic</button>
     <button onclick="if(window.fbForceReload){window.fbForceReload(true);}else{alert('Firebase non disponible');}" style="background:var(--blue);color:white;border:none;border-radius:20px;padding:7px 11px;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 3px 10px rgba(61,184,212,0.3)">☁️⬇️ Charger</button>
@@ -2028,6 +2039,19 @@ function renderHome(){
   // badge
   const nb=document.getElementById('nb-afaire');
   nb.innerHTML=`<span class="ni">🧠</span>Ma tête${urgentsAll.length>0?'<span class="nbadge">'+urgentsAll.length+'</span>':''}`;
+  
+  // BANDEAU ALERTE URGENTS : affiché seulement s'il y a au moins 1 urgent non fait
+  const alertBox=document.getElementById('alert-urgents');
+  const alertText=document.getElementById('alert-urgents-text');
+  if(alertBox){
+    if(urgentsAll.length>0){
+      alertBox.style.display='flex';
+      const nb_u=urgentsAll.length;
+      alertText.textContent=nb_u===1?'1 tâche urgente à traiter →':nb_u+' tâches urgentes à traiter →';
+    } else {
+      alertBox.style.display='none';
+    }
+  }
 }
 
 // Carte compacte pour l'accueil : 1 ligne titre + 1 ligne tags discret
@@ -2822,6 +2846,27 @@ function pdfFooter(doc){
   doc.setTextColor(150,150,150);
   doc.text('Newflash SA · Case postale 1290, 1260 Nyon · 079 489 16 39 · info@agpeinture.ch', pw/2, ph-8, {align:'center'});
 }
+// Partage un PDF nativement (iOS Web Share API) avec fallback sur téléchargement classique
+// Sur iPhone : ouvre le menu Partager natif → Mail/WhatsApp/AirDrop reconnaissent le PDF comme pièce jointe
+// Sur desktop ou navigateur sans Web Share : fallback sur doc.save() classique
+async function sharePdf(doc, filename){
+  try{
+    var blob = doc.output('blob');
+    var file = new File([blob], filename, {type:'application/pdf'});
+    // Préférer le partage natif si dispo et que le navigateur sait partager des fichiers
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:filename});
+      return;
+    }
+  }catch(e){
+    // Si l'utilisateur annule le partage natif, ne pas re-télécharger
+    if(e && e.name === 'AbortError') return;
+    console.warn('sharePdf fallback:', e);
+  }
+  // Fallback classique : téléchargement
+  try{ doc.save(filename); }catch(e){ console.error('PDF save error:', e); }
+}
+
 function pdfFileName(prefix, name, dateStr){
   // Construit un nom de fichier PDF lisible : "Préfixe - Nom - 11.05.2026.pdf"
   // Garde les accents, retire seulement les caractères interdits (/, \, :, *, ?, ", <, >, |)
@@ -2974,7 +3019,7 @@ function generatePDFSuivi(){
 
   pdfFooter(doc);
   var fname = pdfFileName('Suivi', s.chantier, s.date);
-  doc.save(fname);
+  sharePdf(doc, fname);
 }
 
 // FICHE RDV
@@ -3295,7 +3340,7 @@ function generatePDFFicheRDV(){
 
   pdfFooter(doc);
   var fname = pdfFileName('RDV', d.chantier, d.date);
-  doc.save(fname);
+  sharePdf(doc, fname);
 }
 
 function generatePDFListeChantiers(){
@@ -3338,7 +3383,7 @@ function generatePDFListeChantiers(){
 
   pdfFooter(doc);
   var dStr = pdfFmtDate(new Date()).replace(/\./g,'-');
-  doc.save(pdfFileName('Liste Chantiers', 'AG Peinture', new Date()));
+  sharePdf(doc, pdfFileName('Liste Chantiers', 'AG Peinture', new Date()));
 }
 
 
@@ -3866,7 +3911,7 @@ function generatePDFMetre(){
   }
 
   pdfFooter(doc);
-  doc.save(pdfFileName('Métré', m.client, m.date));
+  sharePdf(doc, pdfFileName('Métré', m.client, m.date));
 }
 
 // ========================
@@ -4147,7 +4192,7 @@ function generatePDFCmd(){
   y += 25;
 
   pdfFooter(doc);
-  doc.save(pdfFileName('Commande', c.chantier, c.date));
+  sharePdf(doc, pdfFileName('Commande', c.chantier, c.date));
 }
 
 // ========================
@@ -4461,7 +4506,7 @@ function generatePDFPv(){
   y += 25;
 
   pdfFooter(doc);
-  doc.save(pdfFileName('Plus-value', p.chantier, p.date));
+  sharePdf(doc, pdfFileName('Plus-value', p.chantier, p.date));
 }
 
 // ========================
@@ -5215,7 +5260,7 @@ function generatePDFControle(){
 
   pdfFooter(doc);
   var fname = pdfFileName('Contrôle', c.chantier, c.date);
-  doc.save(fname);
+  sharePdf(doc, fname);
 }
 
 
@@ -5296,7 +5341,7 @@ let fbHasChanges = false;
 window.syncDiagnostic = function(){
   var lines = [];
   lines.push('🔍 DIAGNOSTIC SYNC\n');
-  lines.push('Version : v8mai-g');
+  lines.push('Version : v8mai-h');
   lines.push('');
   // 1. Firebase initialisé ?
   if(typeof firebase === 'undefined'){
