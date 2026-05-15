@@ -323,6 +323,57 @@ header img{height:42px}
 .wp-error{padding:14px;font-size:13px;color:var(--muted);text-align:center}
 .wp-error button{margin-top:8px;background:var(--blue);color:white;border:none;border-radius:20px;padding:8px 18px;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;cursor:pointer}
 
+/* === GRILLE 7J × 4 CRÉNEAUX === */
+.wp-filters{display:flex;gap:5px;overflow-x:auto;margin-bottom:8px;padding-bottom:2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.wp-filters::-webkit-scrollbar{display:none}
+.wp-filter-chip{flex:none;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:5px 10px;font-size:11px;font-weight:800;color:var(--muted);cursor:pointer;white-space:nowrap;font-family:Nunito,sans-serif;transition:all 0.15s}
+.wp-filter-chip:hover{border-color:var(--blue)}
+.wp-filter-chip.active{background:var(--blue);color:white;border-color:var(--blue)}
+.wp-insight{background:linear-gradient(135deg,var(--green-bg),#e8f5e9);border-left:4px solid var(--green);border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:11px;font-weight:700;color:#1a6e3f;display:flex;align-items:center;gap:6px}
+.wp-insight.warn{background:linear-gradient(135deg,var(--orange-bg),#fff3e0);border-color:var(--orange);color:#9a5a00}
+.wp-insight.bad{background:linear-gradient(135deg,var(--red-bg),#ffebee);border-color:var(--red);color:#8a1f15}
+.wp-insight-ico{font-size:16px;flex:none}
+.wp-grid7{display:flex;flex-direction:column;gap:4px}
+.wp-grid7-header{display:grid;grid-template-columns:38px repeat(4,1fr);gap:3px;font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.3px;padding:0 2px;margin-bottom:2px}
+.wp-grid7-header > div{text-align:center}
+.wp-grid7-row{display:grid;grid-template-columns:38px repeat(4,1fr);gap:3px;align-items:stretch;cursor:pointer;transition:transform 0.1s}
+.wp-grid7-row:hover{transform:translateX(2px)}
+.wp-grid7-day{background:var(--blue-bg);border-radius:8px;padding:4px 2px;text-align:center;display:flex;flex-direction:column;justify-content:center}
+.wp-grid7-row.today .wp-grid7-day{background:var(--blue);color:white}
+.wp-grid7-dname{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.2px;line-height:1}
+.wp-grid7-dnum{font-size:14px;font-weight:900;line-height:1.1;margin-top:1px}
+.wp-slot{background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:4px 2px;text-align:center;display:flex;flex-direction:column;justify-content:center;gap:1px;min-height:42px}
+.wp-slot.good{background:var(--green-bg);border-color:var(--green)}
+.wp-slot.warn{background:var(--orange-bg);border-color:var(--orange)}
+.wp-slot.bad{background:var(--red-bg);border-color:var(--red);opacity:0.85}
+.wp-slot-ico{font-size:14px;line-height:1}
+.wp-slot-temp{font-size:10px;font-weight:900;color:var(--text)}
+.wp-slot.bad .wp-slot-temp{color:#8a1f15}
+.wp-slot.warn .wp-slot-temp{color:#9a5a00}
+.wp-slot.good .wp-slot-temp{color:#1a6e3f}
+.wp-slot-rain{font-size:8px;font-weight:700;color:var(--blue2);line-height:1}
+.wp-slot.best{box-shadow:0 0 0 2px var(--green),0 2px 8px rgba(39,174,96,0.3);position:relative;z-index:1}
+.wp-slot.best::after{content:'★';position:absolute;top:-4px;right:-4px;background:var(--green);color:white;font-size:8px;font-weight:900;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1}
+/* Détail journée */
+.wp-day-detail{display:none;background:var(--bg);border-radius:12px;padding:10px;margin-top:6px}
+.wp-day-detail.open{display:block;animation:wpdetailin 0.25s ease-out}
+@keyframes wpdetailin{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.wp-detail-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:0 2px}
+.wp-detail-title{font-size:13px;font-weight:900;color:var(--text)}
+.wp-detail-close{background:transparent;border:none;color:var(--muted);font-size:18px;font-weight:900;cursor:pointer;padding:0;line-height:1;font-family:Nunito,sans-serif}
+.wp-detail-hours{display:flex;overflow-x:auto;gap:5px;padding-bottom:4px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.wp-detail-hours::-webkit-scrollbar{display:none}
+.wp-detail-hour{flex:0 0 64px;background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:5px 3px;text-align:center}
+.wp-detail-hour.good{border-color:var(--green);background:var(--green-bg)}
+.wp-detail-hour.warn{border-color:var(--orange);background:var(--orange-bg)}
+.wp-detail-hour.bad{border-color:var(--red);background:var(--red-bg);opacity:0.85}
+.wp-detail-hour.best{box-shadow:0 0 0 2px var(--green)}
+.wp-dh-time{font-size:10px;font-weight:800;color:var(--muted)}
+.wp-dh-ico{font-size:16px;margin:2px 0;line-height:1}
+.wp-dh-temp{font-size:12px;font-weight:900;color:var(--text)}
+.wp-dh-meta{font-size:8px;font-weight:700;color:var(--muted);line-height:1.2;margin-top:1px}
+.wp-detail-tip{margin-top:8px;padding:6px 8px;background:var(--card);border-radius:6px;font-size:11px;font-weight:700;color:var(--text)}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
 
@@ -756,16 +807,32 @@ function checkPwd(){
       <div class="wp-hour"><div class="wp-hour-time">—</div><div class="wp-hour-ico">⏳</div><div class="wp-hour-temp">—</div></div>
       <div class="wp-hour"><div class="wp-hour-time">—</div><div class="wp-hour-ico">⏳</div><div class="wp-hour-temp">—</div></div>
     </div>
-    <!-- 7 jours -->
-    <div class="wp-section-title">📅 7 prochains jours</div>
-    <div class="wp-days" id="wp-days">
-      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
-      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
-      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
-      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
-      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
-      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
-      <div class="wp-day"><div class="wp-day-name">—</div><div class="wp-day-icon">⏳</div><div class="wp-day-tmax">—</div><div class="wp-day-tmin">—</div><div class="wp-day-rain">—</div><div class="wp-day-wind">—</div></div>
+    <!-- 7 jours × 4 créneaux -->
+    <div class="wp-section-title">📅 7 prochains jours · par créneau</div>
+    <div class="wp-filters" id="wp-filters">
+      <div class="wp-filter-chip active" data-work="ext">🌳 Extérieur</div>
+      <div class="wp-filter-chip" data-work="facade">🏠 Façade</div>
+      <div class="wp-filter-chip" data-work="bois">🪵 Boiseries</div>
+      <div class="wp-filter-chip" data-work="int">🏡 Intérieur</div>
+    </div>
+    <div class="wp-insight" id="wp-insight"><span class="wp-insight-ico">⏳</span><span id="wp-insight-text">Analyse en cours…</span></div>
+    <div class="wp-grid7-header">
+      <div></div>
+      <div>6-9h</div>
+      <div>9-12h</div>
+      <div>12-15h</div>
+      <div>15-18h</div>
+    </div>
+    <div class="wp-grid7" id="wp-grid7">
+      <div class="wp-grid7-row"><div class="wp-grid7-day"><div class="wp-grid7-dname">—</div><div class="wp-grid7-dnum">—</div></div><div class="wp-slot">⏳</div><div class="wp-slot">⏳</div><div class="wp-slot">⏳</div><div class="wp-slot">⏳</div></div>
+    </div>
+    <div class="wp-day-detail" id="wp-day-detail">
+      <div class="wp-detail-head">
+        <div class="wp-detail-title" id="wp-detail-title">—</div>
+        <button class="wp-detail-close" onclick="window.closeDayDetail(event)">✕</button>
+      </div>
+      <div class="wp-detail-hours" id="wp-detail-hours"></div>
+      <div class="wp-detail-tip" id="wp-detail-tip"></div>
     </div>
   </div>
   <div class="dash-grid" id="dash-grid"></div>
@@ -5619,6 +5686,258 @@ window.addEventListener('beforeunload', function(){
     return {cls:'good', ico:'✅', txt:'Conditions idéales pour peindre dehors'};
   }
 
+  // === GRILLE 7J × 4 CRÉNEAUX ===
+  // État global du module
+  const W_STATE = { data: null, work: 'ext', openDay: -1 };
+
+  // Verdict selon le type de travail (rain, wind, temp, hum, code)
+  function verdictFor(work, rain, wind, temp, hum, code){
+    if([95,96,99].includes(code)) return {v:'bad', why:'Orage'};
+    if(work === 'int'){
+      // Intérieur — très tolérant, surtout aération
+      if(temp < 5) return {v:'bad', why:'Trop froid pour ventiler'};
+      if(temp < 10) return {v:'warn', why:'Aération limitée'};
+      if(hum >= 85) return {v:'warn', why:'Humidité élevée'};
+      return {v:'good', why:'OK pour intérieur'};
+    }
+    if(work === 'bois'){
+      // Boiseries — très strict sur humidité
+      if(rain >= 40 || [61,63,65,66,67,80,81,82].includes(code)) return {v:'bad', why:'Pluie'};
+      if(hum >= 80) return {v:'bad', why:'Humidité trop forte'};
+      if(hum >= 70) return {v:'warn', why:'Humidité élevée'};
+      if(temp < 8) return {v:'warn', why:'Trop froid'};
+      if(wind >= 25) return {v:'warn', why:'Vent fort'};
+      return {v:'good', why:'OK boiseries'};
+    }
+    if(work === 'facade'){
+      // Façade — strict sur vent et pluie
+      if(rain >= 25 || [61,63,65,66,67,80,81,82].includes(code)) return {v:'bad', why:'Pluie'};
+      if(wind >= 25) return {v:'bad', why:'Vent fort en hauteur'};
+      if(rain >= 15) return {v:'warn', why:'Risque de pluie'};
+      if(wind >= 18) return {v:'warn', why:'Vent modéré'};
+      if(hum >= 75) return {v:'warn', why:'Humidité'};
+      if(temp < 5) return {v:'warn', why:'Trop froid'};
+      return {v:'good', why:'OK façade'};
+    }
+    // Extérieur (défaut) — logique paintTip
+    if(rain >= 60 || [61,63,65,66,67,80,81,82].includes(code)) return {v:'bad', why:'Pluie'};
+    if(wind >= 30) return {v:'bad', why:'Vent fort'};
+    if(rain >= 30) return {v:'warn', why:'Risque pluie'};
+    if(wind >= 20) return {v:'warn', why:'Vent modéré'};
+    if(temp < 5) return {v:'warn', why:'Trop froid'};
+    if(temp > 30) return {v:'warn', why:'Très chaud'};
+    if(hum >= 80) return {v:'warn', why:'Humidité'};
+    return {v:'good', why:'Idéal'};
+  }
+
+  // Agrège les heures d'un créneau [hStart, hEnd[ pour un jour donné
+  function aggregateSlot(dayIdx, hStart, hEnd){
+    const data = W_STATE.data;
+    if(!data || !data.hourly) return null;
+    const dStr = data.daily.time[dayIdx];
+    const samples = [];
+    for(let h = hStart; h < hEnd; h++){
+      const targetIso = dStr + 'T' + String(h).padStart(2,'0') + ':00';
+      const idx = data.hourly.time.findIndex(t => t.startsWith(targetIso));
+      if(idx >= 0){
+        samples.push({
+          temp: data.hourly.temperature_2m[idx],
+          code: data.hourly.weather_code[idx],
+          rain: data.hourly.precipitation_probability[idx] ?? 0,
+          hum: data.hourly.relative_humidity_2m ? (data.hourly.relative_humidity_2m[idx] ?? 60) : 60,
+          wind: data.hourly.wind_speed_10m ? Math.round(data.hourly.wind_speed_10m[idx] ?? 10) : 10
+        });
+      }
+    }
+    if(!samples.length) return null;
+    const avg = arr => arr.reduce((a,b)=>a+b,0)/arr.length;
+    const worstCode = samples.reduce((w,s) => {
+      const score = c => [95,96,99].includes(c)?5 : [61,63,65,66,67,80,81,82].includes(c)?4 : [51,53,55].includes(c)?3 : c===3?2 : (c===1||c===2)?1 : 0;
+      return score(s.code) > score(w) ? s.code : w;
+    }, 0);
+    return {
+      temp: Math.round(avg(samples.map(s=>s.temp))),
+      rain: Math.round(Math.max(...samples.map(s=>s.rain))),
+      hum: Math.round(avg(samples.map(s=>s.hum))),
+      wind: Math.round(Math.max(...samples.map(s=>s.wind))),
+      code: worstCode
+    };
+  }
+
+  // Trouve le meilleur créneau sur les 7 prochains jours (futur uniquement)
+  function findBestSlot(){
+    const data = W_STATE.data;
+    if(!data) return null;
+    const slots = [[6,9],[9,12],[12,15],[15,18]];
+    const slotLbl = ['6-9h','9-12h','12-15h','15-18h'];
+    const nowH = new Date().getHours();
+    let best = null;
+    for(let d = 0; d < data.daily.time.length; d++){
+      for(let si = 0; si < slots.length; si++){
+        // Skip slots déjà passés aujourd'hui
+        if(d === 0 && slots[si][1] <= nowH) continue;
+        const agg = aggregateSlot(d, slots[si][0], slots[si][1]);
+        if(!agg) continue;
+        const verd = verdictFor(W_STATE.work, agg.rain, agg.wind, agg.temp, agg.hum, agg.code);
+        if(verd.v !== 'good') continue;
+        // Score : on préfère plus tôt, basse pluie, vent faible
+        const score = (d * 100) + (si * 10) + (agg.rain / 10) + (agg.wind / 20);
+        if(!best || score < best.score){
+          best = { dayIdx: d, slotIdx: si, score, agg, lbl: slotLbl[si] };
+        }
+      }
+    }
+    return best;
+  }
+
+  // Rendu de la grille 7×4 + bandeau insight + binding clic
+  function renderGrid(){
+    const data = W_STATE.data;
+    if(!data) return;
+    const slots = [[6,9],[9,12],[12,15],[15,18]];
+    const nowH = new Date().getHours();
+    const grid = document.getElementById('wp-grid7');
+    const best = findBestSlot();
+    const rows = [];
+    for(let d = 0; d < data.daily.time.length; d++){
+      const dt = new Date(data.daily.time[d]);
+      const isToday = d === 0;
+      const dname = isToday ? 'Auj.' : W_DAYS[dt.getDay()];
+      const dnum = dt.getDate();
+      const cells = [`<div class="wp-grid7-day"><div class="wp-grid7-dname">${dname}</div><div class="wp-grid7-dnum">${dnum}</div></div>`];
+      for(let si = 0; si < slots.length; si++){
+        const isPast = isToday && slots[si][1] <= nowH;
+        const agg = aggregateSlot(d, slots[si][0], slots[si][1]);
+        if(isPast || !agg){
+          cells.push(`<div class="wp-slot" style="opacity:0.35"><div class="wp-slot-ico">·</div></div>`);
+          continue;
+        }
+        const verd = verdictFor(W_STATE.work, agg.rain, agg.wind, agg.temp, agg.hum, agg.code);
+        const ic = wmoIcon(agg.code, false);
+        const isBest = best && best.dayIdx === d && best.slotIdx === si;
+        cells.push(`<div class="wp-slot ${verd.v}${isBest?' best':''}"><div class="wp-slot-ico">${ic}</div><div class="wp-slot-temp">${agg.temp}°</div>${agg.rain >= 15 ? `<div class="wp-slot-rain">☔${agg.rain}%</div>` : ''}</div>`);
+      }
+      rows.push(`<div class="wp-grid7-row${isToday?' today':''}" data-day="${d}">${cells.join('')}</div>`);
+    }
+    grid.innerHTML = rows.join('');
+    // Click sur une ligne = détail jour
+    grid.querySelectorAll('.wp-grid7-row').forEach(row => {
+      row.addEventListener('click', ev => {
+        ev.stopPropagation();
+        const dIdx = parseInt(row.dataset.day, 10);
+        window.showDayDetail(dIdx);
+      });
+    });
+    // Bandeau insight
+    const ins = document.getElementById('wp-insight');
+    const insTxt = document.getElementById('wp-insight-text');
+    const insIco = ins.querySelector('.wp-insight-ico');
+    if(best){
+      const dt = new Date(data.daily.time[best.dayIdx]);
+      const when = best.dayIdx === 0 ? 'aujourd\'hui' : (best.dayIdx === 1 ? 'demain' : W_DAYS_FULL[dt.getDay()] + ' ' + dt.getDate());
+      ins.className = 'wp-insight';
+      insIco.textContent = '⭐';
+      insTxt.textContent = `Meilleur créneau : ${when} ${best.lbl} — ${best.agg.temp}°, pluie ${best.agg.rain}%`;
+    } else {
+      ins.className = 'wp-insight warn';
+      insIco.textContent = '⚠️';
+      insTxt.textContent = 'Aucun créneau idéal sur 7 jours — surveiller au jour le jour';
+    }
+  }
+
+  // Tip contextuel par heure pour le détail jour
+  function hourTip(rain, wind, temp, hum, code){
+    if([95,96,99].includes(code)) return 'Orage — risque échafaudage';
+    if(rain >= 60) return 'Pluie probable';
+    if(rain >= 30) return 'Risque de pluie';
+    if(wind >= 30) return 'Vent fort';
+    if(wind >= 20) return 'Vent modéré';
+    if(temp < 5) return 'Trop froid';
+    if(temp > 30) return 'Trop chaud';
+    if(hum >= 80) return 'Humidité forte';
+    return 'OK';
+  }
+
+  // Détail d'un jour : heures 6h-19h avec verdict
+  window.showDayDetail = function(dayIdx){
+    const data = W_STATE.data;
+    if(!data) return;
+    W_STATE.openDay = dayIdx;
+    const det = document.getElementById('wp-day-detail');
+    const title = document.getElementById('wp-detail-title');
+    const hoursEl = document.getElementById('wp-detail-hours');
+    const tipEl = document.getElementById('wp-detail-tip');
+    const dStr = data.daily.time[dayIdx];
+    const dt = new Date(dStr);
+    const isToday = dayIdx === 0;
+    title.textContent = (isToday ? 'Aujourd\'hui' : W_DAYS_FULL[dt.getDay()]) + ' ' + dt.getDate() + ' ' + W_MONTHS[dt.getMonth()];
+    // Heures 6h à 19h
+    const nowH = new Date().getHours();
+    const hoursHTML = [];
+    let bestH = -1, bestScore = Infinity;
+    const hourData = [];
+    for(let h = 6; h <= 19; h++){
+      const targetIso = dStr + 'T' + String(h).padStart(2,'0') + ':00';
+      const idx = data.hourly.time.findIndex(t => t.startsWith(targetIso));
+      if(idx < 0) continue;
+      const isPast = isToday && h < nowH;
+      const temp = Math.round(data.hourly.temperature_2m[idx]);
+      const code = data.hourly.weather_code[idx];
+      const rain = data.hourly.precipitation_probability[idx] ?? 0;
+      const hum = data.hourly.relative_humidity_2m ? Math.round(data.hourly.relative_humidity_2m[idx] ?? 60) : 60;
+      const wind = data.hourly.wind_speed_10m ? Math.round(data.hourly.wind_speed_10m[idx] ?? 10) : 10;
+      const verd = verdictFor(W_STATE.work, rain, wind, temp, hum, code);
+      hourData.push({h, temp, code, rain, hum, wind, verd, isPast});
+      if(!isPast && verd.v === 'good'){
+        const score = rain + wind/2 + Math.abs(temp - 18);
+        if(score < bestScore){ bestScore = score; bestH = h; }
+      }
+    }
+    hourData.forEach(d => {
+      const ic = wmoIcon(d.code, false);
+      const cls = d.isPast ? '' : d.verd.v;
+      const isBest = d.h === bestH;
+      hoursHTML.push(`<div class="wp-detail-hour ${cls}${isBest?' best':''}" style="${d.isPast?'opacity:0.4':''}"><div class="wp-dh-time">${d.h}h</div><div class="wp-dh-ico">${ic}</div><div class="wp-dh-temp">${d.temp}°</div><div class="wp-dh-meta">☔${d.rain}% 💨${d.wind}</div></div>`);
+    });
+    hoursEl.innerHTML = hoursHTML.join('');
+    // Tip global du jour
+    if(bestH >= 0){
+      const d = hourData.find(x => x.h === bestH);
+      tipEl.innerHTML = `⭐ Meilleur moment : <b>${bestH}h</b> — ${d.temp}°, pluie ${d.rain}%, vent ${d.wind} km/h`;
+    } else {
+      const ok = hourData.filter(x => !x.isPast && x.verd.v === 'warn');
+      if(ok.length){
+        tipEl.innerHTML = `⚠️ Aucun créneau idéal — ${ok.length} créneau(x) "moyen(s)" possible(s)`;
+      } else {
+        tipEl.innerHTML = `❌ Journée à éviter pour ce type de travail`;
+      }
+    }
+    det.classList.add('open');
+    // Scroll vers le détail
+    setTimeout(() => det.scrollIntoView({behavior:'smooth', block:'nearest'}), 100);
+  };
+
+  window.closeDayDetail = function(e){
+    if(e) e.stopPropagation();
+    document.getElementById('wp-day-detail').classList.remove('open');
+    W_STATE.openDay = -1;
+  };
+
+  // Binding des filtres
+  function bindFilters(){
+    const chips = document.querySelectorAll('#wp-filters .wp-filter-chip');
+    chips.forEach(c => {
+      c.addEventListener('click', ev => {
+        ev.stopPropagation();
+        chips.forEach(x => x.classList.remove('active'));
+        c.classList.add('active');
+        W_STATE.work = c.dataset.work;
+        renderGrid();
+        if(W_STATE.openDay >= 0) window.showDayDetail(W_STATE.openDay);
+      });
+    });
+  }
+
   function fmtTime(iso){
     const d = new Date(iso);
     return d.getHours().toString().padStart(2,'0') + 'h' + d.getMinutes().toString().padStart(2,'0');
@@ -5637,7 +5956,7 @@ window.addEventListener('beforeunload', function(){
     try{
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
         + `&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,precipitation_probability,is_day`
-        + `&hourly=temperature_2m,weather_code,precipitation_probability`
+        + `&hourly=temperature_2m,weather_code,precipitation_probability,relative_humidity_2m,wind_speed_10m`
         + `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,uv_index_max,sunrise,sunset`
         + `&forecast_days=7&timezone=auto`;
       const r = await fetch(url);
@@ -5702,20 +6021,9 @@ window.addEventListener('beforeunload', function(){
       }
       document.getElementById('wp-hours').innerHTML = hoursHTML.join('');
 
-      // === 7 JOURS ===
-      const days = data.daily;
-      const daysHTML = days.time.map((dStr, i) => {
-        const d = new Date(dStr);
-        const isToday = i === 0;
-        const lbl = isToday ? 'Auj.' : W_DAYS[d.getDay()];
-        const max = Math.round(days.temperature_2m_max[i]);
-        const min = Math.round(days.temperature_2m_min[i]);
-        const ic = wmoIcon(days.weather_code[i], false);
-        const r = days.precipitation_probability_max[i] ?? 0;
-        const w = Math.round(days.wind_speed_10m_max[i]);
-        return `<div class="wp-day${isToday?' today':''}"><div class="wp-day-name">${lbl}</div><div class="wp-day-icon">${ic}</div><div class="wp-day-tmax">${max}°</div><div class="wp-day-tmin">${min}°</div><div class="wp-day-rain">☔${r}%</div><div class="wp-day-wind">💨${w}</div></div>`;
-      }).join('');
-      document.getElementById('wp-days').innerHTML = daysHTML;
+      // === 7 JOURS × 4 CRÉNEAUX ===
+      W_STATE.data = data;
+      renderGrid();
 
       el.classList.remove('wp-loading');
 
@@ -5743,6 +6051,7 @@ window.addEventListener('beforeunload', function(){
     if(!el) return;
     el.classList.add('wp-loading');
     if(cityEl) cityEl.textContent = '📍 Localisation…';
+    bindFilters();
     if(!navigator.geolocation){ loadWeather(46.3833, 6.2333, 'Nyon'); return; }
     navigator.geolocation.getCurrentPosition(
       pos => loadWeather(pos.coords.latitude, pos.coords.longitude),
