@@ -254,6 +254,9 @@ header img{height:42px}
 .wp-widget.collapsed .wp-section-title,
 .wp-widget.collapsed .wp-hours,
 .wp-widget.collapsed .wp-days,
+.wp-widget.collapsed .wp-insight,
+.wp-widget.collapsed .wp-grid-toggle-btn,
+.wp-widget.collapsed .wp-grid7-section,
 .wp-widget.collapsed > div[style*="lever"]{display:none}
 .wp-c-icon{font-size:24px;line-height:1}
 .wp-c-temp{font-size:18px;font-weight:900;color:var(--text)}
@@ -373,6 +376,14 @@ header img{height:42px}
 .wp-dh-temp{font-size:12px;font-weight:900;color:var(--text)}
 .wp-dh-meta{font-size:8px;font-weight:700;color:var(--muted);line-height:1.2;margin-top:1px}
 .wp-detail-tip{margin-top:8px;padding:6px 8px;background:var(--card);border-radius:6px;font-size:11px;font-weight:700;color:var(--text)}
+
+/* Bouton repliable de la grille 7j */
+.wp-grid-toggle-btn{width:100%;background:var(--bg);border:1.5px dashed var(--border);border-radius:10px;padding:9px 12px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:Nunito,sans-serif;font-size:12px;font-weight:800;color:var(--blue);transition:all 0.15s}
+.wp-grid-toggle-btn:hover{background:var(--blue-bg);border-color:var(--blue)}
+.wp-grid-toggle-btn:active{transform:scale(0.98)}
+.wp-grid-toggle-chevron{font-size:10px;transition:transform 0.2s}
+.wp-grid7-section{display:none;animation:wpdetailin 0.25s ease-out}
+.wp-grid7-section.open{display:block}
 
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
@@ -808,14 +819,13 @@ function checkPwd(){
       <div class="wp-hour"><div class="wp-hour-time">—</div><div class="wp-hour-ico">⏳</div><div class="wp-hour-temp">—</div></div>
     </div>
     <!-- 7 jours × 4 créneaux -->
-    <div class="wp-section-title">📅 7 prochains jours · par créneau</div>
-    <div class="wp-filters" id="wp-filters">
-      <div class="wp-filter-chip active" data-work="ext">🌳 Extérieur</div>
-      <div class="wp-filter-chip" data-work="facade">🏠 Façade</div>
-      <div class="wp-filter-chip" data-work="bois">🪵 Boiseries</div>
-      <div class="wp-filter-chip" data-work="int">🏡 Intérieur</div>
-    </div>
+    <div class="wp-section-title">📅 7 prochains jours · façade</div>
     <div class="wp-insight" id="wp-insight"><span class="wp-insight-ico">⏳</span><span id="wp-insight-text">Analyse en cours…</span></div>
+    <button type="button" class="wp-grid-toggle-btn" onclick="toggleGrid7(event)">
+      <span id="wp-grid-toggle-txt">Voir la grille détaillée</span>
+      <span class="wp-grid-toggle-chevron" id="wp-grid-toggle-chev">▼</span>
+    </button>
+    <div class="wp-grid7-section" id="wp-grid7-section">
     <div class="wp-grid7-header">
       <div></div>
       <div>6-9h</div>
@@ -834,6 +844,7 @@ function checkPwd(){
       <div class="wp-detail-hours" id="wp-detail-hours"></div>
       <div class="wp-detail-tip" id="wp-detail-tip"></div>
     </div>
+    </div><!-- /wp-grid7-section -->
   </div>
   <div class="dash-grid" id="dash-grid"></div>
 
@@ -5688,7 +5699,7 @@ window.addEventListener('beforeunload', function(){
 
   // === GRILLE 7J × 4 CRÉNEAUX ===
   // État global du module
-  const W_STATE = { data: null, work: 'ext', openDay: -1 };
+  const W_STATE = { data: null, work: 'facade', openDay: -1 };
 
   // Verdict selon le type de travail (rain, wind, temp, hum, code)
   function verdictFor(work, rain, wind, temp, hum, code){
@@ -5947,6 +5958,18 @@ window.addEventListener('beforeunload', function(){
     if(e && e.target && (e.target.tagName === 'A' || e.target.tagName === 'BUTTON')) return;
     const w = document.getElementById('weather');
     if(w) w.classList.toggle('collapsed');
+  };
+
+  window.toggleGrid7 = function(e){
+    if(e){ e.stopPropagation(); }
+    const section = document.getElementById('wp-grid7-section');
+    const txt = document.getElementById('wp-grid-toggle-txt');
+    const chev = document.getElementById('wp-grid-toggle-chev');
+    if(!section) return;
+    section.classList.toggle('open');
+    const isOpen = section.classList.contains('open');
+    if(txt) txt.textContent = isOpen ? 'Masquer la grille' : 'Voir la grille détaillée';
+    if(chev) chev.textContent = isOpen ? '▲' : '▼';
   };
 
   async function loadWeather(lat, lon, cityName){
